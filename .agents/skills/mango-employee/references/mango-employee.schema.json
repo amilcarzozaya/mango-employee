@@ -1,0 +1,437 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://metodomango.com/spec/mango-employee.schema.json",
+  "title": "MANGO Employee Specification",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "employee",
+    "mango",
+    "skills",
+    "gates",
+    "governance"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "employee": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "role",
+        "mission",
+        "owner",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "mission": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "active",
+            "paused",
+            "retired"
+          ]
+        },
+        "responsibilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "non_responsibilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mango": {
+      "type": "object",
+      "required": [
+        "meta",
+        "audiencia",
+        "nivel",
+        "guia",
+        "opciones_formato"
+      ],
+      "properties": {
+        "meta": {
+          "type": "string"
+        },
+        "audiencia": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nivel": {
+          "type": "string"
+        },
+        "guia": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "opciones_formato": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "authority"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "authority": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "read",
+                "draft",
+                "write",
+                "send",
+                "delete",
+                "spend",
+                "admin"
+              ]
+            }
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "governs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "properties": {
+        "allowed_types": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "rule",
+              "decision",
+              "commitment",
+              "preference",
+              "operational_state",
+              "correction"
+            ]
+          }
+        },
+        "retention_policy": {
+          "type": "string"
+        },
+        "promotion_requires_approval": {
+          "type": "boolean"
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/skill"
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "permissions"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "read",
+                "draft",
+                "write",
+                "send",
+                "delete",
+                "spend",
+                "admin"
+              ]
+            }
+          },
+          "constraints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "autonomy": {
+      "type": "object",
+      "properties": {
+        "default_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "max_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "requires_human_approval"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "category": {
+            "enum": [
+              "external_send",
+              "spend",
+              "pricing",
+              "scope",
+              "deadline",
+              "legal",
+              "publish",
+              "delete",
+              "permissions",
+              "sensitive_data",
+              "other"
+            ]
+          },
+          "requires_human_approval": {
+            "type": "boolean"
+          },
+          "policy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "routines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "trigger": {
+            "type": "string"
+          },
+          "skill_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "properties": {
+        "metrics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "golden_set": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "learning": {
+      "type": "object",
+      "properties": {
+        "correction_log": {
+          "type": "boolean"
+        },
+        "auto_promote_corrections": {
+          "type": "boolean"
+        },
+        "require_regression_test": {
+          "type": "boolean"
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "required": [
+        "human_final_authority",
+        "change_control"
+      ],
+      "properties": {
+        "human_final_authority": {
+          "type": "string"
+        },
+        "change_control": {
+          "type": "string"
+        },
+        "audit_log": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "skill": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "objective",
+        "trigger",
+        "procedure",
+        "output",
+        "definition_of_done",
+        "autonomy_level"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "trigger": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "procedure": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "definition_of_done": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "qa": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "gates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "autonomy_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "updates_memory": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "missing_information_policy": {
+          "type": "string"
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  }
+}

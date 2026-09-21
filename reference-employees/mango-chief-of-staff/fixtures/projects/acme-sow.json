@@ -1,0 +1,12 @@
+{
+  "client": "Acme Manufacturing",
+  "included": [
+    "Discovery workshop",
+    "Workflow map"
+  ],
+  "excluded": [
+    "Production automation",
+    "ERP integration"
+  ],
+  "signed_date": "2026-09-01"
+}

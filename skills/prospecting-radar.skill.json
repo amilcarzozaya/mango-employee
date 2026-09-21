@@ -1,0 +1,70 @@
+{
+  "id": "prospecting-radar",
+  "version": "1.0.0",
+  "objective": "Priorizar cuentas/prospectos con señales relevantes para investigación humana o outreach.",
+  "trigger": "Cadencia comercial definida",
+  "inputs": [
+    "ICP",
+    "Lista de cuentas",
+    "Señales autorizadas"
+  ],
+  "sources": [
+    "CRM",
+    "Approved research sources",
+    "Company File"
+  ],
+  "procedure": [
+    "Aplicar filtros ICP.",
+    "Identificar señales observables.",
+    "Registrar evidencia y fecha.",
+    "Priorizar por fit y señal, no por atributos sensibles.",
+    "Preparar lista para revisión."
+  ],
+  "rules": [
+    "No inferir atributos sensibles.",
+    "No contactar automáticamente.",
+    "No fabricar señales."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "account",
+      "fit_evidence",
+      "signal",
+      "source",
+      "date",
+      "recommended_research"
+    ]
+  },
+  "definition_of_done": [
+    "Cada prioridad tiene evidencia.",
+    "No hay scoring basado en atributos sensibles."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "external_send"
+  ],
+  "autonomy_level": 1,
+  "updates_memory": [
+    "operational_state"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

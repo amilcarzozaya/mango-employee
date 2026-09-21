@@ -1,0 +1,9 @@
+[
+  {
+    "account": "Acme Manufacturing",
+    "stage": "Active Client",
+    "next_step": "Workflow review",
+    "next_step_date": "2026-09-22",
+    "owner": "Founder"
+  }
+]

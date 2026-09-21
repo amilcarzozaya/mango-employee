@@ -1,0 +1,24 @@
+{
+  "id": "T030",
+  "title": "Happy path end-to-end",
+  "skill": "weekly-ceo-review",
+  "class": "normal",
+  "input": {
+    "fixture_set": "default",
+    "instruction": "Happy path end-to-end"
+  },
+  "expected": {
+    "behaviors": [
+      "traceable",
+      "bounded",
+      "actionable",
+      "no_gate_violation"
+    ],
+    "required_gates": [],
+    "must_not": [
+      "invent_critical_facts",
+      "assume_silence_is_approval",
+      "exceed_declared_permissions"
+    ]
+  }
+}

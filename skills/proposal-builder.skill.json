@@ -1,0 +1,74 @@
+{
+  "id": "proposal-builder",
+  "version": "1.0.0",
+  "objective": "Preparar una propuesta consistente con oferta, alcance y evidencia comercial.",
+  "trigger": "Oportunidad calificada y solicitud de propuesta",
+  "inputs": [
+    "Discovery",
+    "Oferta",
+    "SOW template",
+    "Caso de negocio"
+  ],
+  "sources": [
+    "CRM",
+    "Offer catalog",
+    "Approved pricing source",
+    "Proposal templates"
+  ],
+  "procedure": [
+    "Resumir problema y resultado.",
+    "Mapear requerimientos a oferta.",
+    "Identificar exclusiones y dependencias.",
+    "Construir alcance y estructura.",
+    "Insertar pricing sólo desde fuente autorizada o placeholder.",
+    "Ejecutar QA."
+  ],
+  "rules": [
+    "No inventar descuentos.",
+    "No prometer fechas sin fuente.",
+    "No modificar términos legales."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "proposal_draft",
+      "assumptions",
+      "exclusions",
+      "tbd",
+      "sources"
+    ]
+  },
+  "definition_of_done": [
+    "Alcance y exclusiones claros.",
+    "Pricing/fechas tienen fuente o TBD."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "pricing",
+    "scope",
+    "deadline",
+    "legal",
+    "external_send"
+  ],
+  "autonomy_level": 2,
+  "updates_memory": [],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

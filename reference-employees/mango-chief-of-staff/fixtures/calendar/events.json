@@ -1,0 +1,11 @@
+[
+  {
+    "id": "cal-1",
+    "title": "Acme workflow review",
+    "date": "2026-09-22T10:00:00-06:00",
+    "attendees": [
+      "Founder",
+      "Ana Torres"
+    ]
+  }
+]

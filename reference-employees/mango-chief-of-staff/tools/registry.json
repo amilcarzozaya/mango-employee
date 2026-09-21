@@ -1,0 +1,83 @@
+{
+  "protocol_version": "0.1.0",
+  "tools": [
+    {
+      "id": "email",
+      "name": "Email",
+      "adapter": "external",
+      "capabilities": [
+        "read",
+        "draft",
+        "send"
+      ],
+      "risk": "high",
+      "reversible": false,
+      "gate": "external_send",
+      "inputs": {},
+      "outputs": {}
+    },
+    {
+      "id": "calendar",
+      "name": "Calendar",
+      "adapter": "external",
+      "capabilities": [
+        "read",
+        "write"
+      ],
+      "risk": "medium",
+      "reversible": true,
+      "gate": null,
+      "inputs": {},
+      "outputs": {},
+      "rollback": "delete created event"
+    },
+    {
+      "id": "crm",
+      "name": "CRM",
+      "adapter": "external",
+      "capabilities": [
+        "read",
+        "write"
+      ],
+      "risk": "medium",
+      "reversible": true,
+      "gate": null,
+      "inputs": {},
+      "outputs": {},
+      "rollback": "restore prior field values"
+    },
+    {
+      "id": "finance",
+      "name": "Finance",
+      "adapter": "external",
+      "capabilities": [
+        "read",
+        "spend"
+      ],
+      "risk": "critical",
+      "reversible": false,
+      "gate": "spend",
+      "inputs": {},
+      "outputs": {}
+    },
+    {
+      "id": "workspace",
+      "name": "Employee Workspace",
+      "adapter": "filesystem",
+      "capabilities": [
+        "read",
+        "draft",
+        "write"
+      ],
+      "risk": "medium",
+      "reversible": true,
+      "gate": null,
+      "inputs": {},
+      "outputs": {},
+      "config": {
+        "root": "workspace"
+      },
+      "rollback": "restore prior file version"
+    }
+  ]
+}

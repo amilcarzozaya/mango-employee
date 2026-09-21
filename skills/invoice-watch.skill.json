@@ -1,0 +1,73 @@
+{
+  "id": "invoice-watch",
+  "version": "1.0.0",
+  "objective": "Hacer visible y consistente la cobranza sin inventar consecuencias.",
+  "trigger": "Revisión diaria o semanal de cuentas por cobrar",
+  "inputs": [
+    "Facturas",
+    "Términos contractuales",
+    "Historial de contacto"
+  ],
+  "sources": [
+    "Finance",
+    "Contract",
+    "Email"
+  ],
+  "procedure": [
+    "Listar facturas abiertas.",
+    "Calcular días desde vencimiento.",
+    "Recuperar último contacto.",
+    "Aplicar escalera de seguimiento documentada.",
+    "Preparar draft y escalación."
+  ],
+  "rules": [
+    "No amenazar con consecuencias no contractuales.",
+    "No modificar montos.",
+    "No ejecutar movimientos financieros."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "client",
+      "invoice",
+      "amount",
+      "due_date",
+      "days_overdue",
+      "last_contact",
+      "draft",
+      "escalation"
+    ]
+  },
+  "definition_of_done": [
+    "Montos y fechas trazan a Finance.",
+    "Consecuencias trazan a contrato/política."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "external_send",
+    "spend"
+  ],
+  "autonomy_level": 2,
+  "updates_memory": [
+    "operational_state"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "release": "MANGO Employee v0.12 RC1",
+  "version": "0.12.0-rc1",
+  "schema_version": 1,
+  "generated_at": "2026-09-21T02:32:28.692983+00:00",
+  "files": [
+    {
+      "path": "mango_cli/__init__.py",
+      "sha256": "91e7b016c6ecc6b6780b6f2f53e01779dc7cea5d0e4e6f678a2d02eab883925b",
+      "bytes": 26
+    },
+    {
+      "path": "mango_cli/__main__.py",
+      "sha256": "3643b3d42c390685724c9cd355f86d496d1a89dd6dd6a9abb06f8edf11c85936",
+      "bytes": 57
+    },
+    {
+      "path": "mango_cli/benchmark.py",
+      "sha256": "e8d60874f745268f3ddfaf7aada186c880cd37741977b287f446fcf7010d9e9e",
+      "bytes": 5248
+    },
+    {
+      "path": "mango_cli/cli.py",
+      "sha256": "c304d43f11650cbfb29e9408daa393f16b42faa7d551cbf9ccf983087723f8fd",
+      "bytes": 28504
+    },
+    {
+      "path": "mango_cli/execution_engine.py",
+      "sha256": "1b0109d47e8e2fc9b88b072b6a77ac5d34011a50331e1533cf3eef8cd643719b",
+      "bytes": 5499
+    },
+    {
+      "path": "mango_cli/hardening.py",
+      "sha256": "a1becb0f044e43cdeec71901ff995a215012fb726f000b2403572a873eee109b",
+      "bytes": 8402
+    },
+    {
+      "path": "mango_cli/harness.py",
+      "sha256": "b8bc7b21510072d3ceefd4f9703d5159dd660352a4a14fa6d6e0ad8cbdd8a4d5",
+      "bytes": 2443
+    },
+    {
+      "path": "mango_cli/initializer.py",
+      "sha256": "b2b8e0967981ec5ae963b963aa8b8385e64f1b60ac82adfe277af552de0f23c8",
+      "bytes": 9790
+    },
+    {
+      "path": "mango_cli/memory.py",
+      "sha256": "f3bf22bb2a312a5e5e59c51262934206da564d5e670126156b9b9e1bab5524e5",
+      "bytes": 8317
+    },
+    {
+      "path": "mango_cli/observability.py",
+      "sha256": "bd223f58bf6be2c1b4b16601a190b82e3e84447e4107c8c596f04f7104c0ecd0",
+      "bytes": 6926
+    },
+    {
+      "path": "mango_cli/runtime.py",
+      "sha256": "b9776c3e091810ab2c61e06052e9b63f8ccd90ee250a7a5be5820ab3e5f68aec",
+      "bytes": 9353
+    },
+    {
+      "path": "mango_cli/security.py",
+      "sha256": "1d7e3100c208ac632a9609dc8119a299504cac4382f098113ca24f55f92a24de",
+      "bytes": 3155
+    },
+    {
+      "path": "mango_cli/state.py",
+      "sha256": "ea417cbbc4b965fe7a09e6873ab5c682d4074dff0ce6f33c1cfb370653341f25",
+      "bytes": 6687
+    },
+    {
+      "path": "mango_cli/teams.py",
+      "sha256": "ef74556e9093db67630925643cc280633f8d674759eccdded4a3f6d44a81d41c",
+      "bytes": 5933
+    },
+    {
+      "path": "mango_cli/tool_protocol.py",
+      "sha256": "b9d992ab485fb5d6b0a536776611b7b512537c2d52166515d5134285f58af9c7",
+      "bytes": 4499
+    },
+    {
+      "path": "mango_cli/validator.py",
+      "sha256": "cf4a5d916517bdfd8cbe04469f1434c08901948acbb8ee4249c19b5e74bbef56",
+      "bytes": 2661
+    }
+  ],
+  "release_hash": "6064c0521b726ef790c389dd2fccdac22984ddfc11da39da8cc4822dd70bc35f"
+}

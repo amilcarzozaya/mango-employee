@@ -1,0 +1,160 @@
+
+from pathlib import Path
+import sqlite3, json, hashlib, datetime, shutil, tempfile, os
+
+RC_VERSION="0.12.0-rc1"
+SCHEMA_VERSION=1
+DBS={
+ "state":"state/state.db",
+ "memory":"memory/memory.db",
+ "observability":"observability/trace.db",
+ "teams":"state/teams.db",
+}
+VALID_RUN_STATES={"queued","running","waiting_approval","blocked","completed","failed","cancelled"}
+VALID_HANDOFF_STATES={"proposed","accepted","running","returned","completed","rejected","cancelled"}
+
+def now(): return datetime.datetime.now(datetime.timezone.utc).isoformat()
+def base(ep): p=Path(ep); return p.parent if p.is_file() else p
+def sha256(path):
+ h=hashlib.sha256()
+ with open(path,"rb") as f:
+  for chunk in iter(lambda:f.read(1024*1024),b""): h.update(chunk)
+ return h.hexdigest()
+
+def _ensure_meta(path, component):
+ if not path.exists(): return {"component":component,"status":"absent","version":None}
+ c=sqlite3.connect(path)
+ try:
+  c.execute("""CREATE TABLE IF NOT EXISTS mango_schema_meta(
+    component TEXT PRIMARY KEY, schema_version INTEGER NOT NULL, app_version TEXT NOT NULL,
+    migrated_at TEXT NOT NULL)""")
+  row=c.execute("SELECT schema_version FROM mango_schema_meta WHERE component=?",(component,)).fetchone()
+  if row and int(row[0])>SCHEMA_VERSION: raise RuntimeError(f"{component} schema {row[0]} is newer than supported {SCHEMA_VERSION}")
+  c.execute("""INSERT INTO mango_schema_meta(component,schema_version,app_version,migrated_at)
+    VALUES(?,?,?,?) ON CONFLICT(component) DO UPDATE SET
+    schema_version=excluded.schema_version,app_version=excluded.app_version,migrated_at=excluded.migrated_at""",
+    (component,SCHEMA_VERSION,RC_VERSION,now()))
+  c.commit()
+  return {"component":component,"status":"ok","version":SCHEMA_VERSION}
+ finally: c.close()
+
+def migrate(ep):
+ b=base(ep); out=[]
+ # Initialize core DBs through their native connectors before adding metadata.
+ from .state import connect as state_connect
+ from .memory import connect as memory_connect
+ from .observability import connect as obs_connect
+ from .teams import connect as teams_connect
+ for fn in (state_connect,memory_connect,obs_connect,teams_connect):
+  c=fn(ep); c.close()
+ for component,rel in DBS.items(): out.append(_ensure_meta(b/rel,component))
+ return {"ok":all(x["status"]=="ok" for x in out),"schema_version":SCHEMA_VERSION,"components":out}
+
+def _db_integrity(path):
+ if not path.exists(): return {"exists":False,"ok":True,"detail":"absent"}
+ c=sqlite3.connect(path)
+ try:
+  result=c.execute("PRAGMA integrity_check").fetchone()[0]
+  fk=c.execute("PRAGMA foreign_key_check").fetchall()
+  return {"exists":True,"ok":result=="ok" and not fk,"detail":result,"foreign_key_issues":len(fk)}
+ finally:c.close()
+
+def audit(ep):
+ b=base(ep); checks=[]
+ def add(name,ok,detail): checks.append({"name":name,"ok":bool(ok),"detail":detail})
+ # JSON validity / required manifest.
+ try:
+  emp=json.loads((b/"employee.json").read_text()); add("employee-json",True,emp.get("id"))
+ except Exception as e: add("employee-json",False,str(e)); emp={}
+ for component,rel in DBS.items():
+  info=_db_integrity(b/rel); add(f"sqlite-{component}",info["ok"],info)
+ # state invariants
+ sp=b/DBS["state"]
+ if sp.exists():
+  c=sqlite3.connect(sp); c.row_factory=sqlite3.Row
+  bad=[dict(x) for x in c.execute("SELECT id,status FROM runs WHERE status NOT IN ('queued','running','waiting_approval','blocked','completed','failed','cancelled')")]
+  orphan=[dict(x) for x in c.execute("SELECT a.id,a.run_id FROM approvals a LEFT JOIN runs r ON a.run_id=r.id WHERE r.id IS NULL")]
+  terminal_pending=[dict(x) for x in c.execute("""SELECT a.id,a.run_id FROM approvals a JOIN runs r ON a.run_id=r.id
+    WHERE a.status='pending' AND r.status IN ('completed','failed','cancelled')""")]
+  c.close()
+  add("run-state-domain",not bad,bad[:10]); add("no-orphan-approvals",not orphan,orphan[:10]); add("no-terminal-pending-approvals",not terminal_pending,terminal_pending[:10])
+ # teams invariants
+ tp=b/DBS["teams"]
+ if tp.exists():
+  c=sqlite3.connect(tp); c.row_factory=sqlite3.Row
+  orphan_members=[dict(x) for x in c.execute("SELECT m.team_id,m.employee_id FROM team_members m LEFT JOIN teams t ON m.team_id=t.id WHERE t.id IS NULL")]
+  orphan_handoffs=[dict(x) for x in c.execute("SELECT h.id FROM handoffs h LEFT JOIN teams t ON h.team_id=t.id WHERE t.id IS NULL")]
+  bad_h=[dict(x) for x in c.execute("SELECT id,status FROM handoffs WHERE status NOT IN ('proposed','accepted','running','returned','completed','rejected','cancelled')")]
+  c.close()
+  add("no-orphan-team-members",not orphan_members,orphan_members[:10]); add("no-orphan-handoffs",not orphan_handoffs,orphan_handoffs[:10]); add("handoff-state-domain",not bad_h,bad_h[:10])
+ # package hygiene
+ add("no-secret-env-files",not any((b/x).exists() for x in (".env",".env.local",".secrets")), "checked .env/.env.local/.secrets")
+ return {"ok":all(x["ok"] for x in checks),"checks":checks,"passed":sum(x["ok"] for x in checks),"total":len(checks)}
+
+def backup(ep,out_dir):
+ b=base(ep); out=Path(out_dir).resolve(); out.mkdir(parents=True,exist_ok=True)
+ stamp=datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+ dest=out/f"mango-backup-{stamp}"; dest.mkdir()
+ files=[]
+ for component,rel in DBS.items():
+  src=b/rel
+  if not src.exists(): continue
+  dp=dest/rel; dp.parent.mkdir(parents=True,exist_ok=True)
+  sc=sqlite3.connect(src); dc=sqlite3.connect(dp)
+  try: sc.backup(dc)
+  finally: dc.close(); sc.close()
+  files.append({"component":component,"path":rel,"sha256":sha256(dp),"bytes":dp.stat().st_size})
+ # Back up operational JSON, not arbitrary context/secrets.
+ for rel in ("employee.json","state/execution-queue.json","tools/registry.json"):
+  src=b/rel
+  if src.exists():
+   dp=dest/rel; dp.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(src,dp)
+   files.append({"component":"file","path":rel,"sha256":sha256(dp),"bytes":dp.stat().st_size})
+ manifest={"format":"mango-backup-v1","created_at":now(),"app_version":RC_VERSION,"files":files}
+ (dest/"backup-manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n")
+ return dest,manifest
+
+def verify_backup(path):
+ p=Path(path); mf=p/"backup-manifest.json"
+ if not mf.exists(): return {"ok":False,"reason":"missing_manifest"}
+ m=json.loads(mf.read_text()); problems=[]
+ for x in m.get("files",[]):
+  f=p/x["path"]
+  if not f.exists(): problems.append({"path":x["path"],"error":"missing"})
+  elif sha256(f)!=x["sha256"]: problems.append({"path":x["path"],"error":"checksum_mismatch"})
+ return {"ok":not problems,"files":len(m.get("files",[])),"problems":problems}
+
+def restore(ep,backup_dir,force=False):
+ b=base(ep).resolve(); src=Path(backup_dir).resolve()
+ v=verify_backup(src)
+ if not v["ok"]: raise ValueError("Backup verification failed: "+json.dumps(v))
+ if not force:
+  # Refuse overwrite of non-empty operational stores.
+  existing=[rel for rel in list(DBS.values())+["state/execution-queue.json"] if (b/rel).exists()]
+  if existing: raise FileExistsError("Restore would overwrite existing state; use --force")
+ m=json.loads((src/"backup-manifest.json").read_text())
+ for x in m["files"]:
+  rel=Path(x["path"])
+  if rel.is_absolute() or ".." in rel.parts: raise ValueError("Unsafe backup path")
+  dp=b/rel; dp.parent.mkdir(parents=True,exist_ok=True)
+  shutil.copy2(src/rel,dp)
+ return {"ok":True,"restored":len(m["files"])}
+
+def release_manifest(repo):
+ r=Path(repo); files=[]
+ for pat in ("mango_cli/*.py","MANGO-*-SPEC.md","pyproject.toml","README.md","CHANGELOG.md"):
+  for p in sorted(r.glob(pat)):
+   if p.is_file(): files.append({"path":str(p.relative_to(r)),"sha256":sha256(p),"bytes":p.stat().st_size})
+ payload={"release":"MANGO Employee v0.12 RC1","version":RC_VERSION,"schema_version":SCHEMA_VERSION,"generated_at":now(),"files":files}
+ payload["release_hash"]=hashlib.sha256(json.dumps(files,sort_keys=True).encode()).hexdigest()
+ return payload
+
+def readiness(ep,repo):
+ from .security import run_security_audit
+ mig=migrate(ep); data=audit(ep); sec=run_security_audit(base(ep)/"employee.json",Path(repo))
+ checks=[
+  {"name":"schema-migrations","ok":mig["ok"],"detail":mig},
+  {"name":"data-integrity","ok":data["ok"],"detail":{"passed":data["passed"],"total":data["total"]}},
+  {"name":"security-audit","ok":sec["ok"],"detail":{"passed":sec["passed"],"total":sec["total"]}},
+ ]
+ return {"ok":all(x["ok"] for x in checks),"version":RC_VERSION,"checks":checks}

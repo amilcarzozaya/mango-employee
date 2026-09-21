@@ -1,0 +1,70 @@
+{
+  "id": "proposal-follow-up",
+  "version": "1.0.0",
+  "objective": "Mantener momentum comercial aportando valor nuevo en cada contacto.",
+  "trigger": "Días 3, 7 y 14 después de propuesta, o política equivalente",
+  "inputs": [
+    "Propuesta",
+    "Último contacto",
+    "Contexto del prospecto"
+  ],
+  "sources": [
+    "CRM",
+    "Email",
+    "Proposal",
+    "Research approved by owner"
+  ],
+  "procedure": [
+    "Confirmar etapa y última interacción.",
+    "Determinar si existe valor nuevo.",
+    "Preparar mensaje breve con un nuevo dato, recurso, insight o decisión.",
+    "Si no existe valor nuevo, recomendar no contactar.",
+    "Actualizar siguiente acción propuesta."
+  ],
+  "rules": [
+    "No inventar urgencia.",
+    "No usar presión falsa.",
+    "No enviar sin gate."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "touch_number",
+      "new_value",
+      "draft",
+      "recommended_next_step"
+    ]
+  },
+  "definition_of_done": [
+    "Cada draft aporta valor nuevo o recomienda omitir.",
+    "No repite el mensaje anterior."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "external_send",
+    "pricing"
+  ],
+  "autonomy_level": 2,
+  "updates_memory": [
+    "operational_state"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

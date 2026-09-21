@@ -1,0 +1,75 @@
+{
+  "id": "knowledge-curator",
+  "version": "1.0.0",
+  "objective": "Mantener conocimiento operacional útil, vigente y no redundante.",
+  "trigger": "Nueva decisión, política, corrección o documento relevante",
+  "inputs": [
+    "Nuevo conocimiento",
+    "Base actual"
+  ],
+  "sources": [
+    "Company File",
+    "Client Files",
+    "Decision Log",
+    "Correction Log",
+    "Approved docs"
+  ],
+  "procedure": [
+    "Clasificar tipo de conocimiento.",
+    "Buscar duplicado/conflicto.",
+    "Determinar destino.",
+    "Proponer alta, actualización, reemplazo o expiración.",
+    "Añadir fuente y vigencia.",
+    "Solicitar aprobación si cambia política."
+  ],
+  "rules": [
+    "No promover conversación efímera a política.",
+    "No borrar historial requerido para auditoría."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "classification",
+      "destination",
+      "change",
+      "source",
+      "expiry",
+      "approval_required"
+    ]
+  },
+  "definition_of_done": [
+    "No quedan reglas contradictorias sin marcar.",
+    "Toda memoria nueva tiene procedencia."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "permissions"
+  ],
+  "autonomy_level": 2,
+  "updates_memory": [
+    "rule",
+    "decision",
+    "commitment",
+    "preference",
+    "correction"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

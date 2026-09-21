@@ -1,0 +1,86 @@
+{
+  "id": "approval-gate",
+  "version": "1.0.0",
+  "objective": "Detener acciones sensibles y presentar al humano exactamente qué debe decidir.",
+  "trigger": "Antes de una acción restringida",
+  "inputs": [
+    "Acción propuesta",
+    "Fuentes",
+    "Política",
+    "Riesgo"
+  ],
+  "sources": [
+    "Employee spec",
+    "Applicable skill",
+    "Policy sources"
+  ],
+  "procedure": [
+    "Identificar gate aplicable.",
+    "Detener ejecución.",
+    "Construir Approval Card.",
+    "Esperar aprobación explícita.",
+    "Registrar decisión.",
+    "Ejecutar sólo si el permiso y la política lo permiten."
+  ],
+  "rules": [
+    "Silencio no es aprobación.",
+    "Aprobación de una acción no crea permiso permanente.",
+    "Cambios materiales requieren nueva aprobación."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "action",
+      "reason",
+      "target",
+      "exact_change",
+      "sources",
+      "cost",
+      "risk",
+      "reversible",
+      "rollback",
+      "alternatives",
+      "decision_required"
+    ]
+  },
+  "definition_of_done": [
+    "La acción permanece detenida hasta decisión válida.",
+    "La aprobación queda registrada."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "external_send",
+    "spend",
+    "pricing",
+    "scope",
+    "deadline",
+    "legal",
+    "publish",
+    "delete",
+    "permissions",
+    "sensitive_data"
+  ],
+  "autonomy_level": 0,
+  "updates_memory": [
+    "decision"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

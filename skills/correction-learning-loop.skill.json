@@ -1,0 +1,74 @@
+{
+  "id": "correction-learning-loop",
+  "version": "1.0.0",
+  "objective": "Convertir correcciones repetibles en mejoras versionadas sin crear políticas accidentales.",
+  "trigger": "El humano corrige un resultado o comportamiento",
+  "inputs": [
+    "Output original",
+    "Corrección",
+    "Contexto",
+    "Skill/version"
+  ],
+  "sources": [
+    "Correction Log",
+    "Current skill",
+    "Company File",
+    "Client File"
+  ],
+  "procedure": [
+    "Clasificar el error.",
+    "Determinar causa.",
+    "Elegir destino mínimo: regla, fuente, skill, gate o test.",
+    "Proponer cambio.",
+    "Solicitar aprobación si cambia política/autoridad.",
+    "Añadir regression test.",
+    "Incrementar versión."
+  ],
+  "rules": [
+    "No generalizar una excepción sin evidencia.",
+    "No cambiar autoridad automáticamente."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "error_class",
+      "root_cause",
+      "proposed_change",
+      "destination",
+      "regression_test",
+      "version_bump"
+    ]
+  },
+  "definition_of_done": [
+    "La corrección tiene destino.",
+    "Existe prueba que habría detectado el error."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "permissions"
+  ],
+  "autonomy_level": 2,
+  "updates_memory": [
+    "correction",
+    "rule"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "id": "deliverable-qa",
+  "version": "1.0.0",
+  "objective": "Detectar errores verificables antes de que un entregable salga al cliente.",
+  "trigger": "Antes de una entrega",
+  "inputs": [
+    "Entregable",
+    "SOW/brief",
+    "Fuentes citadas"
+  ],
+  "sources": [
+    "Deliverable",
+    "Contract/SOW",
+    "Client File",
+    "Approved source material"
+  ],
+  "procedure": [
+    "Comprobar nombre/cliente/versión.",
+    "Validar números y claims contra fuentes.",
+    "Comparar contra alcance y requisitos.",
+    "Buscar placeholders, fechas, enlaces y asks incompletos.",
+    "Emitir PASS o lista de fallas."
+  ],
+  "rules": [
+    "No editar silenciosamente.",
+    "No aprobar un claim sin fuente."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "status",
+      "failures",
+      "sources",
+      "recommended_fixes"
+    ]
+  },
+  "definition_of_done": [
+    "PASS sólo si no hay fallas críticas.",
+    "Cada falla indica ubicación y corrección esperada."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [],
+  "autonomy_level": 1,
+  "updates_memory": [
+    "correction"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

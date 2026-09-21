@@ -1,0 +1,67 @@
+{
+  "id": "crm-hygiene",
+  "version": "1.0.0",
+  "objective": "Mantener CRM útil sin sobrescribir decisiones humanas.",
+  "trigger": "Después de interacción comercial y revisión periódica",
+  "inputs": [
+    "Interacciones",
+    "Registro CRM actual"
+  ],
+  "sources": [
+    "CRM",
+    "Email",
+    "Meeting notes"
+  ],
+  "procedure": [
+    "Detectar campos faltantes/obsoletos.",
+    "Proponer etapa, next step, owner y fecha basados en evidencia.",
+    "Identificar duplicados.",
+    "Preparar cambios.",
+    "Aplicar sólo campos autorizados."
+  ],
+  "rules": [
+    "No cerrar oportunidades por inferencia.",
+    "No cambiar precio.",
+    "No cambiar etapa si la política exige aprobación."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "proposed_updates",
+      "evidence",
+      "conflicts",
+      "applied_updates"
+    ]
+  },
+  "definition_of_done": [
+    "Cada cambio tiene evidencia.",
+    "Campos de autoridad quedan intactos salvo permiso."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "pricing"
+  ],
+  "autonomy_level": 3,
+  "updates_memory": [
+    "operational_state"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

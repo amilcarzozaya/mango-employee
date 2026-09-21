@@ -1,0 +1,71 @@
+{
+  "id": "customer-health",
+  "version": "1.0.0",
+  "objective": "Detectar señales operativas de riesgo u oportunidad sin diagnosticar intención del cliente.",
+  "trigger": "Revisión semanal/mensual de clientes",
+  "inputs": [
+    "Delivery",
+    "Feedback",
+    "Usage/engagement",
+    "Open loops",
+    "Commercial state"
+  ],
+  "sources": [
+    "Project system",
+    "CRM",
+    "Email",
+    "Client File",
+    "Finance"
+  ],
+  "procedure": [
+    "Reunir señales observables.",
+    "Clasificar señal positiva/neutral/riesgo.",
+    "Explicar evidencia.",
+    "Identificar acción preventiva.",
+    "Escalar riesgos de scope, cobro o relación."
+  ],
+  "rules": [
+    "No inferir satisfacción sin evidencia.",
+    "No usar una única señal como certeza."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "client",
+      "signals",
+      "evidence",
+      "risk",
+      "recommended_action",
+      "owner"
+    ]
+  },
+  "definition_of_done": [
+    "Cada riesgo tiene al menos una evidencia observable.",
+    "Recomendación no se presenta como decisión."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [],
+  "autonomy_level": 1,
+  "updates_memory": [
+    "operational_state"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

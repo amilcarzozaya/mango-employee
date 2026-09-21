@@ -1,0 +1,72 @@
+{
+  "id": "scope-guard",
+  "version": "1.0.0",
+  "objective": "Comparar solicitudes contra el SOW y proteger margen y capacidad.",
+  "trigger": "Cuando una solicitud puede cambiar alcance, esfuerzo o fecha",
+  "inputs": [
+    "Solicitud",
+    "SOW",
+    "Estado del proyecto"
+  ],
+  "sources": [
+    "Contract/SOW",
+    "Client message",
+    "Project system"
+  ],
+  "procedure": [
+    "Descomponer la solicitud.",
+    "Comparar cada componente contra alcance.",
+    "Clasificar in-scope/out-of-scope/ambiguous.",
+    "Estimar impacto sólo si existe método autorizado.",
+    "Preparar respuesta y change-order placeholders.",
+    "Escalar decisión."
+  ],
+  "rules": [
+    "Nunca aceptar alcance adicional.",
+    "Precio y fecha nueva requieren decisión humana."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "classification",
+      "evidence",
+      "impact",
+      "reply_draft",
+      "change_order_placeholders"
+    ]
+  },
+  "definition_of_done": [
+    "Clasificación cita sección/fuente.",
+    "Ambigüedad no se resuelve por inferencia."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "scope",
+    "pricing",
+    "deadline",
+    "external_send"
+  ],
+  "autonomy_level": 2,
+  "updates_memory": [
+    "operational_state"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

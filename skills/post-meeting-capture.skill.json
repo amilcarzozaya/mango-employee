@@ -1,0 +1,72 @@
+{
+  "id": "post-meeting-capture",
+  "version": "1.0.0",
+  "objective": "Convertir una conversación en decisiones, compromisos y siguientes pasos rastreables.",
+  "trigger": "Después de una reunión",
+  "inputs": [
+    "Notas/transcripción",
+    "Cuenta/proyecto"
+  ],
+  "sources": [
+    "Meeting notes",
+    "CRM",
+    "Client File"
+  ],
+  "procedure": [
+    "Extraer decisiones explícitas.",
+    "Extraer compromisos con owner y fecha.",
+    "Marcar owner/fecha ausente como NO DEFINIDO.",
+    "Detectar riesgos y cambios de alcance.",
+    "Preparar follow-up draft.",
+    "Proponer actualizaciones de estado."
+  ],
+  "rules": [
+    "No transformar una sugerencia en compromiso.",
+    "No enviar el follow-up sin autorización."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "decisions",
+      "commitments",
+      "undefined_fields",
+      "risks",
+      "followup_draft",
+      "state_updates"
+    ]
+  },
+  "definition_of_done": [
+    "No quedan compromisos ambiguos ocultos.",
+    "Cambios de alcance se escalan."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "external_send",
+    "scope"
+  ],
+  "autonomy_level": 2,
+  "updates_memory": [
+    "decision",
+    "commitment",
+    "operational_state"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

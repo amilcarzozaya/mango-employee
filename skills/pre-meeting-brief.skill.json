@@ -1,0 +1,69 @@
+{
+  "id": "pre-meeting-brief",
+  "version": "1.0.0",
+  "objective": "Preparar al owner para entrar a una reunión con contexto, compromisos y decisiones claras.",
+  "trigger": "Antes de una reunión",
+  "inputs": [
+    "Evento de calendario",
+    "Contacto/cuenta",
+    "Historial relevante"
+  ],
+  "sources": [
+    "Calendar",
+    "CRM",
+    "Email",
+    "Client File",
+    "Decision Log"
+  ],
+  "procedure": [
+    "Identificar participantes y objetivo.",
+    "Recuperar última interacción y compromisos.",
+    "Listar open loops y riesgos.",
+    "Separar hechos de hipótesis.",
+    "Proponer tres preguntas y la decisión deseada."
+  ],
+  "rules": [
+    "No atribuir intención sin evidencia.",
+    "No presentar datos viejos como actuales."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "context",
+      "last_touch",
+      "commitments",
+      "open_loops",
+      "risks",
+      "questions",
+      "desired_decision",
+      "sources"
+    ]
+  },
+  "definition_of_done": [
+    "Brief cabe en una pantalla.",
+    "Todo compromiso tiene owner/fuente cuando existe."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [],
+  "autonomy_level": 1,
+  "updates_memory": [],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

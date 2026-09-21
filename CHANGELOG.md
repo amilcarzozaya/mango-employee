@@ -1,0 +1,93 @@
+# Changelog
+
+## 0.12.0rc1 — Hardening / Release Candidate
+- Feature freeze before v1.0.
+- Idempotent schema metadata/migrations.
+- Fail-closed newer-schema handling.
+- SQLite integrity and orphan-record audit.
+- Verified backup and checksum-checked restore.
+- Explicit force required for destructive restore.
+- Release readiness gate.
+- SHA-256 release provenance manifest.
+- Threat model and operations runbook.
+- Restored v0.11 Team CLI surface as a compatibility requirement.
+
+## 0.11.0 — MANGO Teams & Handoffs
+- Teams and explicit member roles.
+- Controlled delegation and Handoff Contracts.
+- Scoped shared-memory enforcement.
+- Linked child Runs and provenance.
+- Circular/self-delegation prevention.
+
+## 0.10.0 — MANGO Evals & Benchmark
+- Golden Set benchmark runner.
+- Weighted deterministic operational scoring.
+- Offline and live-runtime modes.
+- JSON results, Markdown reports and descriptive comparisons.
+- Security audit embedded in benchmark results.
+- MANGO Evals & Benchmark Specification v0.1.
+
+
+## 0.9.0 — MANGO Observability & Audit
+- Per-Run trace IDs and execution spans.
+- Provenance for Employee, Skill, Sources, Memory and Tools.
+- Human approval decisions included in trace reports.
+- Operational metrics and trace integrity audit.
+- Human-readable `mango trace explain` without chain-of-thought disclosure.
+- MANGO Observability & Audit Specification v0.1.
+
+
+## 0.8.0 — Approval & Execution Engine
+- Prepared Action objects with immutable action hashes.
+- Automatic Approval Cards for gated tool actions.
+- Exact approval-to-action binding.
+- Re-authorization immediately before execution.
+- Rejection blocks runs; approval resumes them.
+- Tool results recorded into Run event history.
+- MANGO Approval & Execution Specification v0.1.
+
+
+## 0.7.0 — MANGO Tool Protocol
+- Portable tool registry and capability vocabulary.
+- Permission intersection and Gate-aware authorization.
+- Safe filesystem adapter with path containment.
+- Prepared tool invocation envelopes with IDs/hashes.
+- Reference declarations for Email, Calendar, CRM, Finance and Workspace.
+- MANGO Tool Protocol v0.1.
+
+
+## 0.6.0 — MANGO State / Control Plane
+- Persistent Run lifecycle and SQLite state store.
+- Checkpoints, Approval Cards and append-only run events.
+- Human approve/reject workflow.
+- Linked retries, cancellation, history and inspection.
+- `mango start` persistent execution command.
+- MANGO State Specification v0.1.
+
+
+## 0.5.0 — MANGO Memory
+- SQLite operational memory and audit trail.
+- Governed memory lifecycle and scopes.
+- Bounded runtime Memory Packs.
+- Memory CLI and regression tests.
+- Data-cannot-become-Authority safety rule.
+
+
+## 0.4.0 — GitHub-ready multi-runtime security release
+- Added Gemini CLI, Hermes Agent and OpenClaw adapters.
+- Hardened Codex and Claude defaults.
+- Added `mango security` and `mango doctor`.
+- Added context size bounds and secret redaction.
+- Added explicit untrusted-context boundary.
+- Added GitHub Actions CI.
+- Added security, runtime and architecture documentation.
+- Added MIT license, contribution guide, release checklist and creator attribution.
+
+## 0.3.0
+- Added `mango run` runtime packaging and Codex/Claude adapters.
+
+## 0.2.0
+- Added `mango init`.
+
+## 0.1.0
+- Added validate, test and eval export commands.

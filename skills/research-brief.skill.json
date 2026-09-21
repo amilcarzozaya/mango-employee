@@ -1,0 +1,66 @@
+{
+  "id": "research-brief",
+  "version": "1.0.0",
+  "objective": "Convertir investigación en un brief trazable que reduzca tiempo de decisión.",
+  "trigger": "Antes de una decisión, reunión, propuesta o pieza de contenido",
+  "inputs": [
+    "Pregunta",
+    "Audiencia",
+    "Horizonte temporal"
+  ],
+  "sources": [
+    "Approved internal sources",
+    "Approved external research sources"
+  ],
+  "procedure": [
+    "Reformular pregunta.",
+    "Definir evidencia necesaria.",
+    "Buscar fuentes autorizadas.",
+    "Separar hechos, estimaciones y opiniones.",
+    "Sintetizar hallazgos, contradicciones y huecos.",
+    "Entregar implicaciones y preguntas abiertas."
+  ],
+  "rules": [
+    "Citar procedencia.",
+    "Preferir fuentes primarias cuando existan.",
+    "No ocultar incertidumbre."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "question",
+      "findings",
+      "evidence",
+      "contradictions",
+      "unknowns",
+      "implications"
+    ]
+  },
+  "definition_of_done": [
+    "Cada afirmación material tiene soporte.",
+    "Las limitaciones son explícitas."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [],
+  "autonomy_level": 1,
+  "updates_memory": [],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

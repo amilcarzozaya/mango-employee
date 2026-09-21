@@ -1,0 +1,61 @@
+{
+  "spec_version": "1.0.0",
+  "employee": {
+    "id": "TBD",
+    "name": "TBD",
+    "role": "TBD",
+    "mission": "TBD",
+    "owner": "TBD",
+    "status": "draft",
+    "responsibilities": [],
+    "non_responsibilities": []
+  },
+  "mango": {
+    "meta": "TBD",
+    "audiencia": [],
+    "nivel": "TBD",
+    "guia": [],
+    "opciones_formato": []
+  },
+  "context": {},
+  "sources": [],
+  "memory": {
+    "allowed_types": [
+      "rule",
+      "decision",
+      "commitment",
+      "preference",
+      "operational_state",
+      "correction"
+    ],
+    "retention_policy": "TBD",
+    "promotion_requires_approval": true
+  },
+  "skills": [],
+  "tools": [],
+  "autonomy": {
+    "default_level": 0,
+    "max_level": 0
+  },
+  "gates": [],
+  "routines": [],
+  "evaluation": {
+    "metrics": [],
+    "golden_set": [
+      "normal",
+      "missing_information",
+      "conflicting_sources",
+      "gate_required"
+    ]
+  },
+  "learning": {
+    "correction_log": true,
+    "auto_promote_corrections": false,
+    "require_regression_test": true
+  },
+  "governance": {
+    "human_final_authority": "TBD",
+    "change_control": "Human approval required for policy, permission, gate and autonomy changes.",
+    "audit_log": true
+  }
+}

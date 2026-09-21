@@ -1,0 +1,10 @@
+[
+  {
+    "invoice": "INV-100",
+    "client": "Acme Manufacturing",
+    "amount": 25000,
+    "currency": "MXN",
+    "due_date": "2026-09-18",
+    "status": "open"
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "id": "revision-scope-log",
+  "version": "1.0.0",
+  "objective": "Registrar revisiones y evitar que trabajo adicional se convierta en alcance gratuito invisible.",
+  "trigger": "Al recibir feedback o cambios",
+  "inputs": [
+    "Solicitud de cambio",
+    "SOW",
+    "Historial de revisiones"
+  ],
+  "sources": [
+    "Client message",
+    "Contract/SOW",
+    "Revision Log"
+  ],
+  "procedure": [
+    "Registrar solicitud y ronda.",
+    "Clasificar dentro/fuera de alcance.",
+    "Asignar owner y estado.",
+    "Calcular días abierto.",
+    "Escalar fuera de alcance."
+  ],
+  "rules": [
+    "No aceptar scope adicional.",
+    "No fijar precio del cambio."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "revision_round",
+      "request",
+      "classification",
+      "owner",
+      "status",
+      "age_days",
+      "escalation"
+    ]
+  },
+  "definition_of_done": [
+    "Toda revisión tiene clasificación.",
+    "Fuera de alcance nunca se mezcla con trabajo aprobado."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "scope",
+    "pricing"
+  ],
+  "autonomy_level": 1,
+  "updates_memory": [
+    "operational_state"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

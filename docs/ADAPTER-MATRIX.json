@@ -1,0 +1,35 @@
+{
+  "codex": [
+    "codex",
+    "exec",
+    "--ephemeral",
+    "--sandbox",
+    "read-only",
+    "-"
+  ],
+  "claude": [
+    "claude",
+    "-p",
+    "--disallowedTools",
+    "Bash",
+    "Edit",
+    "Write"
+  ],
+  "gemini": [
+    "gemini"
+  ],
+  "hermes": [
+    "hermes",
+    "chat",
+    "--query-file",
+    "-"
+  ],
+  "openclaw": [
+    "openclaw",
+    "agent",
+    "exec",
+    "--message-file",
+    "-",
+    "--isolated"
+  ]
+}

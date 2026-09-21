@@ -1,0 +1,74 @@
+{
+  "id": "morning-command-center",
+  "version": "1.0.0",
+  "objective": "Convertir actividad reciente en una lista corta y verificable de prioridades para el owner.",
+  "trigger": "Al inicio de cada día laboral",
+  "inputs": [
+    "Actividad de las últimas 12–24 horas",
+    "Clientes/proyectos activos",
+    "Deadlines",
+    "Propuestas abiertas",
+    "Facturas vencidas"
+  ],
+  "sources": [
+    "CRM",
+    "Email",
+    "Calendar",
+    "Project system",
+    "Finance"
+  ],
+  "procedure": [
+    "Leer sólo fuentes autorizadas.",
+    "Extraer compromisos, deadlines, propuestas, bloqueos, facturas y riesgos.",
+    "Eliminar ruido informativo sin acción.",
+    "Ordenar por consecuencia, fecha y dependencia.",
+    "Entregar una línea por asunto con fuente."
+  ],
+  "rules": [
+    "No enviar mensajes.",
+    "No inventar fechas ni owners.",
+    "Separar hechos de inferencias.",
+    "Si dos fuentes chocan, mostrar conflicto."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "who",
+      "what",
+      "needs_from_owner",
+      "due_date",
+      "source",
+      "risk"
+    ]
+  },
+  "definition_of_done": [
+    "Cada ítem es accionable.",
+    "Cada fecha/claim tiene fuente.",
+    "Los conflictos están visibles."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [],
+  "autonomy_level": 1,
+  "updates_memory": [
+    "operational_state"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

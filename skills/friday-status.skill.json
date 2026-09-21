@@ -1,0 +1,71 @@
+{
+  "id": "friday-status",
+  "version": "1.0.0",
+  "objective": "Preparar un status ejecutivo de cliente en máximo seis líneas.",
+  "trigger": "Viernes o cierre semanal",
+  "inputs": [
+    "Trabajo de la semana",
+    "Open loops",
+    "Fechas",
+    "Capacidad/presupuesto"
+  ],
+  "sources": [
+    "Project system",
+    "Client File",
+    "Decision Log",
+    "Contract/SOW"
+  ],
+  "procedure": [
+    "Resumir entregado.",
+    "Resumir en progreso.",
+    "Indicar espera del cliente.",
+    "Indicar próxima fecha.",
+    "Indicar capacidad/presupuesto si aplica.",
+    "Indicar un riesgo material."
+  ],
+  "rules": [
+    "Sólo datos verificables.",
+    "Máximo seis líneas salvo instrucción contraria.",
+    "No enviar."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "delivered",
+      "in_progress",
+      "waiting_on_client",
+      "next_date",
+      "capacity_or_budget",
+      "risk"
+    ]
+  },
+  "definition_of_done": [
+    "Es legible en menos de un minuto.",
+    "No contiene claims sin fuente."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [
+    "external_send"
+  ],
+  "autonomy_level": 2,
+  "updates_memory": [],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}

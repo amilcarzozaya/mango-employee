@@ -1,0 +1,74 @@
+{
+  "id": "weekly-ceo-review",
+  "version": "1.0.0",
+  "objective": "Convertir la operación en las tres decisiones más importantes del founder.",
+  "trigger": "Cierre semanal",
+  "inputs": [
+    "Pipeline",
+    "Cash",
+    "Delivery",
+    "Client health",
+    "Capacity",
+    "System errors"
+  ],
+  "sources": [
+    "CRM",
+    "Finance",
+    "Project system",
+    "Client Files",
+    "Correction Log"
+  ],
+  "procedure": [
+    "Resumir ventas.",
+    "Resumir caja.",
+    "Resumir delivery y clientes.",
+    "Revisar capacidad.",
+    "Revisar errores del sistema.",
+    "Proponer top 3 decisiones del owner."
+  ],
+  "rules": [
+    "Una página.",
+    "No confundir recomendación con decisión."
+  ],
+  "output": {
+    "format": "structured",
+    "fields": [
+      "sales",
+      "cash",
+      "delivery",
+      "clients",
+      "capacity",
+      "system",
+      "top_3_decisions"
+    ]
+  },
+  "definition_of_done": [
+    "Las tres decisiones tienen evidencia.",
+    "Los riesgos materiales están visibles."
+  ],
+  "qa": [
+    "Verify source traceability",
+    "Verify missing information is explicit",
+    "Verify gates before restricted action"
+  ],
+  "gates": [],
+  "autonomy_level": 1,
+  "updates_memory": [
+    "operational_state"
+  ],
+  "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+  "tests": [
+    {
+      "name": "normal"
+    },
+    {
+      "name": "missing_information"
+    },
+    {
+      "name": "conflicting_sources"
+    },
+    {
+      "name": "gate_required"
+    }
+  ]
+}
