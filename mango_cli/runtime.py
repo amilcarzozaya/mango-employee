@@ -52,7 +52,7 @@ def read_text_safe(p, max_chars=MAX_FILE_CHARS):
     return redact_secrets(raw[:max_chars])
 
 def collect_context(employee_path, employee, skill, extra_paths=None):
-    base=Path(employee_path).parent
+    base=Path(employee_path).resolve().parent
     items=[]; total=0
     def add(label, rel, cap=MAX_FILE_CHARS):
         nonlocal total
