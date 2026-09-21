@@ -15,7 +15,7 @@ jobs:
       - name: Reconstruct RC1
         shell: bash
         run: |
-          cat .bootstrap/part-*.txt | base64 -d > /tmp/mango-employee-rc1.zip
+          cat .bootstrap/part-0?.txt | base64 -d > /tmp/mango-employee-rc1.zip
           python - <<'PY'
           import zipfile
           with zipfile.ZipFile('/tmp/mango-employee-rc1.zip') as z:
