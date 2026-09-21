@@ -25,7 +25,7 @@ jobs:
         shell: bash
         run: |
           rm -rf .bootstrap
-          rm -f .github/workflows/bootstrap-rc1.yml
+          rm -rf .github/workflows
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
