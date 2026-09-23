@@ -202,7 +202,7 @@ def validate_extraction(data, transcript, *, meeting_date=None,
     if not isinstance(people, list) or not all(isinstance(x, str) for x in people):
         raise MeetingError("meeting.participants debe ser una lista de nombres.")
     for name in people:
-        if not compact(name) or not re.search(r"(?<!\\w)" + re.escape(compact(name)) + r"(?!\\w)", transcript, re.IGNORECASE):
+        if not compact(name) or not re.search(r"(?<!\w)" + re.escape(compact(name)) + r"(?!\w)", transcript, re.IGNORECASE):
             raise MeetingError(f"Participante sin evidencia en transcripción: {name}")
     report = {
         "schema_version": "2.0.0",
