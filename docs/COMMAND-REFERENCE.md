@@ -1,4 +1,4 @@
-# Command Reference — MANGO Employee CLI 0.13.0rc2
+# Command Reference — MANGO Employee CLI 0.13.0rc3
 
 This guide explains the CLI without assuming you already know MANGO terminology.
 
@@ -705,31 +705,64 @@ Opciones: --input, --meeting-date, --timezone, --title, --runtime, --model,
 son json,md. El reporte requiere revisión humana. Más información:
 meeting-intelligence/USER-GUIDE.md.
 
-# Quote Builder — perfil, cálculo, borrador y folio
-
-Los ejemplos de Quote Builder utilizan un Employee con commercial-quotation asignada.
-Todos los datos del directorio examples/quote-builder son **ficticios**.
+# Quote Builder — cálculo puro y perfiles
 
 ~~~bash
-mango quote profile init reference-employees/mango-chief-of-staff \
-  --from-file examples/quote-builder/issuer-profile.json
-
-mango quote profile list reference-employees/mango-chief-of-staff
-
-mango quote calculate reference-employees/mango-chief-of-staff \
-  --profile demo --request examples/quote-builder/request.json
-
-mango quote draft reference-employees/mango-chief-of-staff \
-  --profile demo --request examples/quote-builder/request.json \
-  --formats json,md,docx,pdf --out-dir ./mis-cotizaciones
-
-mango quote issue reference-employees/mango-chief-of-staff \
-  --draft DRAFT_ID --approved-by "Persona autorizada" \
-  --formats json,md,docx,pdf --out-dir ./mis-cotizaciones
+mango quote profile init EMPLOYEE --from-file issuer.json
+mango quote profile list EMPLOYEE
+mango quote calculate EMPLOYEE --profile mi_empresa --request solicitud.json
 ~~~
 
-Instala Word/PDF con python -m pip install -e ".[quote]".
-calculate no guarda ni asigna folio. draft guarda snapshot sin folio; issue
-requiere declaración humana y asigna folio SQLite, sin enviar ni facturar.
-approved-by **no autentica identidad**. Consulta
-[Manual Quote Builder](quote-builder/USER-GUIDE.md).
+Estos comandos son independientes del modelo. Los datos de los ejemplos
+son ficticios; las tasas fiscales las configura el emisor y requieren
+revisión profesional.
+
+# Operational Workflows — ambas Skills dentro del control plane
+
+El comando `mango workflow` reutiliza State, Approval Cards, Gates y
+Observability. Una operación devuelve RUN_ID; los comandos `mango status`,
+`mango approvals` y `mango trace` pueden consultar ese mismo Run.
+
+## Reunión trazable sin llamadas de IA
+
+~~~bash
+mango workflow meeting EMPLOYEE \
+  --input examples/meeting-intelligence/transcript.md \
+  --meeting-date 2026-09-23 \
+  --extraction examples/meeting-intelligence/extraction.json \
+  --formats json,md,docx,pdf
+~~~
+
+Con `--runtime prepare` sin `--extraction`, sólo se prepara un paquete,
+no un reporte. Con un runtime live y Gate `sensitive_data` configurado:
+
+~~~bash
+mango workflow meeting EMPLOYEE --input transcripcion.md \
+  --meeting-date 2026-09-23 --runtime codex
+mango approvals EMPLOYEE --run-id RUN_ID
+mango approve EMPLOYEE APPROVAL_ID --actor "Responsable de privacidad"
+mango workflow meeting-resume EMPLOYEE RUN_ID
+~~~
+
+El segundo paso verifica SHA256 de transcripción y runtime/modelo antes
+de enviarla. Los reportes quedan dentro del Employee.
+
+## Cotización rastreable y aprobación formal
+
+~~~bash
+mango workflow quote-draft EMPLOYEE \
+  --profile mi_empresa --request solicitud.json \
+  --formats json,md,docx,pdf
+mango approvals EMPLOYEE --run-id RUN_ID
+mango approve EMPLOYEE APPROVAL_ID --actor "Responsable comercial"
+mango workflow quote-issue EMPLOYEE RUN_ID --formats json,md,docx,pdf
+mango trace audit EMPLOYEE RUN_ID
+~~~
+
+Repite `mango approve` para CADA tarjeta pendiente. Si la solicitud
+incluye Gates pricing/scope/deadline/legal, la emisión directa
+`mango quote issue` rechaza `--approved-by` sin un Run aprobado.
+No se crea CFDI ni se envía correo. El código de salida 2 significa
+`waiting_approval`.
+
+Manual completo: [Operational Workflows](OPERATIONAL-WORKFLOWS.md).
