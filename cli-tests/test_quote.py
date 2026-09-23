@@ -299,3 +299,17 @@ def test_release_backup_recovers_quote_profiles_drafts_and_ledger(configured, tm
     # Never overwrite active quotation stores unless the user explicitly agrees.
     with pytest.raises(FileExistsError):
         restore(recovered, saved)
+
+
+def test_profile_storage_cannot_escape_employee_through_symlink(employee, tmp_path):
+    external = tmp_path / "outside"
+    external.mkdir()
+    target = employee / "quotes" / "profiles"
+    target.parent.mkdir(exist_ok=True)
+    try:
+        target.symlink_to(external, target_is_directory=True)
+    except OSError:
+        pytest.skip("Host filesystem does not permit symlinks")
+    with pytest.raises(QuoteError, match="fuera del Employee"):
+        init_profile(employee, ROOT, PROFILE)
+    assert not any(external.iterdir())
