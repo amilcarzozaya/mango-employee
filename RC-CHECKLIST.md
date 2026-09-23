@@ -1,36 +1,37 @@
-# MANGO Employee v0.13 RC1 — Validation Checklist
+# MANGO Employee v0.13 RC2 — Validation Checklist
 
 ## Alcance
 
-- MANGO Meeting Intelligence v2: Skill post-meeting-capture v2.0.0.
-- Comando mango meeting con prepare, runtime live o extracción estructurada ya disponible.
-- Reporte de tareas, fechas, compromisos, decisiones, pendientes y hasta tres puntos críticos.
-- Validación de citas literales; fechas normalizadas en Python.
-- Exportación JSON/Markdown y Word/PDF con extras opcionales meeting.
-- Compatibilidad de campos con post-meeting-capture v1.
-- Sin envíos externos ni promoción automática de Memory.
+- Meeting Intelligence v2: post-meeting-capture 2.0.0 (sin cambios de contrato respecto a RC1).
+- Quote Builder v1: commercial-quotation 1.0.0, independiente de proposal-builder.
+- Comandos mango quote profile init/list, calculate, draft e issue.
+- Cálculos Decimal, impuestos configurados explícitamente, descuentos y retenciones.
+- Borradores con snapshots e integridad SHA256; folio atómico por prefijo/año.
+- Emisión requiere --approved-by (atestación declarada, no autenticación).
+- Salidas JSON/Markdown/Word/PDF desde un mismo objeto calculado.
+- Backups/audit/restauración incluyen perfiles, borradores, emitidos y ledger SQLite.
+- Sin facturación CFDI, pagos, envío de correo ni consulta automática de impuestos.
 
 ## Checklist de release
 
-- [x] Canonical Skill, .agents y .claude sincronizadas.
-- [x] Fixtures ficticios de transcripción/extracción incluidos.
-- [x] README, manual de usuario, especificación técnica y schemas añadidos.
-- [x] Compatibilidad con Employee de referencia explícita.
-- [x] Release manifest regenerado tras cambios de runtime/especificación.
-- [ ] CI Python 3.10–3.13: verificar antes de fusionar.
-- [ ] CLI / pruebas DOCX-PDF: verificar en el CI.
-- [ ] Confirmar que el manifest comprometido coincide con el generador.
-- [ ] Revisar CI del commit de merge en main.
+- [x] Skill canónica y copias .agents/.claude registradas.
+- [x] Esquemas, fixtures ficticios, manual de usuario y especificación técnica.
+- [x] Employee de referencia asigna ambas Skills de propósito general.
+- [x] Golden tests de descuentos, decimales, fiscalidad explícita, folios concurrentes e idempotencia.
+- [x] Pruebas de CLI, respaldo de datos y generación Word/PDF.
+- [x] Manifest regenerado después de las modificaciones de código/specs.
+- [ ] CI final de Python 3.10–3.13: confirmar al cerrar el PR.
+- [ ] Verificar el commit de merge en main antes de publicar tag RC2.
 
 ## Provenance
 
 - Format: mango-release-manifest-v1
-- Package: 0.13.0rc1
-- Canonical files: 32
-- Release hash: dd500813ef25e814ea99ab84754e1b5abff05735e752a8e87d29da104b564132
+- Package: 0.13.0rc2
+- Canonical files: 35
+- Release hash: f7bcc12adad1354f731549b8aba7e0bbf72ebcebe62644756aaa75bb2ec1dda9
 
-## Límites declarados
+## Limitaciones operativas
 
-Sin transcripción de audio/video, diarización, OCR ni seguimiento externo automático.
-Un reporte terminado aún requiere revisión humana; la evidencia literal no
-constituye validación independiente de todas las interpretaciones de la IA.
+La cotización requiere revisión profesional de impuestos y condiciones.
+--approved-by no sustituye SSO/Gates corporativos ni firma electrónica.
+Los ejemplos de reglas fiscales son educativos; RET10SIM NO es asesoría tributaria.
