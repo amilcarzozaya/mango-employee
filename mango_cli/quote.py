@@ -438,8 +438,65 @@ def _issued_payload(quote, folio, approved_by, now):
                   "approved_by": approved_by, "issued_at": now})
 
 
+def _require_formal_quote_approvals(employee_path, packet, draft, approver, approval_run_id):
+    """Revalidate every configured commercial Gate against the exact draft.
+
+    A self-attested --approved-by cannot bypass an Employee's formal Gates.
+    """
+    required = {g["category"] for g in packet.get("gates", [])
+                if g["category"] in ("pricing", "scope", "deadline", "legal")}
+    if not required:
+        return
+    if not approval_run_id:
+        raise QuoteError("Emisión bloqueada por Gates comerciales. Usa mango workflow quote-draft y quote-issue.")
+    from .state import inspect
+    try:
+        record = inspect(employee_path, approval_run_id)
+    except ValueError as exc:
+        raise QuoteError("Approval Run no encontrado.") from exc
+    run = record["run"]
+    if (run["employee_id"] != packet["employee"]["id"]
+            or run["skill_id"] != SKILL_ID or run["status"] != "running"):
+        raise QuoteError("Approval Run ajeno, bloqueado o no ejecutable.")
+    try:
+        cp = json.loads(run["checkpoint"] or "{}")
+    except json.JSONDecodeError as exc:
+        raise QuoteError("Checkpoint de aprobación inválido.") from exc
+    if (cp.get("workflow") != "quote" or cp.get("draft_id") != draft["draft_id"]
+            or cp.get("draft_sha256") != draft["integrity"]["sha256"]
+            or set(cp.get("required_gates", [])) != required):
+        raise QuoteError("El Run no autoriza el borrador exacto y sus Gates.")
+    actors = {}
+    for category in required:
+        matches = [card for card in record["approvals"]
+                   if card["category"] == category
+                   and card["action"] == "issue_quote:" + draft["draft_id"]]
+        if len(matches) != 1:
+            raise QuoteError("Approval Card ausente o duplicada: " + category)
+        card = matches[0]
+        try:
+            payload = json.loads(card["payload"] or "{}")
+        except json.JSONDecodeError as exc:
+            raise QuoteError("Payload de aprobación inválido.") from exc
+        expected = {
+            "kind": "mango_quote_issue_v1", "run_id": approval_run_id,
+            "draft_id": draft["draft_id"],
+            "draft_sha256": draft["integrity"]["sha256"],
+            "profile_id": draft["profile_id"],
+            "currency": draft["currency"], "total": draft["totals"]["total"],
+            "quote_date": draft["quote_date"], "valid_until": draft["valid_until"],
+        }
+        if (card["status"] != "approved" or not card["resolved_by"]
+                or any(payload.get(k) != v for k, v in expected.items())):
+            raise QuoteError("Aprobación " + category + " no coincide con el borrador exacto.")
+        actors[category] = card["resolved_by"]
+    actor = actors.get("pricing") or next(iter(actors.values()))
+    if actor != approver:
+        raise QuoteError("El aprobador indicado no coincide con la aprobación formal.")
+
+
 def issue_quote(employee_path, repo_root, draft_id, approved_by, *,
-                out_dir=None, formats=("json", "md")):
+                out_dir=None, formats=("json", "md"), approval_run_id=None):
     root, packet = ensure_assigned(employee_path, repo_root)
     if not isinstance(draft_id, str) or not re.fullmatch(r"qd-[0-9a-f]{32}", draft_id):
         raise QuoteError("draft_id inválido.")
@@ -449,6 +506,7 @@ def issue_quote(employee_path, repo_root, draft_id, approved_by, *,
         raise QuoteError("Borrador no encontrado.")
     draft = _json(draft_path)
     _verify(draft)
+    _require_formal_quote_approvals(employee_path, packet, draft, approver, approval_run_id)
     from .quote_render import preflight_formats, export_quote
     preflight_formats(formats)
     db = _inside(root, root / "quotes" / "folios.sqlite")
