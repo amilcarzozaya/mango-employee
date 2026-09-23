@@ -1,15 +1,26 @@
-# MANGO Employee v0.13 RC1 — Release Candidate Guide
+# MANGO Employee v0.13 RC2 — Release Candidate Guide
 
 This page is for maintainers/operators preparing the RC2 repository state.
 
 New users should start at docs/START-HERE.md.
 
-## RC1 scope
+## RC2 scope
+
+RC2 adds independent MANGO Quote Builder v1.0.0: issuer profiles,
+exact Decimal commercial quote engine, explicitly configured tax codes,
+immutable drafts, SQLite-issued folios with manual approval statement,
+Word/PDF export and release backup of operational quotation stores.
+
+RC1 previously added Meeting Intelligence v2; its functionality remains.
+Quote Builder deliberately excludes CFDI, external send, live tax-law inference
+and verified corporate approver identity.
+
+## Existing platform scope
 
 MANGO Meeting Intelligence v2 adds verified meeting reports, deterministic date parsing and optional Word/PDF. It does not transcribe audio, perform OCR or send external messages.
 
 
-RC2 combines:
+The existing platform combines:
 
 - release hardening;
 - governed State/Memory/Observability;

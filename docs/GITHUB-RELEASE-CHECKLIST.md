@@ -49,7 +49,7 @@ For setup, use docs/START-HERE.md.
 For RC2, the intended tag form is:
 
 ~~~text
-v0.13.0rc1
+v0.13.0rc2
 ~~~
 
 Before tagging:
@@ -61,3 +61,14 @@ Before tagging:
 - [ ] release notes explain RC status/limitations.
 
 Do not reuse historical placeholder tags from older development phases.
+
+## Quote Builder RC2 checks
+
+- [ ] Golden Decimal calculations, discounts, withholding and inclusive taxes pass.
+- [ ] Unknown/expired tax codes fail closed; no tax inference.
+- [ ] Two concurrent issues cannot reuse a folio.
+- [ ] Same draft retry preserves folio and approver.
+- [ ] Human attestation is explicit and documented as non-authenticated.
+- [ ] Quote backup includes ledger, profiles, drafts and issued snapshots.
+- [ ] Word/PDF outputs pass optional dependency tests.
+- [ ] No generated customer data is committed to the public repository.

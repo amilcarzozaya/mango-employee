@@ -15,6 +15,7 @@ from .hardening import migrate as release_migrate, audit as release_audit, backu
 from .memory import connect as memory_connect, add as memory_add, search as memory_search, set_status, supersede as memory_supersede, audit as memory_audit, explain as memory_explain, consolidate as memory_consolidate, TYPES, SCOPES
 from .chain import run_chain, resume_handoff, inspect_chain, HandoffError
 from .meeting import process_meeting, MeetingError
+from .quote import init_profile, list_profiles, make_quote, issue_quote, QuoteError
 
 def icon(ok): return "PASS" if ok else "FAIL"
 
@@ -90,6 +91,35 @@ def cmd_run(args):
         return result["returncode"]
     except Exception as e:
         print("ERROR:",e)
+        return 1
+
+
+def cmd_quote(args):
+    ep=discover_employee(args.target)
+    repo_root=Path(__file__).resolve().parents[1]
+    try:
+        if args.quote_command=="profile":
+            if args.profile_command=="init":
+                result=init_profile(ep,repo_root,args.from_file)
+            elif args.profile_command=="list":
+                result={"profiles":list_profiles(ep,repo_root)}
+            else:
+                raise QuoteError("Operación de perfil desconocida.")
+        elif args.quote_command in ("calculate","draft"):
+            formats=tuple(x.strip() for x in args.formats.split(",") if x.strip())
+            result=make_quote(ep,repo_root,args.profile,args.request,
+                              persist=args.quote_command=="draft",
+                              out_dir=args.out_dir,formats=formats)
+        elif args.quote_command=="issue":
+            formats=tuple(x.strip() for x in args.formats.split(",") if x.strip())
+            result=issue_quote(ep,repo_root,args.draft,args.approved_by,
+                               out_dir=args.out_dir,formats=formats)
+        else:
+            raise QuoteError("Operación desconocida.")
+        print(json.dumps(result,ensure_ascii=False,indent=2))
+        return 0
+    except (QuoteError,ValueError,OSError,RuntimeError) as exc:
+        print("ERROR:",exc,file=sys.stderr)
         return 1
 
 
@@ -374,7 +404,7 @@ def cmd_release(args):
 
 def main():
     ap=argparse.ArgumentParser(prog="mango",description="CLI for MANGO Employee Specification")
-    ap.add_argument("--version",action="version",version="mango-employee-cli 0.13.0rc1")
+    ap.add_argument("--version",action="version",version="mango-employee-cli 0.13.0rc2")
     sub=ap.add_subparsers(dest="command",required=True)
     p=sub.add_parser("init",help="Interactively create a MANGO Employee project"); p.add_argument("directory",nargs="?",default="./my-mango-employee"); p.set_defaults(fn=cmd_init)
     p=sub.add_parser("run",help="Prepare or execute a task with an Employee + Skill")
@@ -390,6 +420,34 @@ def main():
     p.add_argument("--dry-run",action="store_true")
     p.add_argument("--verbose",action="store_true")
     p.set_defaults(fn=cmd_run)
+    p=sub.add_parser("quote",help="MANGO Quote Builder: issuer profile, exact calculations, drafts and atomic folios")
+    quote_sub=p.add_subparsers(dest="quote_command",required=True)
+    pr=quote_sub.add_parser("profile",help="Initialize or list saved issuer profiles")
+    pr_sub=pr.add_subparsers(dest="profile_command",required=True)
+    q=pr_sub.add_parser("init",help="Save issuer profile once; will not overwrite")
+    q.add_argument("target",help="Employee directory or employee.json")
+    q.add_argument("--from-file",required=True,help="Issuer profile JSON with approved tax configuration")
+    q=pr_sub.add_parser("list",help="List configured issuer profile IDs")
+    q.add_argument("target")
+    q=quote_sub.add_parser("calculate",help="Exact quote math without creating files or allocating a folio")
+    q.add_argument("target")
+    q.add_argument("--profile",required=True,help="Saved profile ID")
+    q.add_argument("--request",required=True,help="JSON with client, items, prices and explicit tax_codes")
+    q.add_argument("--formats",default="json,md",help="Reserved for draft mode")
+    q.add_argument("--out-dir",default=None)
+    q=quote_sub.add_parser("draft",help="Persist an immutable draft snapshot and export documents")
+    q.add_argument("target")
+    q.add_argument("--profile",required=True)
+    q.add_argument("--request",required=True)
+    q.add_argument("--formats",default="json,md",help="json,md,docx,pdf")
+    q.add_argument("--out-dir",default=None)
+    q=quote_sub.add_parser("issue",help="Allocate folio atomically after human attestation; never sends/invoices")
+    q.add_argument("target")
+    q.add_argument("--draft",required=True,help="draft_id printed by mango quote draft")
+    q.add_argument("--approved-by",required=True,help="Human approver name (self-attestation, not verified identity)")
+    q.add_argument("--formats",default="json,md",help="json,md,docx,pdf")
+    q.add_argument("--out-dir",default=None)
+    p.set_defaults(fn=cmd_quote)
     p=sub.add_parser("meeting",help="Meeting Intelligence: transcript → verified report")
     p.add_argument("target",help="Employee directory or employee.json; must assign post-meeting-capture")
     p.add_argument("--input",required=True,help="Transcript/minutes TXT, MD, JSON, DOCX or text PDF")

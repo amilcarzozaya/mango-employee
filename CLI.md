@@ -1,4 +1,4 @@
-# MANGO Employee CLI — 0.13.0rc1
+# MANGO Employee CLI — 0.13.0rc2
 
 This file is the short CLI entry point.
 
@@ -148,3 +148,18 @@ mango meeting reference-employees/mango-chief-of-staff \
 
 Word y PDF son opcionales: python -m pip install -e ".[meeting]".
 Manual: docs/meeting-intelligence/USER-GUIDE.md.
+
+## Quote Builder — cotizaciones comerciales
+
+~~~bash
+mango quote profile init EMPLOYEE --from-file issuer.json
+mango quote profile list EMPLOYEE
+mango quote calculate EMPLOYEE --profile mi_empresa --request solicitud.json
+mango quote draft EMPLOYEE --profile mi_empresa --request solicitud.json \
+  --formats json,md,docx,pdf
+mango quote issue EMPLOYEE --draft DRAFT_ID \
+  --approved-by "Nombre de quien aprueba" --formats json,md,docx,pdf
+~~~
+
+Cálculos Decimal, impuestos explícitos, folios únicos, sin CFDI ni envíos.
+Guía: docs/quote-builder/USER-GUIDE.md.

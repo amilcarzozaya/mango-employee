@@ -69,7 +69,8 @@ The canonical set includes:
 - post-meeting-capture;
 - weekly-ceo-review;
 - approval-gate;
-- correction-learning-loop.
+- correction-learning-loop;
+- commercial-quotation (MANGO Quote Builder; calculates and drafts locally).
 
 ## Learn by comparison
 

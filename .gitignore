@@ -11,3 +11,7 @@ build/
 mango-evals/
 run-package.json
 run-prompt.md
+
+# Locally generated quotations contain customer/issuer data
+**/quotes/
+mis-cotizaciones/

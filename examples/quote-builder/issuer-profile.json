@@ -1,0 +1,52 @@
+{
+  "profile_id": "demo",
+  "seller": {
+    "contact_name": "Persona Demo (FICTICIA)",
+    "company_name": "MANGO DEMO (FICTICIA)",
+    "legal_name": "Empresa de Ejemplo S.A. de C.V. (FICTICIA)",
+    "email": "demo@example.invalid",
+    "phone": "+52 55 0000 0000",
+    "address": "Calle de Ejemplo 100, Ciudad de México (DIRECCIÓN FICTICIA)",
+    "country": "MX",
+    "tax_id": null
+  },
+  "currency": "MXN",
+  "decimal_places": 2,
+  "folio_prefix": "COT-DEMO",
+  "taxes": [
+    {
+      "code": "IVA16",
+      "label": "IVA al 16 % — configuración de ejemplo",
+      "rate": "0.16",
+      "kind": "add",
+      "effective_from": "2026-01-01"
+    },
+    {
+      "code": "IVA0",
+      "label": "IVA tasa cero — ejemplo (sujeto a validación)",
+      "rate": "0",
+      "kind": "add",
+      "effective_from": "2026-01-01"
+    },
+    {
+      "code": "EXENTO",
+      "label": "Operación exenta — ejemplo (sujeto a validación)",
+      "rate": "0",
+      "kind": "add",
+      "effective_from": "2026-01-01"
+    },
+    {
+      "code": "RET10SIM",
+      "label": "Retención simulada 10 % — SOLO TEST, no regla tributaria",
+      "rate": "0.10",
+      "kind": "withhold",
+      "effective_from": "2026-01-01"
+    }
+  ],
+  "defaults": {
+    "validity_days": 10,
+    "payment_terms": "Transferencia bancaria, previa aceptación (EJEMPLO)",
+    "delivery_terms": "Fecha de entrega por confirmar por escrito.",
+    "notes": "Ejemplo ficticio. El tratamiento de impuestos depende de la operación real."
+  }
+}

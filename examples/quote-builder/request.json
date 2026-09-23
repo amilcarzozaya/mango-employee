@@ -1,0 +1,41 @@
+{
+  "client": {
+    "name": "Cliente Demo (FICTICIO)",
+    "company_name": "Cliente Ejemplo (FICTICIO)",
+    "email": "cliente@example.invalid",
+    "phone": "+52 55 0000 1111",
+    "address": "Domicilio de ejemplo, México",
+    "tax_id": null
+  },
+  "quote_date": "2026-09-23",
+  "currency": "MXN",
+  "prices_include_tax": false,
+  "items": [
+    {
+      "description": "Taller práctico de IA — ejemplo",
+      "quantity": "2",
+      "unit": "sesión",
+      "unit_price": "1500.00",
+      "discount_percent": "10",
+      "tax_codes": [
+        "IVA16"
+      ]
+    },
+    {
+      "description": "Materiales complementarios — ejemplo (clasificación fiscal ilustrativa)",
+      "quantity": "1.5",
+      "unit": "paquete",
+      "unit_price": "200.00",
+      "tax_codes": [
+        "IVA0"
+      ]
+    }
+  ],
+  "validity_days": 10,
+  "payment_terms": "Transferencia bancaria 50 % anticipo y 50 % entrega (EJEMPLO)",
+  "delivery_terms": "Entrega según cronograma aprobado.",
+  "exclusions": [
+    "Viáticos no incluidos."
+  ],
+  "notes": "Cotización ficticia para probar MANGO Quote Builder."
+}
