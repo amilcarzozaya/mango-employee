@@ -1,5 +1,8 @@
 # MANGO Employee Threat Model — RC1
 
+> **Advanced / normative reference.** If you are new to MANGO Employee, start with `docs/START-HERE.md`, then `docs/CONCEPTS.md` and `docs/SECURITY.md`. This file assumes the basic trust boundaries are already understood.
+
+
 ## Protected assets
 Employee policy, Company/Client context, Memory, Tool configuration, Approval decisions, Run state, audit evidence, Team handoffs and recovery media.
 
