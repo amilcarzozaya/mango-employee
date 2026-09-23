@@ -129,6 +129,29 @@ mango run reference-employees/mango-chief-of-staff \
 
 **prepare** is a built-in runtime mode. It builds the package/prompt and makes no model call.
 
+## MANGO Meeting Intelligence
+
+La Skill post-meeting-capture v2 transforma transcripciones y minutas en reportes
+verificables con tareas, fechas, compromisos, decisiones, pendientes y hasta
+tres puntos críticos. La extracción utiliza un modelo opcional, mientras que
+las citas, fechas y exportaciones se validan en Python.
+
+Ejemplo completamente offline con datos ficticios:
+
+~~~bash
+python -m pip install -e ".[meeting]"
+mango meeting reference-employees/mango-chief-of-staff \
+  --input examples/meeting-intelligence/transcript.md \
+  --meeting-date 2026-09-23 \
+  --extraction examples/meeting-intelligence/extraction.json \
+  --formats json,md,docx,pdf --out-dir ./reportes
+~~~
+
+Con un modelo autenticado, omite --extraction y utiliza --runtime codex
+u otro runtime compatible. El comando no envía mensajes ni crea tareas
+externas, y no promueve automáticamente la memoria.
+
+Manual: [MANGO Meeting Intelligence](docs/meeting-intelligence/USER-GUIDE.md).
 ## Core terms in one minute
 
 - **Employee** — who the AI worker is, what it may do, and who owns final authority.
@@ -360,7 +383,7 @@ See [REFERENCE-EMPLOYEE.md](REFERENCE-EMPLOYEE.md).
 
 Current documentation target:
 
-**MANGO Employee CLI 0.12.0rc2**
+**MANGO Employee CLI 0.13.0rc1**
 
 Release provenance is stored in RELEASE-MANIFEST.json and RC-CHECKLIST.md.
 
