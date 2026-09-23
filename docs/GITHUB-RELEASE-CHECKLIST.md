@@ -60,4 +60,4 @@ Before tagging:
 - [ ] tag points at the reviewed release commit.
 - [ ] release notes explain RC status/limitations.
 
-Do not reuse the historical v0.4.0 placeholder.
+Do not reuse historical placeholder tags from older development phases.
