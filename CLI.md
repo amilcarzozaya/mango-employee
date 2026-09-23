@@ -102,3 +102,57 @@ Runtime behavior:
 10. Restricted actions remain Approval Cards; the MANGO runtime does not silently grant external permissions.
 
 `--context` can add explicit employee-relative files. Paths escaping the employee directory are rejected.
+
+
+## `mango chain` — Chain Runtime v0.1
+
+Execute a parent Skill and its child Skill automatically inside **one persistent Run**:
+
+```bash
+mango chain ./employees/my-employee \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Prepare the next T1 LinkedIn asset" \
+  --runtime codex
+```
+
+Use a different child runtime when needed:
+
+```bash
+mango chain ./employees/my-employee \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Prepare Q-017" \
+  --runtime codex \
+  --child-runtime claude
+```
+
+`--runtime prepare` performs preflight only: it validates assignment/dependency/contract and prints the parent prompt. It creates no Run and calls no model.
+
+### Resume blocked handoff
+
+If the parent result does not contain a valid governed handoff, the Run becomes `blocked` and preserves the parent output.
+
+```bash
+mango handoff ./employees/my-employee RUN_ID \
+  --file corrected-handoff.json
+```
+
+The child then continues inside the **same Run ID**.
+
+### Inspect chain lineage
+
+```bash
+mango chain-status ./employees/my-employee RUN_ID
+mango status ./employees/my-employee RUN_ID
+mango trace show ./employees/my-employee RUN_ID
+mango trace explain ./employees/my-employee RUN_ID
+mango trace audit ./employees/my-employee RUN_ID
+```
+
+Chain artifacts are stored under `state/chains/RUN_ID/`.
+
+Exit codes:
+- `0` completed/preflight;
+- `1` failed;
+- `2` blocked waiting for a valid handoff.
