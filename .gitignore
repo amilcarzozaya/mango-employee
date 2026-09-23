@@ -15,3 +15,6 @@ run-prompt.md
 # Locally generated quotations contain customer/issuer data
 **/quotes/
 mis-cotizaciones/
+
+# Generated meeting prompts and reports may contain confidential transcripts
+**/meetings/
