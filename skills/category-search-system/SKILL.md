@@ -5,7 +5,7 @@ description: Build and operate a complete Category Search System: generate and p
 
 # MANGO Category Search System
 
-Version: **1.2.0**
+Version: **1.3.0**
 
 ## Mission
 
@@ -78,7 +78,7 @@ The parent selects the query, search job, entity association, evidence and angle
 
 The child must preserve `query_id`, `primary_query`, entity, audience, geography and constraints, then return a `handoff_receipt`.
 
-The handoff is resolvable inside the same MANGO Employee registry when both skills are installed and assigned to the Employee. Do not claim the current CLI auto-chains two skill runs unless an explicit orchestrator capability is present.
+When both skills are installed and assigned to the Employee, `mango chain` can execute the parent and child automatically inside one persistent Run. `mango handoff` can resume the same blocked Run with a corrected/approved handoff JSON. The chain never expands permissions or bypasses gates.
 
 ## Modes
 
@@ -197,3 +197,24 @@ Recommended: **Level 2 — Preparer**.
 11. Share of Answer denominator is observation count.
 12. Weekly queue orders operational priority while preserving strategic rank.
 13. Publish request stops at publish gate.
+
+
+## Runtime orchestration
+
+Use:
+
+```bash
+mango chain EMPLOYEE \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Prepare the next T1 LinkedIn asset" \
+  --runtime codex
+```
+
+The root Run preserves two chain steps, both package IDs, handoff provenance, receipt lineage, and trace.
+
+If the parent handoff is invalid, the Run becomes `blocked`. Resume the same Run:
+
+```bash
+mango handoff EMPLOYEE RUN_ID --file corrected-handoff.json
+```

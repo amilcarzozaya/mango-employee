@@ -1368,7 +1368,7 @@
     },
     {
       "id": "category-search-system",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "objective": "Operate a governed Category Search System from strategic Query Brain through T1 content execution, neutral multi-surface observations, auditable operational reprioritization, and a Google Sheets dashboard/weekly content queue without fabricating demand or overwriting strategic truth.",
       "trigger": "When the user wants to build category authority, define 20-50+ strategic questions, create a search/query map, prioritize content for Google/LinkedIn/AI search, execute T1 content, observe search visibility, or run a weekly Category Search dashboard/queue.",
       "inputs": [
@@ -1548,7 +1548,33 @@
       "handoff_contract": {
         "version": "1.0",
         "to_skill": "linkedin-search-visibility",
+        "required_fields": [
+          "handoff_version",
+          "from_skill",
+          "to_skill",
+          "query_id",
+          "mode",
+          "entity",
+          "primary_query",
+          "intent",
+          "audience",
+          "geography",
+          "angle",
+          "proof_required",
+          "constraints"
+        ],
+        "receipt_fields": [
+          "from_skill",
+          "to_skill",
+          "query_id",
+          "status"
+        ],
         "documentation": "docs/category-search-system/HANDOFF-CONTRACT.md"
+      },
+      "runtime_orchestration": {
+        "command": "mango chain",
+        "resume_command": "mango handoff",
+        "lineage_command": "mango chain-status"
       }
     },
     {

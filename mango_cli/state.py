@@ -30,8 +30,13 @@ def connect(ep):
   resolved_by TEXT,resolution_note TEXT,FOREIGN KEY(run_id) REFERENCES runs(id));
  CREATE TABLE IF NOT EXISTS run_events(
   id INTEGER PRIMARY KEY AUTOINCREMENT,run_id TEXT NOT NULL,event TEXT NOT NULL,actor TEXT,detail TEXT,created_at TEXT NOT NULL);
+ CREATE TABLE IF NOT EXISTS chain_steps(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,run_id TEXT NOT NULL,ordinal INTEGER NOT NULL,role TEXT NOT NULL,
+  skill_id TEXT NOT NULL,runtime TEXT,package_id TEXT,span_id TEXT,status TEXT NOT NULL,output_path TEXT,
+  detail TEXT,started_at TEXT NOT NULL,completed_at TEXT,UNIQUE(run_id,ordinal));
  CREATE INDEX IF NOT EXISTS ix_runs_status ON runs(status,updated_at);
  CREATE INDEX IF NOT EXISTS ix_approvals_status ON approvals(status,requested_at);
+ CREATE INDEX IF NOT EXISTS ix_chain_steps_run ON chain_steps(run_id,ordinal);
  """); c.commit(); return c
 def event(c,rid,e,actor=None,detail=None):
  c.execute("INSERT INTO run_events(run_id,event,actor,detail,created_at) VALUES(?,?,?,?,?)",(rid,e,actor,detail,now()))
@@ -97,7 +102,8 @@ def inspect(ep,rid):
  if not r: c.close(); raise ValueError("Run not found")
  a=[dict(x) for x in c.execute("SELECT * FROM approvals WHERE run_id=? ORDER BY requested_at",(rid,))]
  e=[dict(x) for x in c.execute("SELECT event,actor,detail,created_at FROM run_events WHERE run_id=? ORDER BY id",(rid,))]
- c.close(); return {"run":dict(r),"approvals":a,"events":e}
+ steps=[dict(x) for x in c.execute("SELECT * FROM chain_steps WHERE run_id=? ORDER BY ordinal",(rid,))]
+ c.close(); return {"run":dict(r),"approvals":a,"events":e,"chain_steps":steps}
 def retry(ep,rid,actor="human"):
  r=get_run(ep,rid)
  if not r or r["status"] not in ("failed","blocked"): raise ValueError("Only failed/blocked runs can be retried")

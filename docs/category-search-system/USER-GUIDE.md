@@ -1,4 +1,4 @@
-# Guía rápida de usuario — MANGO Category Search + LinkedIn
+# Guía rápida de usuario — MANGO Category Search + LinkedIn + Chain Runtime
 
 ## Qué problema resuelve
 
@@ -68,3 +68,32 @@ mango info ./employees/my-employee
 ## Resultado correcto
 
 Un run correcto conserva el mismo `query_id` desde el Query Brain hasta el handoff receipt.
+
+
+## Auto-chain recomendado
+
+En vez de ejecutar dos `mango run` manuales, usa:
+
+```bash
+mango chain ./employees/my-employee \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Selecciona la siguiente T1 y crea el asset LinkedIn" \
+  --runtime codex
+```
+
+El comando:
+1. crea un único Run raíz;
+2. ejecuta el padre;
+3. extrae y valida el handoff;
+4. construye el paquete del child con Trusted Runtime Handoff;
+5. ejecuta el child;
+6. valida el receipt;
+7. completa el mismo Run con lineage trazable.
+
+Si el handoff falla:
+
+```bash
+mango chain-status ./employees/my-employee RUN_ID
+mango handoff ./employees/my-employee RUN_ID --file corrected-handoff.json
+```

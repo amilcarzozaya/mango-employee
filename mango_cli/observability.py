@@ -79,11 +79,12 @@ def report(ep,run_id):
  sc=state_connect(ep)
  events=[dict(x) for x in sc.execute("SELECT event,actor,detail,created_at FROM run_events WHERE run_id=? ORDER BY id",(run_id,))]
  approvals=[dict(x) for x in sc.execute("SELECT * FROM approvals WHERE run_id=? ORDER BY requested_at",(run_id,))]
+ chain_steps=[dict(x) for x in sc.execute("SELECT * FROM chain_steps WHERE run_id=? ORDER BY ordinal",(run_id,))]
  sc.close()
  totals={}
  for m in mets: totals[m["name"]]=totals.get(m["name"],0)+m["value"]
  return {"run":run,"trace_id":"tr_"+run_id.replace("run_",""),"spans":spans,"provenance":prov,
-         "approvals":approvals,"events":events,"metrics":mets,"metric_totals":totals}
+         "approvals":approvals,"events":events,"chain_steps":chain_steps,"metrics":mets,"metric_totals":totals}
 
 def explain(ep,run_id):
  r=report(ep,run_id); run=r["run"]
@@ -95,6 +96,10 @@ def explain(ep,run_id):
  if r["approvals"]:
   for a in r["approvals"]: lines.append(f"- `{a['category']}` / {a['action']}: **{a['status']}** by {a['resolved_by'] or 'pending'}")
  else: lines.append("- No approval decisions recorded.")
+ lines += ["","## Chain lineage"]
+ if r.get("chain_steps"):
+  for x in r["chain_steps"]: lines.append(f"- step {x['ordinal']} `{x['role']}` → `{x['skill_id']}` — {x['status']} — package `{x['package_id'] or '-'}`")
+ else: lines.append("- Single-skill run; no chain steps recorded.")
  lines += ["","## Trace"]
  for s in r["spans"]: lines.append(f"- `{s['name']}` [{s['kind']}] — {s['status']} — {round(s['duration_ms'] or 0,2)} ms")
  lines += ["","## Metrics"]
@@ -110,4 +115,14 @@ def audit(ep,run_id):
   if a["status"]=="approved" and not a["resolved_by"]: issues.append("approved_without_actor")
  for s in r["spans"]:
   if s["status"]=="running" and r["run"]["status"] in ("completed","failed","cancelled"): issues.append(f"orphan_span:{s['id']}")
+ if str(r["run"].get("skill_id","")).startswith("chain:"):
+  steps=r.get("chain_steps",[])
+  if not steps: issues.append("chain_missing_steps")
+  ordinals=[x.get("ordinal") for x in steps]
+  if len(ordinals)!=len(set(ordinals)): issues.append("chain_duplicate_step_ordinal")
+  if r["run"]["status"]=="completed":
+   if len(steps)!=2: issues.append("completed_chain_must_have_two_steps")
+   if any(x.get("status")!="completed" for x in steps): issues.append("completed_chain_has_incomplete_step")
+   if not any(p["kind"]=="handoff" and p["relation"]=="emitted_by_parent" for p in r["provenance"]): issues.append("missing_parent_handoff_provenance")
+   if not any(p["kind"]=="handoff" and p["relation"]=="consumed_by_child" for p in r["provenance"]): issues.append("missing_child_handoff_provenance")
  return {"ok":not issues,"issues":issues,"run_id":run_id,"trace_id":r["trace_id"]}
