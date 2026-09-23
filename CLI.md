@@ -1,4 +1,4 @@
-# MANGO Employee CLI — 0.12.0rc2
+# MANGO Employee CLI — 0.13.0rc1
 
 This file is the short CLI entry point.
 
@@ -130,3 +130,21 @@ For automation, read the command output as well as the exit code.
 ## Full reference
 
 See [docs/COMMAND-REFERENCE.md](docs/COMMAND-REFERENCE.md).
+
+## Meeting Intelligence — transcripción a reporte
+
+Una reunión produce un resumen, tareas/fechas, compromisos, decisiones,
+pendientes y hasta tres asuntos críticos con citas verificadas.
+
+Prueba sin modelo (con fixtures ficticios):
+
+~~~bash
+mango meeting reference-employees/mango-chief-of-staff \
+  --input examples/meeting-intelligence/transcript.md \
+  --meeting-date 2026-09-23 \
+  --extraction examples/meeting-intelligence/extraction.json \
+  --formats json,md --out-dir ./reportes
+~~~
+
+Word y PDF son opcionales: python -m pip install -e ".[meeting]".
+Manual: docs/meeting-intelligence/USER-GUIDE.md.
