@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.12.0rc2 — Documentation onboarding refresh
+- Added a zero-assumption documentation path from prerequisites through first Run.
+- Added detailed prerequisite installation/verification for Python, pip, Git, virtual environments, Node, and optional runtimes.
+- Added complete Skill assignment, command, troubleshooting, upgrade/recovery, and Category Search onboarding guides.
+- Rewrote runtime setup with current upstream install/authentication references and explicit verification levels.
+- Expanded State, Memory, Tools, Approval, Observability, Teams, Security, Architecture, and Reference Employee guides.
+- Marked technical specifications as advanced references and historical benchmarks as historical artifacts.
+- Added documentation regression checks to keep onboarding/version/tag references current.
+
 ## 0.12.0rc2 — Chain Runtime
 - Added `mango chain` for one-Run parent→child Skill orchestration.
 - Added `mango handoff` to resume blocked chain Runs with validated handoff JSON.
