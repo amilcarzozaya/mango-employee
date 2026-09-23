@@ -201,6 +201,9 @@ def validate_extraction(data, transcript, *, meeting_date=None,
     people = meta.get("participants", [])
     if not isinstance(people, list) or not all(isinstance(x, str) for x in people):
         raise MeetingError("meeting.participants debe ser una lista de nombres.")
+    for name in people:
+        if not compact(name) or not re.search(r"(?<!\\w)" + re.escape(compact(name)) + r"(?!\\w)", transcript, re.IGNORECASE):
+            raise MeetingError(f"Participante sin evidencia en transcripción: {name}")
     report = {
         "schema_version": "2.0.0",
         "report_id": "meeting-" + uuid.uuid4().hex[:12],
@@ -235,6 +238,10 @@ def validate_extraction(data, transcript, *, meeting_date=None,
                 status = item.get("status", "committed" if field == "commitments" else "pending")
                 if status not in ("committed", "proposed", "pending"):
                     raise MeetingError(f"{where}.status inválido: {status}")
+                ambiguous_signals = ("podria", "podriamos", "tal vez", "quiza", "habria que", "deberiamos")
+                if status == "committed" and any(s in plain(evidence["source_excerpt"]) for s in ambiguous_signals):
+                    status = "proposed"
+                    report["review_required"].append(f"{ident}: compromiso ambiguo, requiere confirmación")
                 due_text = compact(item.get("due_text")) or None
                 due = due_date_from_text(due_text, day)
                 row = {"id": ident, "description": _req(item, "description", where),
