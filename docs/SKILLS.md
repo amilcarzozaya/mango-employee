@@ -251,6 +251,14 @@ validación estricta de citas y fechas más exportación JSON/Markdown/Word/PDF.
 No asumas que otro preset la tiene asignada: compruébalo con mango info.
 Consulta meeting-intelligence/USER-GUIDE.md.
 
+## Quote Builder — commercial-quotation v1
+
+Cotizaciones reproducibles de forma determinística, sin utilizar IA para operaciones
+monetarias. La Skill necesita estar asignada en employee.json (autonomía Level 2).
+Usa mango quote para perfil, cálculo, borrador y emisión local con folio. El emisor
+define cada regla fiscal explícitamente. Manual:
+[Quote Builder](quote-builder/USER-GUIDE.md).
+
 ## Skill anatomy
 
 A full Skill may contain:
