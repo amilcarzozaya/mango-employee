@@ -1,6 +1,7 @@
 # MANGO Operational Workflows Specification v1
 
-> Advanced reference. Start with [the full Spanish user guide](docs/OPERATIONAL-WORKFLOWS.md)
+> Advanced reference. Start with [Start Here](docs/START-HERE.md), then
+> [the Spanish operational guide](docs/OPERATIONAL-WORKFLOWS.md)
 > and [MANGO concepts](docs/CONCEPTS.md).
 
 ## Scope and version
