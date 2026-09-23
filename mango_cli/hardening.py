@@ -2,8 +2,8 @@
 from pathlib import Path
 import sqlite3, json, hashlib, datetime, shutil, tempfile, os
 
-RC_VERSION="0.13.0rc2"
-RC_LABEL="MANGO Employee v0.13 RC2"
+RC_VERSION="0.13.0rc3"
+RC_LABEL="MANGO Employee v0.13 RC3"
 SCHEMA_VERSION=1
 DBS={
  "state":"state/state.db",
@@ -143,6 +143,20 @@ def backup(ep,out_dir):
    rel=source.relative_to(b)
    dp=dest/rel; dp.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(source,dp)
    files.append({"component":"quote-"+kind,"path":str(rel),"sha256":sha256(dp),"bytes":dp.stat().st_size})
+ # Meeting Intelligence validated report artifacts are operational records.
+ # Keep prompt-out files and original transcripts OUT of automatic backups.
+ mf=b/"meetings/output"
+ if mf.exists():
+  for source in sorted(mf.iterdir()):
+   if source.is_symlink() or not source.is_file():
+    raise ValueError("Unsafe Meeting artifact in backup directory")
+   if source.suffix.lower() not in (".json",".md",".docx",".pdf"):
+    continue
+   if source.stat().st_size>20*1024*1024:
+    raise ValueError("Meeting report exceeds backup size cap")
+   rel=source.relative_to(b)
+   dp=dest/rel; dp.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(source,dp)
+   files.append({"component":"meeting-report","path":str(rel),"sha256":sha256(dp),"bytes":dp.stat().st_size})
  # Back up operational JSON, not arbitrary context/secrets.
  for rel in ("employee.json","state/execution-queue.json","tools/registry.json"):
   src=b/rel
@@ -171,7 +185,7 @@ def restore(ep,backup_dir,force=False):
   # Refuse overwrite of non-empty operational stores.
   existing=[rel for rel in list(DBS.values())+["state/execution-queue.json","quotes/folios.sqlite"] if (b/rel).exists()]
   listed=json.loads((src/"backup-manifest.json").read_text())
-  existing += [item["path"] for item in listed.get("files",[]) if item["path"].startswith("quotes/") and (b/item["path"]).exists()]
+  existing += [item["path"] for item in listed.get("files",[]) if (item["path"].startswith("quotes/") or item["path"].startswith("meetings/output/")) and (b/item["path"]).exists()]
   if existing: raise FileExistsError("Restore would overwrite existing state; use --force")
  m=json.loads((src/"backup-manifest.json").read_text())
  for x in m["files"]:
