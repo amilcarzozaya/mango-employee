@@ -78,3 +78,15 @@ def test_markdown_local_links_resolve():
             if not path.exists():
                 failures.append((str(md.relative_to(ROOT)),target,"missing"))
     assert not failures, failures[:25]
+
+
+def test_documented_local_tool_adapter_matches_implementation():
+    from mango_cli.tool_protocol import execute_local
+    import inspect
+    implementation=inspect.getsource(execute_local)
+    command_reference=(ROOT/"docs/COMMAND-REFERENCE.md").read_text(encoding="utf-8")
+    tool_guide=(ROOT/"docs/TOOLS.md").read_text(encoding="utf-8")
+    assert 'adapter=="filesystem"' in implementation
+    assert "--adapter filesystem" in command_reference
+    assert "--adapter filesystem" in tool_guide
+    assert "--adapter local_filesystem" not in command_reference
