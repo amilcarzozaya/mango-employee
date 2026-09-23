@@ -1,4 +1,4 @@
-# Category Search System v1.1.0
+# Category Search System v1.2.0
 
 Installed MANGO parent Skill.
 
@@ -19,3 +19,15 @@ Core governance:
 - no direct consumer-Google scraping;
 - DEMO/LIVE data stay separate;
 - publishing stays gated.
+
+
+## LinkedIn child skill
+
+LinkedIn execution is delegated through a typed handoff to `linkedin-search-visibility` v1.1.0.
+
+Documentation:
+- `docs/category-search-system/USER-GUIDE.md`
+- `docs/category-search-system/USER-MANUAL.md`
+- `docs/category-search-system/HANDOFF-CONTRACT.md`
+
+The handoff is registry-resolvable when both skills are installed and assigned. The current CLI is not claimed to auto-chain two skill runs without an explicit orchestrator.
