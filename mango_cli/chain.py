@@ -189,7 +189,12 @@ def _execute_child(ep,rid,pair,h,runtime,model,root,root_span=None,output=None):
     if rr["returncode"]!=0:
         _step_update(ep,rid,2,"failed",output_path=path,detail=rr.get("stderr")); end_span(ep,span,"error",rr.get("stdout"),rr.get("stderr"))
         raise RuntimeError(rr.get("stderr") or f"child runtime exit {rr['returncode']}")
-    receipt=validate_receipt(extract_receipt(rr.get("stdout","")),h,parent_id,child_id,pair["contract"])
+    try:
+        receipt=validate_receipt(extract_receipt(rr.get("stdout","")),h,parent_id,child_id,pair["contract"])
+    except HandoffError as e:
+        _step_update(ep,rid,2,"failed",output_path=path,detail=str(e))
+        end_span(ep,span,"error",rr.get("stdout"),str(e))
+        raise
     receipt_path=_save_json(ep,rid,"04-receipt.json",receipt)
     _step_update(ep,rid,2,"completed",output_path=path,detail={"receipt_path":receipt_path,"query_id":h["query_id"]})
     end_span(ep,span,"ok",rr.get("stdout"))
@@ -249,12 +254,12 @@ def resume_handoff(ep,rid,h,root,child_skill=None,runtime=None,model=None,output
     parent_id,expected_child=_split(run["skill_id"]); child_id=child_skill or expected_child
     if child_id!=expected_child: raise HandoffError("Child skill does not match root lineage")
     pair=validate_pair(ep,parent_id,child_id,root); h=validate_handoff(h,parent_id,child_id,pair["contract"])
+    runtime=runtime or _child_runtime(run)
+    if runtime=="prepare": raise HandoffError("Resume requires executable child runtime")
     if run["status"]=="blocked": transition(ep,rid,"running","handoff")
     hpath=_save_json(ep,rid,"02-handoff.json",h)
     provenance(ep,rid,"handoff",h["query_id"],"human_or_runtime_resume",detail={"path":hpath,"handoff_hash":digest(h)})
     state_checkpoint(ep,rid,{"stage":"handoff_resumed","query_id":h["query_id"],"handoff_path":hpath},"handoff")
-    runtime=runtime or _child_runtime(run)
-    if runtime=="prepare": raise HandoffError("Resume requires executable child runtime")
     span=start_span(ep,rid,"chain:resume","chain",attributes={"parent_skill":parent_id,"child_skill":child_id})
     try:
         out=_execute_child(ep,rid,pair,h,runtime,model,root,span,output); end_span(ep,span,"ok",out); return out
