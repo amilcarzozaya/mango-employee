@@ -119,7 +119,7 @@ See RELEASE-CANDIDATE.md and GITHUB-RELEASE-CHECKLIST.md.
 
 ## Quote Builder backup and recovery
 
-When quotes/folio.sqlite exists, the release backup captures the quote
+When quotes/folios.sqlite exists, the release backup captures the quote
 ledger and private profiles/drafts/issued JSON snapshots. Rendered Word/PDF
 are excluded because they can be regenerated from the validated issued JSON.
 Always verify the backup before restoring; test quote numbering on
