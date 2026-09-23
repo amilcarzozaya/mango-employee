@@ -26,6 +26,13 @@ INCLUSIVE = ROOT / "examples/quote-builder/request-prices-include-tax.json"
 def employee(tmp_path):
     destination = tmp_path / "my-employee"
     shutil.copytree(REFERENCE, destination)
+    # Legacy unit tests exercise direct issuance only for an Employee with no
+    # commercial Gates. Fully gated issuance is tested in test_workflows.py.
+    config = destination / "employee.json"
+    payload = json.loads(config.read_text(encoding="utf-8"))
+    payload["gates"] = [gate for gate in payload["gates"] if gate["category"]
+                        not in ("pricing", "scope", "deadline", "legal")]
+    config.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     return destination
 
 
