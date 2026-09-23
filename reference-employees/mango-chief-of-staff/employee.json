@@ -171,9 +171,9 @@
     },
     {
       "id": "post-meeting-capture",
-      "version": "1.0.0",
-      "objective": "Capturar decisiones y compromisos.",
-      "trigger": "after_meeting",
+      "version": "2.0.0",
+      "objective": "Generar un reporte verificable de reunión: decisiones, tareas/fechas, compromisos, pendientes y hasta tres puntos críticos con citas literales.",
+      "trigger": "Tras disponer de transcripción o minuta de una reunión.",
       "procedure": [
         "Use official skill definition."
       ],
@@ -181,7 +181,9 @@
         "format": "structured"
       },
       "definition_of_done": [
-        "No hidden ambiguity"
+        "Reporte con evidencia literal por registro.",
+        "Fechas ambiguas y responsables faltantes visibles.",
+        "No enviar ni promover memoria automáticamente."
       ],
       "autonomy_level": 2
     },
