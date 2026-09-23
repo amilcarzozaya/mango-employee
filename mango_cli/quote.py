@@ -210,13 +210,18 @@ def validate_profile(data):
     }
 
 
-def init_profile(employee_path, repo_root, source):
+def init_profile_data(employee_path, repo_root, data):
+    """Persist a validated issuer profile supplied by a UI, without a JSON input file."""
     root, _ = ensure_assigned(employee_path, repo_root)
-    profile = validate_profile(_json(source))
+    profile = validate_profile(data)
     path = _inside(root, root / "quotes" / "profiles" / (profile["profile_id"] + ".json"))
     _save_exclusive(path, profile)
     return {"profile_id": profile["profile_id"], "saved_to": str(path),
             "tax_rule_count": len(profile["taxes"]), "status": "configured"}
+
+
+def init_profile(employee_path, repo_root, source):
+    return init_profile_data(employee_path, repo_root, _json(source))
 
 
 def list_profiles(employee_path, repo_root):
