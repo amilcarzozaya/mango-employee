@@ -428,7 +428,7 @@ mango tools authorize EMPLOYEE TOOL_ID send --gate external_send
 
 ~~~bash
 mango tools register EMPLOYEE workspace \
-  --adapter local_filesystem \
+  --adapter filesystem \
   --capability read \
   --risk low \
   --root ./workspace
