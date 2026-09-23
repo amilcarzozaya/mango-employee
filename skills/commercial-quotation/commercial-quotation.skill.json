@@ -1,0 +1,142 @@
+{
+  "id": "commercial-quotation",
+  "version": "1.0.0",
+  "objective": "Generar cotizaciones comerciales verificables a partir de datos de emisor configurados y conceptos de cantidad, descripción y precio unitario; cálculos exactos de descuentos, impuestos y retenciones configurados, folio único y Word/PDF.",
+  "trigger": "Después de que el cliente solicita cotización y se reciben precios, cantidades y el perfil aprobado del emisor.",
+  "inputs": [
+    "issuer profile configurado localmente (nombre, razón social, empresa, email, teléfono, domicilio, moneda y reglas fiscales explícitas)",
+    "cliente con nombre",
+    "quote_date AAAA-MM-DD",
+    "uno o más conceptos con quantity, description, unit, unit_price y tax_codes explícitos",
+    "descuento opcional: discount_percent o discount_amount",
+    "conditions/validity/payment terms/price_includes_tax",
+    "approved_by humano solamente para emisión y folio"
+  ],
+  "sources": [
+    "Issuer profile local explícito",
+    "Solicitud comercial facilitada por el usuario",
+    "Catálogo de impuestos/tasas configurado y fechado por emisor",
+    "Políticas y Gates asignados al Employee"
+  ],
+  "procedure": [
+    "Comprobar registro/asignación de la Skill, autonomía y Gates del Employee.",
+    "Guardar una sola vez el perfil del emisor, sin sobrescritura y sin almacenar credenciales.",
+    "Validar cliente, moneda, vigencia, conceptos, cantidades, precios y tasas configuradas; rechazar datos faltantes sin inventar condiciones.",
+    "Aplicar aritmética determinística Decimal: cantidad×precio, descuentos, base, impuestos adicionales, retenciones y total, con ROUND_HALF_UP por renglón.",
+    "Aplicar únicamente códigos fiscales explícitos y reglas vigentes del perfil; nunca deducir fiscalidad por el texto de la descripción.",
+    "Emitir snapshot inmutable del emisor y la política fiscal aplicados al borrador para evitar cambios retroactivos.",
+    "Generar cotización borrador sin folio desde el mismo JSON validado en Markdown/Word/PDF opcional.",
+    "Exigir atestación humana con approved_by antes de emitir; generar folio único secuencial por prefijo/año mediante transacción SQLite BEGIN IMMEDIATE.",
+    "Registrar aprobación declarada, folio y fecha de emisión sin enviar correo ni crear CFDI.",
+    "Hacer la emisión idempotente por draft_id; si la renderización falla, recuperar el folio ya asignado sin consumir otro.",
+    "Mostrar límites: cotización comercial no es factura; las reglas tributarias requieren revisión profesional."
+  ],
+  "rules": [
+    "Nunca usar el modelo de IA para efectuar operaciones monetarias, porcentajes, impuestos o folios.",
+    "Rechazar valores float no confiables y números NaN/Infinity; usar Decimal y tasas como texto.",
+    "No asumir tasas, exenciones, retenciones, regímenes fiscales ni currency conversion; códigos de impuestos explícitos por renglón.",
+    "Los precios y condiciones comerciales proceden de la solicitud aprobada; nunca inventarlos.",
+    "No emitir sin --approved-by, y advertir que es autoatestación local, no identidad autenticada.",
+    "No sobrescribir perfiles, borradores ni documentos previamente emitidos.",
+    "No enviar al cliente, facturar CFDI ni generar obligaciones fiscales automáticamente.",
+    "No prometer plazos o cambiar alcance sin autorización humana cuando corresponda."
+  ],
+  "output": {
+    "format": "draft/issued commercial quote JSON + Markdown; optional DOCX/PDF",
+    "fields": [
+      "schema_version",
+      "status",
+      "draft_id",
+      "profile_id",
+      "issuer_snapshot",
+      "client",
+      "quote_date",
+      "valid_until",
+      "currency",
+      "items",
+      "tax_breakdown",
+      "totals",
+      "terms",
+      "exclusions",
+      "folio",
+      "issued_at",
+      "approved_by",
+      "integrity",
+      "notice"
+    ]
+  },
+  "definition_of_done": [
+    "Perfil de emisor completo y persistido sin sobrescribir.",
+    "Borrador calculado por Decimal con impuestos explícitos y totales recomputables.",
+    "Los importes coinciden en JSON, Markdown, Word y PDF desde un mismo snapshot.",
+    "Los folios nunca se duplican y la reemisión del mismo borrador es idempotente.",
+    "La aprobación humana se solicita antes de asignar folio y se registra sin pretender autenticación.",
+    "Sin llamadas LLM para matemáticas, acciones externas, envío, ni expedición de CFDI."
+  ],
+  "qa": [
+    "Precisión decimal exacta y ROUND_HALF_UP por renglón",
+    "Códigos de impuestos configurados y vigentes",
+    "Sin duplicidad de folios bajo concurrencia",
+    "Borradores sin folio",
+    "Idempotencia de emisión y hash de snapshot",
+    "Paridad de Word/PDF respecto al JSON",
+    "Prevención de rutas de perfiles no permitidas",
+    "Emisión bloqueada si falta atestación humana"
+  ],
+  "gates": [
+    "pricing",
+    "scope",
+    "deadline",
+    "legal",
+    "external_send"
+  ],
+  "autonomy_level": 2,
+  "updates_memory": [],
+  "missing_information_policy": "Rechazar si faltan emisor, cliente, cantidades, precio, tax_codes o fecha; dejar opcionales como POR DEFINIR sin inventar. La fiscalidad siempre se declara explícitamente por emisor.",
+  "tests": [
+    {
+      "name": "exact-math",
+      "expected": "Gross, discount, base, tax, withholding and total match Decimal golden values"
+    },
+    {
+      "name": "fractional-quantity",
+      "expected": "Fractional quantity uses Decimal, never float"
+    },
+    {
+      "name": "inclusive-prices",
+      "expected": "Reverse-calculate configured additive tax and reconcile rounding"
+    },
+    {
+      "name": "zero-and-exempt",
+      "expected": "Different named codes with zero rate remain distinct"
+    },
+    {
+      "name": "invalid-tax",
+      "expected": "Unknown/expired tax rule fails closed"
+    },
+    {
+      "name": "discount-overflow",
+      "expected": "Reject discount > gross or dual discounts"
+    },
+    {
+      "name": "profile-once",
+      "expected": "Reject duplicate profile IDs without overwriting"
+    },
+    {
+      "name": "concurrent-issue",
+      "expected": "Distinct drafts allocate unique monotonic folios"
+    },
+    {
+      "name": "idempotent-issue",
+      "expected": "Repeated issuance of same draft does not consume a new folio"
+    },
+    {
+      "name": "document-parity",
+      "expected": "DOCX and PDF render from the same validated quote"
+    },
+    {
+      "name": "no-external-actions",
+      "expected": "No send, invoice or CFDI"
+    }
+  ]
+}
