@@ -102,7 +102,7 @@ def test_sensitive_meeting_denies_unapproved_external_runtime_and_changed_source
     assert len(pending_approvals(employee, rid)) == 1
     from mango_cli.meeting import process_meeting
     with pytest.raises(MeetingError, match="sensitive_data"):
-        process_meeting(employee_path=employee, repo_root=ROOT, source_path=source,
+        process_meeting(employee_path=employee / "employee.json", repo_root=ROOT, source_path=source,
                         meeting_date="2026-09-23", runtime="codex")
     with pytest.raises(WorkflowError, match="Falta aprobación"):
         meeting_resume(employee, ROOT, rid)
