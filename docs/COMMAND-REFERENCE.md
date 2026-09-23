@@ -1,4 +1,4 @@
-# Command Reference — MANGO Employee CLI 0.12.0rc2
+# Command Reference — MANGO Employee CLI 0.13.0rc1
 
 This guide explains the CLI without assuming you already know MANGO terminology.
 
@@ -677,3 +677,30 @@ Always read the command output; do not rely on the number alone when automating.
 - TOOLS.md
 - OBSERVABILITY.md
 - UPGRADE.md
+
+# Meeting Intelligence — transcripción/minuta a reporte
+
+mango meeting recibe un Employee que tenga asignada la Skill post-meeting-capture v2.
+No envía correos ni modifica calendarios/CRM/Memory.
+
+Prueba offline completa:
+
+~~~bash
+mango meeting reference-employees/mango-chief-of-staff \
+  --input examples/meeting-intelligence/transcript.md \
+  --meeting-date 2026-09-23 \
+  --extraction examples/meeting-intelligence/extraction.json \
+  --formats json,md,docx,pdf \
+  --out-dir ./reportes
+~~~
+
+Para Word y PDF instala: python -m pip install -e ".[meeting]".
+
+Con modelo live, omite --extraction e indica --runtime codex (u otro
+runtime instalado/autenticado). Para sólo preparar el prompt sin modelo,
+indica --runtime prepare y opcionalmente --prompt-out archivo-privado.md.
+
+Opciones: --input, --meeting-date, --timezone, --title, --runtime, --model,
+--extraction, --formats, --out-dir, --prompt-out. Los formatos predeterminados
+son json,md. El reporte requiere revisión humana. Más información:
+meeting-intelligence/USER-GUIDE.md.
