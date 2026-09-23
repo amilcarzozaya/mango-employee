@@ -91,6 +91,7 @@ Reference Tool registry.
 - weekly-ceo-review
 - approval-gate
 - correction-learning-loop
+- commercial-quotation (MANGO Quote Builder, no automatic send/CFDI)
 
 Check live assignments with:
 
