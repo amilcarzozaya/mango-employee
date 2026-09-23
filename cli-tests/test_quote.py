@@ -76,7 +76,7 @@ def test_mxn_golden_decimal_calculation(configured):
     assert q["totals"] == {
         "gross": "3300.00", "discount": "300.00",
         "taxable_base": "3000.00", "tax_added": "432.00",
-        "tax_withheld": "0", "total": "3432.00"
+        "tax_withheld": "0.00", "total": "3432.00"
     }
     assert q["items"][0]["quantity"] == "2"
     assert q["items"][0]["line_total"] == "3132.00"
@@ -117,7 +117,7 @@ def test_zero_rate_and_exemption_have_different_labels(configured):
          "tax_codes": ["EXENTO"]},
     ]
     q = calculate(load_profile(configured, "demo"), data)
-    assert q["totals"]["total"] == "200"
+    assert q["totals"]["total"] == "200.00"
     assert {x["code"] for x in q["tax_breakdown"]} == {"IVA0", "EXENTO"}
 
 
@@ -235,7 +235,7 @@ def test_reject_existing_output_and_preserve_data(configured):
     another = _draft(configured, out=configured / "separate")
     with pytest.raises(ValueError, match="existentes"):
         from mango_cli.quote_render import export_quote
-        quote = json.loads(Path(another["stored_draft"]).read_text(encoding="utf-8"))
+        quote = json.loads(Path(first["stored_draft"]).read_text(encoding="utf-8"))
         export_quote(quote, Path(first["files"]["json"]).parent, ("json", "md"))
 
 
@@ -269,7 +269,7 @@ def test_docx_pdf_export_parity(configured, tmp_path):
     paths = export_quote(q, tmp_path, ("json", "md", "docx", "pdf"))
     doc = docx.Document(paths["docx"])
     # Total appears in all formats using a common validated data object.
-    assert any("3432.00" in p.text for p in doc.paragraphs)
-    assert "3432.00" in Path(paths["md"]).read_text(encoding="utf-8")
-    assert "3432.00" in pypdf.PdfReader(paths["pdf"]).pages[0].extract_text()
+    assert any("3,432.00" in p.text for p in doc.paragraphs)
+    assert "3,432.00" in Path(paths["md"]).read_text(encoding="utf-8")
+    assert "3,432.00" in pypdf.PdfReader(paths["pdf"]).pages[0].extract_text()
     assert json.loads(Path(paths["json"]).read_text(encoding="utf-8"))["totals"]["total"] == "3432.00"
