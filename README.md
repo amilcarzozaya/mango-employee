@@ -152,6 +152,38 @@ u otro runtime compatible. El comando no envía mensajes ni crea tareas
 externas, y no promueve automáticamente la memoria.
 
 Manual: [MANGO Meeting Intelligence](docs/meeting-intelligence/USER-GUIDE.md).
+## MANGO Quote Builder
+
+La nueva Skill `commercial-quotation` genera cotizaciones comerciales
+determinísticas. Guarda el emisor una sola vez, valida descuentos, calcula
+impuestos configurados mediante Decimal, prepara un borrador sin folio y
+asigna un folio secuencial único sólo tras aprobación humana declarada.
+
+~~~bash
+python -m pip install -e ".[quote]"
+mango quote profile init reference-employees/mango-chief-of-staff \
+  --from-file examples/quote-builder/issuer-profile.json
+mango quote calculate reference-employees/mango-chief-of-staff \
+  --profile demo --request examples/quote-builder/request.json
+mango quote draft reference-employees/mango-chief-of-staff \
+  --profile demo --request examples/quote-builder/request.json \
+  --formats json,md,docx,pdf
+~~~
+
+La respuesta de draft entrega DRAFT_ID. Luego:
+
+~~~bash
+mango quote issue reference-employees/mango-chief-of-staff \
+  --draft DRAFT_ID --approved-by "Nombre de aprobador humano" \
+  --formats json,md,docx,pdf
+~~~
+
+Los datos de ejemplo son ficticios. Las tasas fiscales las configura el
+emisor; no hay recomendación tributaria, autenticación de identidad,
+CFDI ni envío automático.
+
+[Manual completo desde cero](docs/quote-builder/USER-GUIDE.md).
+
 ## Core terms in one minute
 
 - **Employee** — who the AI worker is, what it may do, and who owns final authority.
@@ -383,7 +415,7 @@ See [REFERENCE-EMPLOYEE.md](REFERENCE-EMPLOYEE.md).
 
 Current documentation target:
 
-**MANGO Employee CLI 0.13.0rc1**
+**MANGO Employee CLI 0.13.0rc2**
 
 Release provenance is stored in RELEASE-MANIFEST.json and RC-CHECKLIST.md.
 
