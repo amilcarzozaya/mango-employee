@@ -265,6 +265,12 @@ def validate_extraction(data, transcript, *, meeting_date=None,
     report["critical_points"].sort(key=lambda x: -x["priority_score"])
     report["critical_points"] = report["critical_points"][:3]
     report["review_required"] = list(dict.fromkeys(report["review_required"]))
+    # Compatibility with the v1 post-meeting-capture output contract.
+    # These fields are proposals/aliases; nothing is executed or sent.
+    report["risks"] = report["critical_points"]
+    report["undefined_fields"] = report["review_required"]
+    report["state_updates"] = report["memory_candidates"]
+    report["followup_draft"] = None
     return report
 
 
