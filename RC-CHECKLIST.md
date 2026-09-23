@@ -34,7 +34,7 @@
 - Manifest format: mango-release-manifest-v1
 - Package: 0.13.0rc3
 - Canonical files: 37
-- Release hash: 68b8c23c7ca531d3072d659aa5b5d9024f4da2db53d8e4cfba0b3ff97b7e1b56
+- Release hash: 1f12369e9f22dc808b1e109112881b7e0a1730536891df6d654d69e32bf0d414
 
 ## Explicit limitations
 
