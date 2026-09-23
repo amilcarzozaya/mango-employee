@@ -1,5 +1,8 @@
 # MANGO Tool Protocol (MTP) v0.1
 
+> **Advanced / normative reference.** If you are new to MANGO Employee, start with `docs/START-HERE.md`, then `docs/CONCEPTS.md` and `docs/COMMAND-REFERENCE.md`. This file assumes the basic terms Employee, Skill, Runtime, Run, Gate, Tool, Memory, and Handoff are already understood.
+
+
 Created by **Amílcar Zozaya**, creator of Método MANGO.
 
 MTP defines how a MANGO Employee may interact with external systems without making the model or connector the source of authority.
