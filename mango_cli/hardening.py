@@ -2,8 +2,8 @@
 from pathlib import Path
 import sqlite3, json, hashlib, datetime, shutil, tempfile, os
 
-RC_VERSION="0.13.0rc1"
-RC_LABEL="MANGO Employee v0.13 RC1"
+RC_VERSION="0.13.0rc2"
+RC_LABEL="MANGO Employee v0.13 RC2"
 SCHEMA_VERSION=1
 DBS={
  "state":"state/state.db",
