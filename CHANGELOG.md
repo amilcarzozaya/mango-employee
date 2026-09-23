@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.13.0rc3 — Operational Workflows (Stage 4)
+
+- Connects Meeting Intelligence and Quote Builder to existing persistent State, Approval Cards and Observability without duplicating the Skill implementations.
+- Adds mango workflow meeting / meeting-resume with source-hash-bound sensitive_data approvals for external runtimes when configured.
+- Adds mango workflow quote-draft / quote-issue with SHA256-bound pricing/scope/deadline/legal approvals and same-Run issuance.
+- Blocks direct gated Quote issue without formal approvals; human name alone is insufficient when commercial Gates exist.
+- Keeps multi-approval Runs waiting until all pending cards are resolved; rejection blocks issuance.
+- Adds crash recovery and same-folio idempotence, per-Employee output confinement, and validation of source/draft integrity.
+- Adds release backup/restore coverage for validated Meeting reports (not original transcripts or prompts).
+- Adds end-to-end offline and simulated-runtime regression tests, from-zero documentation and RC3 release manifest.
+
+
 ## 0.13.0rc2 — MANGO Quote Builder v1
 
 - Adds independent commercial-quotation Skill and explicit reference Employee assignment.
