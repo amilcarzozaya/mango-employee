@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.13.0rc4 — MANGO Guided
+
+- Adds beginner-friendly Spanish menu and direct guided subcommands for Employee setup, issuer profiles, quotations, meetings and Approval Cards.
+- Captures and validates commercial inputs through questions; no manual JSON editing or AI arithmetic.
+- Uses the original State/Gates/Trace workflows for all material operations, with explicit review for every commercial approval.
+- Automatically enables sensitive_data on newly created guided Employees and requires informed consent before enabling it on existing Employees.
+- Adds Bash/PowerShell first-use installers into an isolated Python virtual environment; optional Word/PDF and runtimes are diagnosed.
+- Prepare-mode meetings generate a private prompt file instead of claiming a completed report; transcripts are not included in backups.
+- Adds full Spanish user guide, advanced specification, scripted beginner acceptance tests and RC4 release manifest.
+
+
 ## 0.13.0rc3 — Operational Workflows (Stage 4)
 
 - Connects Meeting Intelligence and Quote Builder to existing persistent State, Approval Cards and Observability without duplicating the Skill implementations.
