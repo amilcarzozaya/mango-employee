@@ -197,3 +197,14 @@ Do not manually edit hashes to “make them match”.
 - [ ] Runtime doctor reviewed.
 - [ ] Prepare-mode smoke test passed.
 - [ ] Live runtime tested only after the above.
+
+## Quote Builder upgrade
+
+New installations can enable optional Word/PDF with
+python -m pip install -e ".[quote]". The existing core still works
+without extras.
+
+If an Employee has already created quotes, backup and restore must include
+quotes/folios.sqlite and profiles/drafts/issued JSON. Release backups
+now capture these files. Do not copy only folios.sqlite while discarding
+the associated issued records. Regenerate missing PDF/DOCX as needed.
