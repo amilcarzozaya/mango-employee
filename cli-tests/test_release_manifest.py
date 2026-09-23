@@ -7,8 +7,8 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def test_release_manifest_matches_package_version_and_chain():
     m=release_manifest(ROOT)
-    assert m["version"]==RC_VERSION=="0.12.0rc2"
-    assert m["release"]=="MANGO Employee v0.12 RC2"
+    assert m["version"]==RC_VERSION=="0.13.0rc1"
+    assert m["release"]=="MANGO Employee v0.13 RC1"
     assert m["format"]=="mango-release-manifest-v1"
     assert m["file_count"]==len(m["files"])
     paths={x["path"] for x in m["files"]}
