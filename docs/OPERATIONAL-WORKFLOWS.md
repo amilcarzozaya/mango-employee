@@ -116,6 +116,10 @@ mango approve EMPLOYEE APPROVAL_ID --actor "Responsable de privacidad"
 mango workflow meeting-resume EMPLOYEE RUN_ID
 ~~~
 
+El servicio de Meeting Intelligence también bloquea la invocación directa
+mango meeting con un modelo externo cuando el Employee tiene sensitive_data
+configurado y falta la aprobación formal.
+
 El sistema verifica que el archivo conserve exactamente la huella
 SHA256 y que la aprobación corresponda a ese runtime/modelo.
 Si el documento cambió, no se transmite ni se usa esa aprobación.
