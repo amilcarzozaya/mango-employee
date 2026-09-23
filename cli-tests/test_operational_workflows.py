@@ -59,7 +59,8 @@ def test_meeting_offline_is_tracked_without_promoting_memory(employee):
                for p in trace["provenance"])
     assert trace_audit(employee, rid)["ok"]
     # No implicit Memory writes, external sends, or approval bypasses.
-    assert not (employee / "memory" / "memory.db").exists() or True
+    # Candidate records appear only in report JSON, not as promoted Memory.
+    assert not any(p["relation"] == "memory_promoted" for p in trace["provenance"])
     assert not trace["approvals"]
 
 
