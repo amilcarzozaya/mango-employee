@@ -170,7 +170,7 @@ probabilidad estadística ni una decisión automática.
 
 El archivo JSON contiene una cita literal `source_excerpt` por elemento
 estructurado y una marca de tiempo sólo cuando está disponible.
-MANGO rechaza una extracción si incluye citas que no aparecen en el documento.
+MANGO rechaza una extracción si incluye citas que no aparecen en el documento, si atribuye el responsable a otra persona o si asigna una fecha que no se encuentra en el fragmento citado.
 
 Antes de distribuir el reporte, revisa nombres, resumen, compromisos,
 prioridades y especialmente la lista `review_required`.
