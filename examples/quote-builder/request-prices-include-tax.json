@@ -1,0 +1,19 @@
+{
+  "client": {
+    "name": "Cliente Prueba (FICTICIO)"
+  },
+  "quote_date": "2026-09-23",
+  "currency": "MXN",
+  "prices_include_tax": true,
+  "items": [
+    {
+      "description": "Servicio de ejemplo con precio que incluye IVA configurado",
+      "quantity": "1",
+      "unit": "servicio",
+      "unit_price": "116.00",
+      "tax_codes": [
+        "IVA16"
+      ]
+    }
+  ]
+}
