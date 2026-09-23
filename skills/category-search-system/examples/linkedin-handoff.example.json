@@ -1,0 +1,28 @@
+{
+  "handoff_version": "1.0",
+  "from_skill": "category-search-system",
+  "to_skill": "linkedin-search-visibility",
+  "query_id": "Q-017",
+  "mode": "single_post",
+  "entity": "Amílcar Zozaya + MANGO Employee",
+  "primary_query": "¿Cómo crear un agente de IA para una empresa?",
+  "intent": "how_to",
+  "audience": "Operaciones / Innovación / Emprendedores",
+  "geography": "México / LATAM",
+  "angle": "Diseña sistemas, no sólo prompts.",
+  "proof_required": [
+    "metodología",
+    "casos o ejemplos verificables",
+    "controles de seguridad"
+  ],
+  "approved_claims": [],
+  "source_assets": [],
+  "voice": "español México, ejecutivo, práctico",
+  "cta": null,
+  "post_type": "text",
+  "constraints": {
+    "no_ranking_guarantees": true,
+    "preserve_primary_query": true,
+    "publish_gate_required": true
+  }
+}

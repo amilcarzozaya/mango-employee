@@ -1365,6 +1365,323 @@
           "name": "gate_required"
         }
       ]
+    },
+    {
+      "id": "category-search-system",
+      "version": "1.2.0",
+      "objective": "Operate a governed Category Search System from strategic Query Brain through T1 content execution, neutral multi-surface observations, auditable operational reprioritization, and a Google Sheets dashboard/weekly content queue without fabricating demand or overwriting strategic truth.",
+      "trigger": "When the user wants to build category authority, define 20-50+ strategic questions, create a search/query map, prioritize content for Google/LinkedIn/AI search, execute T1 content, observe search visibility, or run a weekly Category Search dashboard/queue.",
+      "inputs": [
+        "target entity or entities",
+        "business/positioning goal",
+        "audience",
+        "market/geography",
+        "seed categories or topics",
+        "optional existing content inventory",
+        "optional evidence library",
+        "optional publication capacity/cadence",
+        "optional search observations"
+      ],
+      "sources": [
+        "query-brain",
+        "user-provided-positioning-and-evidence",
+        "current-official-search-platform-guidance",
+        "published-content-inventory",
+        "search-observations"
+      ],
+      "procedure": [
+        "Frame the category objective with MANGO and normalize canonical entities, audiences, markets and category vocabulary.",
+        "Generate and deduplicate distinct search jobs; score strategic priority without inventing search volume, keyword difficulty or ranking probability.",
+        "Select a balanced T1 portfolio and define entity association, proof requirements, unique point of view and content mode.",
+        "Execute T1 through the Content Engine using materially distinct assets and evidence cards.",
+        "Stop at the publish gate before external publication unless explicit authority exists.",
+        "Observe exact queries neutrally across authorized search/AI surfaces and record timestamp, provider, target mention, citations, owned citations, entities and bounded answer evidence.",
+        "Preserve strategic scores and calculate a separate operational-priority overlay.",
+        "Export normalized observation/query/entity/URL feeds to the Google Sheets Dashboard; never mix synthetic DEMO rows with LIVE rows.",
+        "Generate the weekly content queue from operational status while keeping strategic rank visible.",
+        "Use corrections and repeated observations to refresh evidence, content and operational order; only change strategic Brain definitions when strategic evidence justifies a versioned change.",
+        "Retain history/rollback and never treat a single observation as permanent ranking."
+      ],
+      "rules": [
+        "The Query Brain is a strategic map, not a claim about actual search volume.",
+        "Never guarantee ranking, indexing, AI citation, traffic, leads or sales.",
+        "Never invent search volume, keyword difficulty, competitor rankings or AI visibility measurements.",
+        "Do not create separate thin assets for trivial wording variations of the same intent.",
+        "Prefer unique first-hand, evidence-backed, people-first content over commodity summaries.",
+        "One primary search job per asset.",
+        "Current platform mechanics and current market claims require fresh verification when web access exists.",
+        "Search observations must include date, query, surface and result.",
+        "Strategic priority and operational priority are separate; observation must not silently rewrite strategic score.",
+        "Measurement prompts must be neutral and must not tell a provider to mention or rank the target entity.",
+        "Do not scrape consumer Google pages directly; use authorized/imported SERP observations.",
+        "Synthetic DEMO observations must never be presented as real visibility or included in LIVE dashboard calculations.",
+        "Share of Answer means target appearances divided by collected observations only; it is not market share.",
+        "The Google Sheets dashboard is an operating view, not the source of strategic truth.",
+        "External publication requires the publish gate unless the active contract explicitly authorizes it."
+      ],
+      "output": {
+        "format": "structured markdown + JSON/CSV registry + dashboard feed",
+        "modes": [
+          "build_brain",
+          "expand_category",
+          "prioritize",
+          "content_cluster",
+          "execute_t1",
+          "visibility_audit",
+          "observe",
+          "dashboard_sync",
+          "weekly_queue",
+          "refresh_brain"
+        ],
+        "fields": [
+          "category_map",
+          "query_registry",
+          "priority_tiers",
+          "entity_map",
+          "content_cluster_briefs",
+          "publication_plan",
+          "verification_queries",
+          "observation_log",
+          "operational_priority_overlay",
+          "share_of_answer",
+          "entity_observations",
+          "cited_urls",
+          "weekly_content_queue",
+          "dashboard_feed",
+          "gaps_and_next_actions"
+        ]
+      },
+      "definition_of_done": [
+        "Canonical entities, audience, market and category vocabulary are explicit.",
+        "The query universe contains materially distinct search jobs.",
+        "Every query has a transparent strategic priority score with no fabricated demand data.",
+        "T1 queries have entity association, proof requirement and content mode.",
+        "Near-duplicate queries are clustered or merged.",
+        "Current factual claims are sourced or marked for verification.",
+        "Dated neutral observations remain separate from strategic truth.",
+        "Operational priority can be recalculated without modifying the base strategic score.",
+        "Google Sheets feed separates DEMO and LIVE data and produces a weekly content queue.",
+        "No search outcome is promised.",
+        "No external publication occurs without required approval."
+      ],
+      "qa": [
+        "No duplicate search jobs as separate thin-content targets.",
+        "No priority score described as search volume, difficulty or probability.",
+        "T1 queries are strategically or commercially meaningful.",
+        "Entity association is natural and supportable.",
+        "Evidence requirements are explicit.",
+        "Observation queries are neutral and surface-specific.",
+        "Strategic score is unchanged after observation scoring.",
+        "DEMO and LIVE rows are never mixed.",
+        "Share of Answer uses collected observations as its denominator.",
+        "Publishing remains gated."
+      ],
+      "gates": [
+        "publish-gate"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [],
+      "missing_information_policy": "Use the existing Query Brain and explicit positioning as defaults. If demand data, proof, current ranking evidence, provider credentials or SERP observations are missing, mark UNKNOWN/TBD or BLOCKED; do not infer or fabricate.",
+      "tests": [
+        {
+          "name": "50-query-build",
+          "expected": "20-50+ materially distinct questions, scored and tiered without invented search volume"
+        },
+        {
+          "name": "duplicate-intent",
+          "expected": "near-duplicate wording is merged into one search job or supporting phrase"
+        },
+        {
+          "name": "thin-content-risk",
+          "expected": "system recommends consolidation instead of many near-identical pages"
+        },
+        {
+          "name": "missing-demand-data",
+          "expected": "strategic score proceeds while search volume remains UNKNOWN"
+        },
+        {
+          "name": "entity-association",
+          "expected": "entity/topic relationship is natural and evidence-backed"
+        },
+        {
+          "name": "current-claim",
+          "expected": "fresh source required before current platform or market claim is published"
+        },
+        {
+          "name": "visibility-check",
+          "expected": "dated query/surface observation recorded without permanent-ranking claim"
+        },
+        {
+          "name": "strategic-immutability",
+          "expected": "observation updates operational overlay but leaves strategic priority_score unchanged"
+        },
+        {
+          "name": "provider-blocked",
+          "expected": "missing live provider credentials/feed blocks observation rather than fabricating data"
+        },
+        {
+          "name": "dashboard-demo-live-separation",
+          "expected": "synthetic fixture rows are excluded from LIVE calculations"
+        },
+        {
+          "name": "share-of-answer-contract",
+          "expected": "Share of Answer is target appearances / collected observations, not market share"
+        },
+        {
+          "name": "weekly-content-queue",
+          "expected": "queue sorts operational priority and keeps strategic rank visible"
+        },
+        {
+          "name": "publish-request",
+          "expected": "external publishing stops at publish gate without explicit approval"
+        }
+      ],
+      "dependencies": [
+        {
+          "skill_id": "linkedin-search-visibility",
+          "min_version": "1.1.0",
+          "required_for": [
+            "linkedin_execution"
+          ]
+        }
+      ],
+      "handoff_contract": {
+        "version": "1.0",
+        "to_skill": "linkedin-search-visibility",
+        "documentation": "docs/category-search-system/HANDOFF-CONTRACT.md"
+      }
+    },
+    {
+      "id": "linkedin-search-visibility",
+      "version": "1.1.0",
+      "objective": "Create or audit LinkedIn content that strengthens discoverability, entity association, and AI/search retrievability for one defined search job, including direct execution of category-search-system handoff packages, without promising ranking or inventing evidence.",
+      "trigger": "When a user or parent Category Search System wants to create, optimize, cluster, or audit LinkedIn content around a query, category, problem, geography, service, expertise area, or AI-search visibility goal.",
+      "inputs": [
+        "entity",
+        "topic_or_query",
+        "audience",
+        "optional parent_handoff_package",
+        "optional geography",
+        "optional proof/evidence",
+        "optional positioning",
+        "optional offer",
+        "optional CTA",
+        "optional voice",
+        "optional post_type",
+        "optional time_context"
+      ],
+      "sources": [
+        "category-search-system-handoff",
+        "linkedin-ai-search-guidance",
+        "user-provided-evidence",
+        "current-public-sources-when-needed"
+      ],
+      "procedure": [
+        "If invoked from category-search-system, validate and consume the handoff package as the source of truth for query_id, primary query, entity association, audience, geography, angle and evidence requirements.",
+        "Frame direct tasks with MANGO when no parent handoff exists.",
+        "Classify search intent and keep one primary search job per asset.",
+        "Build a compact query map with semantic secondary phrases.",
+        "Generate three natural opening lines that front-load the primary topic without keyword stuffing.",
+        "Draft the answer so the useful response appears near the top.",
+        "Make the relationship between the entity and category explicit using approved evidence.",
+        "Verify material claims; remove or qualify unsupported claims.",
+        "Handle public-visibility and document/PDF filename risk before previewing URL terms.",
+        "Return the requested asset plus handoff receipt, discoverability preview, verification queries, claims-to-verify and publish-gate status.",
+        "Stop at the publication gate unless explicit publish authority and approval exist."
+      ],
+      "rules": [
+        "Never guarantee ranking, indexing, AI citation, traffic, leads or sales.",
+        "Never invent search volume, rankings, testimonials, clients, results or platform mechanics.",
+        "Prefer official LinkedIn sources for current platform behavior when web access exists.",
+        "Use one primary search job per asset.",
+        "Place the topic naturally in the opening line when search-oriented URL construction matters.",
+        "Avoid hashtags in the opening line.",
+        "Do not assume editing the opening after publication changes the existing URL.",
+        "Flag document/PDF filename effects before claiming what the slug will be.",
+        "Keep copy useful and natural; no keyword stuffing.",
+        "When invoked by category-search-system, do not change the parent's strategic score or silently substitute another primary query.",
+        "Publishing requires human approval unless the active contract explicitly authorizes it."
+      ],
+      "output": {
+        "format": "markdown + structured handoff receipt",
+        "modes": [
+          "single_post",
+          "category_cluster",
+          "authority_article",
+          "audit"
+        ],
+        "fields": [
+          "handoff_receipt",
+          "search_brief",
+          "opening_options",
+          "final_asset",
+          "discoverability_preview",
+          "verification_queries",
+          "claims_to_verify",
+          "publish_gate_status"
+        ]
+      },
+      "definition_of_done": [
+        "The primary query and search intent are explicit.",
+        "The opening line contains the primary topic naturally.",
+        "The entity-topic association is explicit and non-spammy.",
+        "The first useful answer appears near the top.",
+        "Material claims are supported or clearly qualified.",
+        "Public visibility and media filename risks are addressed.",
+        "The URL/slug is presented only as a preview, never a guarantee.",
+        "Verification queries are supplied.",
+        "Parent query_id is returned in the handoff receipt when applicable.",
+        "No external publication occurs without the required approval."
+      ],
+      "qa": [
+        "One primary query per post.",
+        "No keyword stuffing.",
+        "No unsupported superlatives or rankings.",
+        "Facts, first-hand experience, inference and recommendation are distinguishable.",
+        "Parent handoff fields are preserved.",
+        "Document/PDF behavior is handled when applicable.",
+        "Search/indexing outcomes are not promised."
+      ],
+      "gates": [
+        "publish-gate"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [],
+      "missing_information_policy": "If a parent handoff is present, preserve its query and mark missing evidence/TBD. For direct tasks, derive query candidates only when the topic is clear. Never fabricate demand data, proof, or current platform behavior.",
+      "accepts_handoff_from": [
+        "category-search-system"
+      ],
+      "handoff_contract_version": "1.0",
+      "tests": [
+        {
+          "name": "parent-handoff",
+          "expected": "query_id, primary query, entity and angle are consumed unchanged and handoff receipt is returned"
+        },
+        {
+          "name": "local-service-query",
+          "expected": "natural geo/category opening plus evidence-backed post and verification queries"
+        },
+        {
+          "name": "missing-evidence",
+          "expected": "unsupported performance claim removed or qualified"
+        },
+        {
+          "name": "keyword-stuffing",
+          "expected": "rewrite to one natural primary phrase with semantic variants"
+        },
+        {
+          "name": "pdf-attachment",
+          "expected": "filename slug risk flagged and descriptive filename suggested"
+        },
+        {
+          "name": "ranking-guarantee",
+          "expected": "no guarantee; distinguish optimization from outcome"
+        },
+        {
+          "name": "publish-request",
+          "expected": "draft prepared; publication stopped at publish gate without explicit approval"
+        }
+      ]
     }
   ]
 }
