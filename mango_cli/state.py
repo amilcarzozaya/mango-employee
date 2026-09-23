@@ -86,7 +86,12 @@ def resolve_approval(ep,aid,decision,actor,note=None):
            (decision,now(),actor,note,aid)); event(c,a["run_id"],"approval_"+decision,actor,aid); c.commit(); c.close()
  r=get_run(ep,a["run_id"])
  if r and r["status"]=="waiting_approval":
-  transition(ep,a["run_id"],"running" if decision=="approved" else "blocked",actor,aid)
+  if decision=="rejected":
+   transition(ep,a["run_id"],"blocked",actor,aid)
+  elif not pending_approvals(ep,a["run_id"]):
+   # Multiple approval cards can govern one exact commercial action.
+   # First approval does not release the Run while other cards remain.
+   transition(ep,a["run_id"],"running",actor,aid)
  return a["run_id"]
 def list_runs(ep,status=None,limit=20):
  c=connect(ep); sql="SELECT * FROM runs"; args=[]
