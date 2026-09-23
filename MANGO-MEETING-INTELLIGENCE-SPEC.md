@@ -51,3 +51,17 @@ require human review even though record-level evidence is mechanically checked.
 
 See `docs/meeting-intelligence/TECHNICAL-SPEC.md` for API, supported input
 formats, extraction envelope, date grammar, source checks, and security.
+
+## Stage 4: persistent, privacy-aware workflow
+
+`mango workflow meeting` records a Run, source hash, Runtime Package,
+provenance and report files. When the Employee declares an active
+`sensitive_data` Gate and a live external model is requested, it creates
+a content-/runtime-bound Approval Card and does not transmit until
+`mango workflow meeting-resume` validates the exact original SHA256
+and the approval. Offline extraction and prepare mode never trigger an
+external model call. Generated reports under `meetings/output` are
+included in verified release backups, while original transcripts and
+sensitive prompt exports are not backed up automatically.
+
+See [Operational Workflows](docs/OPERATIONAL-WORKFLOWS.md).
