@@ -294,7 +294,7 @@ def setup(destination, *, input_fn=input, out=print):
     if missing:
         raise ValueError(f"Faltan Skills canónicas en el repositorio: {missing}")
     target = Path(destination).expanduser()
-    if target.exists() and (not target.is_dir() or any(target.iterdir())):
+    if target.is_symlink() or (target.exists() and (not target.is_dir() or any(target.iterdir()))):
         raise FileExistsError("Carpeta ya ocupada: se prohíbe sobrescribir el Employee.")
     _say(out, "\nMANGO Employee — alta guiada (sin editar JSON)")
     _say(out, "El Employee se creará con Meeting Intelligence, Quote Builder")
@@ -547,9 +547,12 @@ def meeting_wizard(employee, *, input_fn=input, out=print):
             raise GuidedCancelled("No se transmitió información.")
         enable_privacy(ep, input_fn=input_fn, out=out)
     formats = _formats(input_fn=input_fn, out=out)
+    # Prepare mode must leave the user an actual file they can open.
+    prompt = (ep.parent / "meetings" / "prompts" /
+              ("prepared-" + uuid.uuid4().hex + ".md")) if runtime == "prepare" else None
     result = meeting_workflow(ep, _repo(), source,
                               title=title, meeting_date=meeting_date,
-                              runtime=runtime, formats=formats)
+                              runtime=runtime, formats=formats, prompt_out=prompt)
     _say(out, f"\nRun: {result['run_id']} · Estado: {result['status']}")
     if result["status"] == "waiting_approval":
         _say(out, "No se transmitió nada: se necesita aprobación sensible.")
@@ -558,6 +561,7 @@ def meeting_wizard(employee, *, input_fn=input, out=print):
                                     input_fn=input_fn, out=out)
     elif result["status"] == "prepared":
         _say(out, "Sólo se preparó el prompt; NO se generó un reporte de reunión.")
+        _say(out, f"Archivo preparado: {result.get('prompt_path')}")
         _say(out, "Para un reporte utiliza un runtime externo autorizado.")
     return result
 
