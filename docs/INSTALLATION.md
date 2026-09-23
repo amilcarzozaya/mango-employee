@@ -77,6 +77,16 @@ python -m pip install -e .
 
 Editable mode means the installed mango command points at this working tree. When you git pull code changes, reinstalling with pip -e . is still a good upgrade hygiene step, but you do not need to copy the package somewhere else.
 
+## Optional Meeting Intelligence document features
+
+For Word/PDF reading and Word/PDF output, run:
+
+~~~bash
+python -m pip install -e ".[meeting]"
+~~~
+
+The basic installation continues to work without these extras. See docs/meeting-intelligence/USER-GUIDE.md.
+
 ## Verify the CLI
 
 ~~~bash
@@ -86,7 +96,7 @@ mango --version
 Expected release for this documentation:
 
 ~~~text
-mango-employee-cli 0.12.0rc2
+mango-employee-cli 0.13.0rc1
 ~~~
 
 Then:
