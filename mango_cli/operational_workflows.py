@@ -64,6 +64,9 @@ def _fail_run(ep, rid, span, exc):
     status = get_run(ep, rid)["status"]
     if status == "running":
         fail(ep, rid, str(exc), "operational-workflow")
+    elif status == "waiting_approval":
+        # A partially-created approval batch must never remain executable.
+        transition(ep, rid, "blocked", "operational-workflow", str(exc))
 
 
 def _record_report(ep, rid, result, source_hash, *, prepared):
