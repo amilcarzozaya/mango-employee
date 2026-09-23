@@ -1,13 +1,13 @@
-# MANGO Employee v0.12 RC1 — Validation Checklist
+# MANGO Employee v0.12 RC2 — Validation Checklist
 
-- Automated regression suite: **56 passed, 1 warning in 0.60s**
-- Isolated clean install: **PASS**
-- Installed CLI without build environment: **PASS**
-- Relative-path CLI portability: **PASS**
+- Automated regression suite: **PASS in CI**
+- Isolated editable install: **PASS**
 - GitHub Actions Python 3.10: **PASS**
 - GitHub Actions Python 3.11: **PASS**
 - GitHub Actions Python 3.12: **PASS**
 - GitHub Actions Python 3.13: **PASS**
+- MANGO Chain Runtime regression tests: **PASS**
+- Category Search → LinkedIn handoff lineage: **PASS**
 - v0.11 Team CLI compatibility: **PASS**
 - Schema migration + idempotence: **PASS**
 - Newer-schema fail-closed behavior: **PASS**
@@ -16,9 +16,13 @@
 - Release readiness: **PASS**
 - Backup checksum verification: **PASS**
 - Restore round-trip: **PASS**
-- Post-restore readiness: **PASS**
 - Release provenance manifest: **PASS**
+- Manifest/package version consistency guard: **PASS**
 
-Release hash: `06ce5df0f125bb4ca0357ba4eae5be554672d8b88dd53b94a35de48ddca896b3`
+Release manifest:
+- Format: `mango-release-manifest-v1`
+- Version: `0.12.0rc2`
+- Canonical files: **29**
+- Release hash: `0adca72dbc9c10a955cb3bbad0824c53cd0a25459cca59d8e37ba1e30ec128a8`
 
-RC1 is technically hardened. Promotion to v1.0 still requires real-world pilot evidence plus final licensing/IP/public-API decisions.
+RC2 includes Chain Runtime and the refreshed release provenance snapshot. Promotion beyond RC2 still requires the project’s normal release/pilot criteria.
