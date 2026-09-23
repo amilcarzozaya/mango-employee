@@ -483,6 +483,7 @@ def _require_formal_quote_approvals(employee_path, packet, draft, approver, appr
             "draft_id": draft["draft_id"],
             "draft_sha256": draft["integrity"]["sha256"],
             "profile_id": draft["profile_id"],
+            "client_name": draft["client"]["name"],
             "currency": draft["currency"], "total": draft["totals"]["total"],
             "quote_date": draft["quote_date"], "valid_until": draft["valid_until"],
         }
