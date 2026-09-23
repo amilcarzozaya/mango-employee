@@ -24,6 +24,6 @@ Release manifest:
 - Format: `mango-release-manifest-v1`
 - Version: `0.12.0rc2`
 - Canonical files: **29**
-- Release hash: `06e1d0bd904a13c1751560613d28097053fab0878a4837e0f0c8bdbe6bf67e52`
+- Release hash: `d95019d2c01fb636d33c4c0b062bca4824c35528b60cd65d0017d33321a43dd3`
 
 RC2 includes Chain Runtime and the refreshed release provenance snapshot. Promotion beyond RC2 still requires the project’s normal release/pilot criteria.
