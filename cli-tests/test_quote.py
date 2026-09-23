@@ -273,3 +273,29 @@ def test_docx_pdf_export_parity(configured, tmp_path):
     assert "3,432.00" in Path(paths["md"]).read_text(encoding="utf-8")
     assert "3,432.00" in pypdf.PdfReader(paths["pdf"]).pages[0].extract_text()
     assert json.loads(Path(paths["json"]).read_text(encoding="utf-8"))["totals"]["total"] == "3432.00"
+
+
+def test_release_backup_recovers_quote_profiles_drafts_and_ledger(configured, tmp_path):
+    from mango_cli.hardening import backup, verify_backup, restore, audit
+    draft = _draft(configured)
+    issued = issue_quote(configured, ROOT, draft["draft_id"], "Auditor de prueba")
+    before = audit(configured)
+    quote_audits = [x for x in before["checks"] if x["name"].startswith("quote-")
+                    or x["name"] == "sqlite-quote-ledger"]
+    assert quote_audits and all(x["ok"] for x in quote_audits)
+    saved, manifest = backup(configured, tmp_path / "backups")
+    paths = {x["path"] for x in manifest["files"]}
+    assert "quotes/profiles/demo.json" in paths
+    assert "quotes/drafts/" + draft["draft_id"] + ".json" in paths
+    assert "quotes/issued/" + draft["draft_id"] + ".json" in paths
+    assert "quotes/folios.sqlite" in paths
+    assert verify_backup(saved)["ok"]
+    recovered = tmp_path / "restored"
+    recovered.mkdir()
+    result = restore(recovered, saved)
+    assert result["ok"]
+    assert (recovered / "quotes/folios.sqlite").is_file()
+    assert (recovered / "quotes/issued" / (draft["draft_id"] + ".json")).is_file()
+    # Never overwrite active quotation stores unless the user explicitly agrees.
+    with pytest.raises(FileExistsError):
+        restore(recovered, saved)
