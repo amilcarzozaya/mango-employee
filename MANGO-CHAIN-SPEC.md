@@ -1,5 +1,8 @@
 # MANGO Chain Runtime Specification (MCRS) v0.1
 
+> **Advanced / normative reference.** If you are new to MANGO Employee, start with `docs/START-HERE.md`, then `docs/CONCEPTS.md` and `docs/COMMAND-REFERENCE.md`. This file assumes the basic terms Employee, Skill, Runtime, Run, Gate, Tool, Memory, and Handoff are already understood.
+
+
 Created by **Amílcar Zozaya**, creator of Método MANGO.
 
 MANGO Chain adds governed Skill-to-Skill orchestration inside one persistent Run.
