@@ -161,3 +161,7 @@ transcripciones originales ni prompts completos por defecto.
 
 El CLI registra decisiones de operadores pero no autentica su identidad.
 Una empresa debe implementar SSO, roles, cifrado y políticas de conservación.
+
+La comprobación `sensitive_data` se realiza tanto en el workflow como
+en el propio servicio de Meeting Intelligence. El comando directo
+no permite saltarse una aprobación formal antes de utilizar un modelo externo.
