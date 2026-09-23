@@ -88,6 +88,26 @@ def audit(ep):
   bad_h=[dict(x) for x in c.execute("SELECT id,status FROM handoffs WHERE status NOT IN ('proposed','accepted','running','returned','completed','rejected','cancelled')")]
   c.close()
   add("no-orphan-team-members",not orphan_members,orphan_members[:10]); add("no-orphan-handoffs",not orphan_handoffs,orphan_handoffs[:10]); add("handoff-state-domain",not bad_h,bad_h[:10])
+ # Optional Quote Builder ledger integrity, if the Employee uses quotations.
+ qp=b/"quotes/folios.sqlite"
+ if qp.exists():
+  info=_db_integrity(qp); add("sqlite-quote-ledger",info["ok"],info)
+ for kind in ("profiles","drafts","issued"):
+  folder=b/"quotes"/kind
+  if folder.exists():
+   for file in sorted(folder.glob("*.json")):
+    try:
+     if file.is_symlink(): raise ValueError("Symbolic link in quote snapshots")
+     payload=json.loads(file.read_text(encoding="utf-8"))
+     if not isinstance(payload,dict): raise ValueError("Invalid JSON document")
+     if kind in ("drafts","issued"):
+      expected=payload.get("integrity",{}).get("sha256")
+      canonical=json.dumps({k:v for k,v in payload.items() if k!="integrity"},
+       ensure_ascii=False,sort_keys=True,separators=(",",":")).encode("utf-8")
+      if expected!=hashlib.sha256(canonical).hexdigest():
+       raise ValueError("Quote snapshot checksum mismatch")
+     add("quote-"+kind+"-"+file.name,True,"valid snapshot")
+    except Exception as exc: add("quote-"+kind+"-"+file.name,False,str(exc))
  # package hygiene
  add("no-secret-env-files",not any((b/x).exists() for x in (".env",".env.local",".secrets")), "checked .env/.env.local/.secrets")
  return {"ok":all(x["ok"] for x in checks),"checks":checks,"passed":sum(x["ok"] for x in checks),"total":len(checks)}
@@ -105,6 +125,24 @@ def backup(ep,out_dir):
   try: sc.backup(dc)
   finally: dc.close(); sc.close()
   files.append({"component":component,"path":rel,"sha256":sha256(dp),"bytes":dp.stat().st_size})
+ # Quote Builder operational data: back up the folio SQLite ledger plus
+ # issuer profiles and immutable draft/issued JSON. Rendered output is
+ # regenerable from issued JSON and intentionally excluded.
+ qdb=b/"quotes/folios.sqlite"
+ if qdb.exists():
+  qp=dest/"quotes/folios.sqlite"; qp.parent.mkdir(parents=True,exist_ok=True)
+  sc=sqlite3.connect(qdb); dc=sqlite3.connect(qp)
+  try: sc.backup(dc)
+  finally: dc.close(); sc.close()
+  files.append({"component":"quote-ledger","path":"quotes/folios.sqlite","sha256":sha256(qp),"bytes":qp.stat().st_size})
+ for kind in ("profiles","drafts","issued"):
+  folder=b/"quotes"/kind
+  if not folder.exists(): continue
+  for source in sorted(folder.glob("*.json")):
+   if source.is_symlink() or not source.is_file(): raise ValueError("Unsafe quote snapshot path")
+   rel=source.relative_to(b)
+   dp=dest/rel; dp.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(source,dp)
+   files.append({"component":"quote-"+kind,"path":str(rel),"sha256":sha256(dp),"bytes":dp.stat().st_size})
  # Back up operational JSON, not arbitrary context/secrets.
  for rel in ("employee.json","state/execution-queue.json","tools/registry.json"):
   src=b/rel
@@ -131,7 +169,9 @@ def restore(ep,backup_dir,force=False):
  if not v["ok"]: raise ValueError("Backup verification failed: "+json.dumps(v))
  if not force:
   # Refuse overwrite of non-empty operational stores.
-  existing=[rel for rel in list(DBS.values())+["state/execution-queue.json"] if (b/rel).exists()]
+  existing=[rel for rel in list(DBS.values())+["state/execution-queue.json","quotes/folios.sqlite"] if (b/rel).exists()]
+  listed=json.loads((src/"backup-manifest.json").read_text())
+  existing += [item["path"] for item in listed.get("files",[]) if item["path"].startswith("quotes/") and (b/item["path"]).exists()]
   if existing: raise FileExistsError("Restore would overwrite existing state; use --force")
  m=json.loads((src/"backup-manifest.json").read_text())
  for x in m["files"]:
