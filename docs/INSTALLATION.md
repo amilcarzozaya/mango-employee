@@ -87,6 +87,17 @@ python -m pip install -e ".[meeting]"
 
 The basic installation continues to work without these extras. See docs/meeting-intelligence/USER-GUIDE.md.
 
+## Optional Quote Builder documents
+
+Para cotizaciones Word/PDF, instala:
+
+~~~bash
+python -m pip install -e ".[quote]"
+~~~
+
+No se necesita ningún modelo de IA para cotizar. Un ejemplo ficticio, el perfil
+y todas las instrucciones se encuentran en [Quote Builder](quote-builder/USER-GUIDE.md).
+
 ## Verify the CLI
 
 ~~~bash
@@ -96,7 +107,7 @@ mango --version
 Expected release for this documentation:
 
 ~~~text
-mango-employee-cli 0.13.0rc1
+mango-employee-cli 0.13.0rc2
 ~~~
 
 Then:
