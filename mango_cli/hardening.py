@@ -2,7 +2,8 @@
 from pathlib import Path
 import sqlite3, json, hashlib, datetime, shutil, tempfile, os
 
-RC_VERSION="0.12.0-rc1"
+RC_VERSION="0.12.0rc2"
+RC_LABEL="MANGO Employee v0.12 RC2"
 SCHEMA_VERSION=1
 DBS={
  "state":"state/state.db",
@@ -140,13 +141,36 @@ def restore(ep,backup_dir,force=False):
   shutil.copy2(src/rel,dp)
  return {"ok":True,"restored":len(m["files"])}
 
+def _package_version(repo):
+ p=Path(repo)/"pyproject.toml"
+ if not p.exists(): raise FileNotFoundError("pyproject.toml not found")
+ text=p.read_text(encoding="utf-8")
+ import re
+ m=re.search(r'^version\s*=\s*"([^"]+)"',text,re.MULTILINE)
+ if not m: raise ValueError("Project version not found in pyproject.toml")
+ return m.group(1)
+
 def release_manifest(repo):
- r=Path(repo); files=[]
+ r=Path(repo); package_version=_package_version(r)
+ if package_version!=RC_VERSION:
+  raise RuntimeError(f"Release version mismatch: hardening={RC_VERSION} pyproject={package_version}")
+ files=[]
  for pat in ("mango_cli/*.py","MANGO-*-SPEC.md","pyproject.toml","README.md","CHANGELOG.md"):
   for p in sorted(r.glob(pat)):
-   if p.is_file(): files.append({"path":str(p.relative_to(r)),"sha256":sha256(p),"bytes":p.stat().st_size})
- payload={"release":"MANGO Employee v0.12 RC1","version":RC_VERSION,"schema_version":SCHEMA_VERSION,"generated_at":now(),"files":files}
- payload["release_hash"]=hashlib.sha256(json.dumps(files,sort_keys=True).encode()).hexdigest()
+   if p.is_file():
+    files.append({"path":str(p.relative_to(r)),"sha256":sha256(p),"bytes":p.stat().st_size})
+ files=sorted(files,key=lambda x:x["path"])
+ canonical=json.dumps(files,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()
+ payload={
+  "format":"mango-release-manifest-v1",
+  "release":RC_LABEL,
+  "version":RC_VERSION,
+  "schema_version":SCHEMA_VERSION,
+  "generated_at":now(),
+  "file_count":len(files),
+  "files":files,
+  "release_hash":hashlib.sha256(canonical).hexdigest()
+ }
  return payload
 
 def readiness(ep,repo):
