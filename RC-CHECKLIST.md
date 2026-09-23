@@ -1,29 +1,36 @@
-# MANGO Employee v0.12 RC2 — Validation Checklist
+# MANGO Employee v0.13 RC1 — Validation Checklist
 
-- Automated regression suite: **PASS in CI**
-- Isolated editable install: **PASS**
-- GitHub Actions Python 3.10: **PASS**
-- GitHub Actions Python 3.11: **PASS**
-- GitHub Actions Python 3.12: **PASS**
-- GitHub Actions Python 3.13: **PASS**
-- MANGO Chain Runtime regression tests: **PASS**
-- Category Search → LinkedIn handoff lineage: **PASS**
-- v0.11 Team CLI compatibility: **PASS**
-- Schema migration + idempotence: **PASS**
-- Newer-schema fail-closed behavior: **PASS**
-- Data integrity audit: **PASS**
-- Security audit: **PASS**
-- Release readiness: **PASS**
-- Backup checksum verification: **PASS**
-- Restore round-trip: **PASS**
-- Release provenance manifest: **PASS**
-- Manifest/package version consistency guard: **PASS**
-- Documentation onboarding/link regression tests: **PASS**
+## Alcance
 
-Release manifest:
-- Format: `mango-release-manifest-v1`
-- Version: `0.12.0rc2`
-- Canonical files: **29**
-- Release hash: `d95019d2c01fb636d33c4c0b062bca4824c35528b60cd65d0017d33321a43dd3`
+- MANGO Meeting Intelligence v2: Skill post-meeting-capture v2.0.0.
+- Comando mango meeting con prepare, runtime live o extracción estructurada ya disponible.
+- Reporte de tareas, fechas, compromisos, decisiones, pendientes y hasta tres puntos críticos.
+- Validación de citas literales; fechas normalizadas en Python.
+- Exportación JSON/Markdown y Word/PDF con extras opcionales meeting.
+- Compatibilidad de campos con post-meeting-capture v1.
+- Sin envíos externos ni promoción automática de Memory.
 
-RC2 includes Chain Runtime and the refreshed release provenance snapshot. Promotion beyond RC2 still requires the project’s normal release/pilot criteria.
+## Checklist de release
+
+- [x] Canonical Skill, .agents y .claude sincronizadas.
+- [x] Fixtures ficticios de transcripción/extracción incluidos.
+- [x] README, manual de usuario, especificación técnica y schemas añadidos.
+- [x] Compatibilidad con Employee de referencia explícita.
+- [x] Release manifest regenerado tras cambios de runtime/especificación.
+- [ ] CI Python 3.10–3.13: verificar antes de fusionar.
+- [ ] CLI / pruebas DOCX-PDF: verificar en el CI.
+- [ ] Confirmar que el manifest comprometido coincide con el generador.
+- [ ] Revisar CI del commit de merge en main.
+
+## Provenance
+
+- Format: mango-release-manifest-v1
+- Package: 0.13.0rc1
+- Canonical files: 32
+- Release hash: dd500813ef25e814ea99ab84754e1b5abff05735e752a8e87d29da104b564132
+
+## Límites declarados
+
+Sin transcripción de audio/video, diarización, OCR ni seguimiento externo automático.
+Un reporte terminado aún requiere revisión humana; la evidencia literal no
+constituye validación independiente de todas las interpretaciones de la IA.
