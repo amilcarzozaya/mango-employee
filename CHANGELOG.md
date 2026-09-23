@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.13.0rc2 — MANGO Quote Builder v1
+
+- Adds independent commercial-quotation Skill and explicit reference Employee assignment.
+- Adds one-time issuer profiles with tax rules configured by the issuer.
+- Adds pure Decimal calculator with discount, additive tax, withholding, inclusive tax and transparent per-line rounding.
+- Adds draft snapshots, atomic/idempotent SQLite folios, manual human attestation and JSON/Markdown/Word/PDF output.
+- Adds fictional fixtures, JSON schemas, user manual, technical specification and regression tests.
+- Explicitly excludes CFDI, tax-law inference, automatic sending and authenticated approver identity.
+
+
 ## 0.13.0rc1 — MANGO Meeting Intelligence v2
 - Upgrades the existing post-meeting-capture Skill to v2, preserving its ID and legacy output aliases.
 - Adds mango meeting with prepare, live extraction, and validated offline JSON import.
