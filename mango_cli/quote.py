@@ -118,6 +118,14 @@ def _employee_root(employee_path):
     return path.resolve().parent, path.resolve()
 
 
+def _inside(root, path):
+    """Reject symlinked parent directories escaping the Employee project."""
+    resolved = Path(path).resolve(strict=False)
+    if not resolved.is_relative_to(Path(root).resolve()):
+        raise QuoteError("Ruta de almacenamiento fuera del Employee: no permitida.")
+    return Path(path)
+
+
 def ensure_assigned(employee_path, repo_root):
     root, employee_file = _employee_root(employee_path)
     # The normal MANGO package enforces registry presence, assignment,
@@ -205,7 +213,7 @@ def validate_profile(data):
 def init_profile(employee_path, repo_root, source):
     root, _ = ensure_assigned(employee_path, repo_root)
     profile = validate_profile(_json(source))
-    path = root / "quotes" / "profiles" / (profile["profile_id"] + ".json")
+    path = _inside(root, root / "quotes" / "profiles" / (profile["profile_id"] + ".json"))
     _save_exclusive(path, profile)
     return {"profile_id": profile["profile_id"], "saved_to": str(path),
             "tax_rule_count": len(profile["taxes"]), "status": "configured"}
@@ -220,7 +228,7 @@ def list_profiles(employee_path, repo_root):
 def load_profile(root, profile_id):
     if not isinstance(profile_id, str) or not PROFILE_ID.fullmatch(profile_id):
         raise QuoteError("profile_id inválido.")
-    path = root / "quotes" / "profiles" / (profile_id + ".json")
+    path = _inside(root, root / "quotes" / "profiles" / (profile_id + ".json"))
     if not path.is_file() or path.is_symlink():
         raise QuoteError(f"Perfil no encontrado o no permitido: {profile_id}")
     profile = validate_profile(_json(path))
@@ -415,7 +423,7 @@ def make_quote(employee_path, repo_root, profile_id, request_path, *, persist=Fa
     # Check renderers/dependencies before we persist a draft.
     from .quote_render import preflight_formats, export_quote
     preflight_formats(formats)
-    local = root / "quotes" / "drafts" / (draft["draft_id"] + ".json")
+    local = _inside(root, root / "quotes" / "drafts" / (draft["draft_id"] + ".json"))
     _save_exclusive(local, draft)
     destination = Path(out_dir) if out_dir is not None else root / "quotes" / "output"
     paths = export_quote(draft, destination, formats)
@@ -436,14 +444,14 @@ def issue_quote(employee_path, repo_root, draft_id, approved_by, *,
     if not isinstance(draft_id, str) or not re.fullmatch(r"qd-[0-9a-f]{32}", draft_id):
         raise QuoteError("draft_id inválido.")
     approver = _text(approved_by, "approved_by", max_length=150)
-    draft_path = root / "quotes" / "drafts" / (draft_id + ".json")
+    draft_path = _inside(root, root / "quotes" / "drafts" / (draft_id + ".json"))
     if not draft_path.is_file() or draft_path.is_symlink():
         raise QuoteError("Borrador no encontrado.")
     draft = _json(draft_path)
     _verify(draft)
     from .quote_render import preflight_formats, export_quote
     preflight_formats(formats)
-    db = root / "quotes" / "folios.sqlite"
+    db = _inside(root, root / "quotes" / "folios.sqlite")
     db.parent.mkdir(parents=True, exist_ok=True)
     con = sqlite3.connect(str(db), timeout=20, isolation_level=None)
     try:
@@ -486,7 +494,7 @@ def issue_quote(employee_path, repo_root, draft_id, approved_by, *,
         con.close()
     # Allocated folio is durable before rendering; a failed renderer can be
     # safely retried with same draft ID and same approval without a new folio.
-    issued_path = root / "quotes" / "issued" / (draft_id + ".json")
+    issued_path = _inside(root, root / "quotes" / "issued" / (draft_id + ".json"))
     if issued_path.exists():
         previous = _json(issued_path)
         if previous.get("folio") != issued["folio"] or previous.get("integrity") != issued["integrity"]:
