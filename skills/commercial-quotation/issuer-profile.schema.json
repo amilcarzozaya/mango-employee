@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MANGO Quote Builder issuer profile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_id",
+    "seller",
+    "currency",
+    "taxes"
+  ],
+  "properties": {
+    "profile_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_-]{0,39}$"
+    },
+    "seller": {
+      "type": "object",
+      "required": [
+        "contact_name",
+        "company_name",
+        "legal_name",
+        "email",
+        "phone",
+        "address"
+      ],
+      "properties": {
+        "contact_name": {
+          "type": "string"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "legal_name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "tax_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "decimal_places": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3
+    },
+    "folio_prefix": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9-]{0,11}$"
+    },
+    "taxes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "label",
+          "rate",
+          "kind"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "rate": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "add",
+              "withhold"
+            ]
+          },
+          "effective_from": {
+            "type": "string",
+            "format": "date"
+          },
+          "effective_to": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          }
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "validity_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365
+        },
+        "payment_terms": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "delivery_terms": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}
