@@ -1,12 +1,22 @@
-# MANGO Employee v0.13 RC3 — Release Candidate Guide
+# MANGO Employee v0.13 RC4 — Release Candidate Guide
 
-This page is for maintainers/operators preparing the RC3 repository state.
+This page is for maintainers/operators preparing the RC4 repository state.
 
 New users should start at docs/START-HERE.md.
 
-## RC3 scope
+## RC4 scope
 
-RC3 implements Stage 4: tracked `mango workflow meeting` and
+RC4 adds the Spanish Guided menu and local installers. A new user
+can create an Employee, capture issuer/tax information, create quotations,
+review formal Approval Cards, and prepare meeting workflows without
+editing JSON. Existing deterministic calculations and formal safety
+controls remain authoritative.
+
+[Guided manual](GUIDED-SETUP.md).
+
+## Previous RC scope
+
+RC4 implements Stage 4: tracked `mango workflow meeting` and
 `mango workflow quote-draft/quote-issue` using the existing State,
 Approval Cards and Observability services. A configured sensitive_data
 Gate prevents external meeting transmission before consent; commercial
@@ -20,7 +30,7 @@ See [the full Stage 4 guide](OPERATIONAL-WORKFLOWS.md).
 
 ## Prior releases
 
-RC3 adds independent MANGO Quote Builder v1.0.0: issuer profiles,
+RC4 adds independent MANGO Quote Builder v1.0.0: issuer profiles,
 exact Decimal commercial quote engine, explicitly configured tax codes,
 immutable drafts, SQLite-issued folios with manual approval statement,
 Word/PDF export and release backup of operational quotation stores.
@@ -98,7 +108,7 @@ RELEASE-MANIFEST.json records:
 
 Because README.md and MANGO-*-SPEC.md files are part of the canonical manifest set, changing them requires manifest regeneration before calling the release snapshot clean.
 
-## RC3 provenance
+## RC4 provenance
 
 The exact release hash can change when tracked release documentation/runtime/spec files are updated.
 
@@ -106,7 +116,7 @@ Therefore, treat RELEASE-MANIFEST.json in the current branch/main as the source 
 
 ## Promotion criteria
 
-Promotion beyond RC3 should require:
+Promotion beyond RC4 should require:
 
 - automated suite green;
 - clean install;
