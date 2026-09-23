@@ -1,4 +1,4 @@
-# MANGO Employee CLI — 0.13.0rc3
+# MANGO Employee CLI — 0.13.0rc4
 
 This file is the short CLI entry point.
 
@@ -12,6 +12,25 @@ If you have never installed MANGO, read these first:
 The full command-by-command reference is:
 
 **docs/COMMAND-REFERENCE.md**
+
+## Spanish Guided mode — no JSON editing required
+
+~~~bash
+mango guided
+mango guided check
+mango guided setup ./mi-employee
+mango guided profile ./mi-employee
+mango guided quote ./mi-employee
+mango guided meeting ./mi-employee
+mango guided approvals ./mi-employee
+~~~
+
+The wizard reuses the existing deterministic quote engine, Meeting validator,
+persisted Runs, commercial Approval Cards and sensitive_data Gate. Pressing
+Enter is never accepted as a human approval. Optional external models require
+a separate install and authorization.
+
+[Guided setup manual](docs/GUIDED-SETUP.md).
 
 ## Install locally
 
