@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install --upgrade pip pytest
-      - run: python -m pip install -e .
+      - run: python -m pip install -e ".[meeting]"
       - run: pytest -q
       - run: mango validate reference-employees/mango-chief-of-staff
       - run: mango test reference-employees/mango-chief-of-staff
