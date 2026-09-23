@@ -1,6 +1,6 @@
 # Manual de Usuario — MANGO Category Search System + LinkedIn Search Visibility
 
-Versión del sistema: Category Search System 1.2.0 + LinkedIn Search Visibility 1.1.0
+Versión del sistema: Category Search System 1.3.0 + LinkedIn Search Visibility 1.1.0 + MANGO CLI 0.12.0rc2
 
 ## 1. Objetivo
 
@@ -270,8 +270,41 @@ El flujo padre→hijo está completo cuando:
 7. hay verification queries;
 8. después de publicar puede observarse el mismo query_id.
 
-## 15. Límite actual
+## 15. Chain Runtime
 
-La instalación hace el handoff **resoluble y determinista dentro del registry de MANGO Employee**. La versión actual del CLI no se presenta como un auto-orquestador que ejecute dos skills consecutivas por sí solo. Para auto-chain real haría falta una capacidad explícita de orquestación/handoff en runtime/CLI.
+MANGO Employee ya puede ejecutar el flujo padre→hijo automáticamente dentro de un único Run:
 
-Ese límite está documentado para no confundir “skill registrada y handoff tipado” con “ejecución automática multi-skill”.
+```bash
+mango chain EMPLOYEE \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Selecciona la siguiente T1 y crea el asset LinkedIn" \
+  --runtime codex
+```
+
+El Run conserva:
+- parent y child;
+- package ID de cada etapa;
+- output del padre;
+- handoff validado;
+- output del child;
+- receipt;
+- spans/provenance;
+- checkpoints.
+
+Si el handoff del padre no cumple el contrato, el Run queda `blocked`. Corrige o aprueba un handoff y continúa el mismo Run:
+
+```bash
+mango handoff EMPLOYEE RUN_ID --file corrected-handoff.json
+```
+
+Inspección:
+
+```bash
+mango chain-status EMPLOYEE RUN_ID
+mango trace explain EMPLOYEE RUN_ID
+mango trace audit EMPLOYEE RUN_ID
+```
+
+La finalización de la cadena **no** equivale a autorización para publicar. El publish gate permanece independiente.
+
