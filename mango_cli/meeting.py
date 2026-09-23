@@ -181,6 +181,21 @@ def _evidence(record, transcript, where):
     return {"source_excerpt": quote, "source_timestamp": stamp}
 
 
+def _owner_is_grounded(owner, excerpt, transcript):
+    """Only accept an owner explicitly named in the excerpt or its speaker line."""
+    if not owner:
+        return True
+    name = plain(compact(owner))
+    expression = r"(?<!\w)" + re.escape(name) + r"(?!\w)"
+    if re.search(expression, plain(excerpt)):
+        return True
+    quote = compact(excerpt).casefold()
+    for line in transcript.splitlines():
+        if quote in compact(line).casefold() and re.search(expression, plain(line)):
+            return True
+    return False
+
+
 def _items(data, field):
     rows = data.get(field, [])
     if not isinstance(rows, list) or len(rows) > 150 or any(
@@ -222,6 +237,8 @@ def validate_extraction(data, transcript, *, meeting_date=None,
         for idx, item in enumerate(_items(data, field), 1):
             where = f"{field}[{idx}]"
             evidence = _evidence(item, transcript, where)
+            if not _owner_is_grounded(item.get("owner"), evidence["source_excerpt"], transcript):
+                raise MeetingError(f"{where}.owner no está respaldado por la cita o el hablante.")
             report["source_integrity"]["validated_excerpts"] += 1
             ident = f"{prefixes[field]}-{idx:03d}"
             if field in ("decisions", "pending"):
@@ -243,6 +260,8 @@ def validate_extraction(data, transcript, *, meeting_date=None,
                     status = "proposed"
                     report["review_required"].append(f"{ident}: compromiso ambiguo, requiere confirmación")
                 due_text = compact(item.get("due_text")) or None
+                if due_text and plain(due_text) not in plain(evidence["source_excerpt"]):
+                    raise MeetingError(f"{where}.due_text no aparece en la cita literal.")
                 due = due_date_from_text(due_text, day)
                 row = {"id": ident, "description": _req(item, "description", where),
                        "owner": compact(item.get("owner")) or None, "due_text": due_text,
