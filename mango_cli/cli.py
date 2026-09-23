@@ -13,6 +13,7 @@ from .state import connect as state_connect, create_run, get_run, transition, ch
 from .teams import create_team, add_member, team_status, delegate, accept, return_handoff, complete as complete_handoff, handoff_contract
 from .hardening import migrate as release_migrate, audit as release_audit, backup as release_backup, verify_backup, restore as release_restore, readiness as release_readiness, release_manifest
 from .memory import connect as memory_connect, add as memory_add, search as memory_search, set_status, supersede as memory_supersede, audit as memory_audit, explain as memory_explain, consolidate as memory_consolidate, TYPES, SCOPES
+from .chain import run_chain, resume_handoff, inspect_chain, HandoffError
 
 def icon(ok): return "PASS" if ok else "FAIL"
 
@@ -89,6 +90,47 @@ def cmd_run(args):
     except Exception as e:
         print("ERROR:",e)
         return 1
+
+
+def cmd_chain(args):
+    ep=discover_employee(args.target); repo_root=Path(__file__).resolve().parents[1]
+    try:
+        r=run_chain(ep,args.parent_skill,args.child_skill,args.task,repo_root,args.runtime,args.child_runtime,args.model,args.child_model,args.context,args.output)
+        if r.get("mode")=="prepare":
+            print(json.dumps({k:v for k,v in r.items() if k!="parent_prompt"},ensure_ascii=False,indent=2))
+            print("\n"+r["parent_prompt"])
+            return 0
+        print(r.get("run_id"))
+        if r.get("status")=="completed":
+            if r.get("output"): print(r["output"],end="" if r["output"].endswith("\n") else "\n")
+            return 0
+        print(json.dumps({k:v for k,v in r.items() if k!="output"},ensure_ascii=False,indent=2))
+        return r.get("exit_code",1)
+    except Exception as e:
+        print("ERROR:",e)
+        return 1
+
+def cmd_handoff(args):
+    ep=discover_employee(args.target); repo_root=Path(__file__).resolve().parents[1]
+    try:
+        if args.file:
+            h=json.loads(Path(args.file).read_text(encoding="utf-8"))
+        else:
+            h=json.loads(args.json)
+        r=resume_handoff(ep,args.run_id,h,repo_root,args.child_skill,args.runtime,args.model,args.output)
+        print(r.get("run_id"))
+        if r.get("output"): print(r["output"],end="" if r["output"].endswith("\n") else "\n")
+        return r.get("exit_code",0)
+    except Exception as e:
+        print("ERROR:",e)
+        return 1
+
+def cmd_chain_status(args):
+    ep=discover_employee(args.target)
+    try:
+        print(json.dumps(inspect_chain(ep,args.run_id),ensure_ascii=False,indent=2)); return 0
+    except Exception as e:
+        print("ERROR:",e); return 1
 
 
 def cmd_security(args):
@@ -311,7 +353,7 @@ def cmd_release(args):
 
 def main():
     ap=argparse.ArgumentParser(prog="mango",description="CLI for MANGO Employee Specification")
-    ap.add_argument("--version",action="version",version="mango-employee-cli 0.10.0")
+    ap.add_argument("--version",action="version",version="mango-employee-cli 0.12.0rc2")
     sub=ap.add_subparsers(dest="command",required=True)
     p=sub.add_parser("init",help="Interactively create a MANGO Employee project"); p.add_argument("directory",nargs="?",default="./my-mango-employee"); p.set_defaults(fn=cmd_init)
     p=sub.add_parser("run",help="Prepare or execute a task with an Employee + Skill")
@@ -327,6 +369,27 @@ def main():
     p.add_argument("--dry-run",action="store_true")
     p.add_argument("--verbose",action="store_true")
     p.set_defaults(fn=cmd_run)
+    p=sub.add_parser("chain",help="Execute a parent→child Skill chain as one traceable Run")
+    p.add_argument("target",help="Employee directory or employee.json")
+    p.add_argument("--parent-skill",required=True,help="Assigned parent skill id")
+    p.add_argument("--child-skill",required=True,help="Assigned child skill id")
+    p.add_argument("--task",required=True,help="Task for the parent skill")
+    p.add_argument("--runtime",choices=list(SUPPORTED_RUNTIMES),default="prepare",help="Parent runtime; prepare performs preflight only")
+    p.add_argument("--child-runtime",choices=list(SUPPORTED_RUNTIMES),default=None,help="Child runtime; defaults to parent runtime")
+    p.add_argument("--model",default=None,help="Parent model override")
+    p.add_argument("--child-model",default=None,help="Child model override")
+    p.add_argument("--context",action="append",default=[],help="Additional parent context path; repeatable")
+    p.add_argument("--output",default=None,help="Write child final output")
+    p.set_defaults(fn=cmd_chain)
+    p=sub.add_parser("handoff",help="Resume a blocked chain Run with a validated handoff JSON")
+    p.add_argument("target"); p.add_argument("run_id")
+    hg=p.add_mutually_exclusive_group(required=True); hg.add_argument("--file"); hg.add_argument("--json")
+    p.add_argument("--child-skill",default=None,help="Optional child id; must match root lineage")
+    p.add_argument("--runtime",choices=list(SUPPORTED_RUNTIMES),default=None,help="Child runtime; defaults to chain runtime")
+    p.add_argument("--model",default=None); p.add_argument("--output",default=None)
+    p.set_defaults(fn=cmd_handoff)
+    p=sub.add_parser("chain-status",help="Inspect parent→child lineage for a chain Run")
+    p.add_argument("target"); p.add_argument("run_id"); p.set_defaults(fn=cmd_chain_status)
     p=sub.add_parser("release",help="MANGO Release Candidate hardening")
     rr=p.add_subparsers(dest="release_command",required=True)
     q=rr.add_parser("migrate"); q.add_argument("target")
