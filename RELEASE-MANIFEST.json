@@ -3,7 +3,7 @@
   "release": "MANGO Employee v0.13 RC3",
   "version": "0.13.0rc3",
   "schema_version": 1,
-  "generated_at": "2026-09-23T19:35:39.437Z",
+  "generated_at": "2026-09-23T19:37:03.764Z",
   "file_count": 37,
   "files": [
     {
@@ -47,9 +47,9 @@
       "sha256": "c32c830ae07e60540329850d4d6e70e59863c3c80c6cd2bc9a43f97fda2c01c1"
     },
     {
-      "bytes": 5275,
+      "bytes": 5318,
       "path": "MANGO-OPERATIONAL-WORKFLOWS-SPEC.md",
-      "sha256": "8c5ddaa39f17c86fa27add293ead1f5707a00bee6cfe255f54bf08a5b2b22098"
+      "sha256": "14812447743db5d5bfa3639eaf78825a14288b5930abdbe3aefef52ca0ad9607"
     },
     {
       "bytes": 3697,
@@ -192,5 +192,5 @@
       "sha256": "dba74d88c791390071850a0862070e098971915b62b564d0b551a57c26f6aaad"
     }
   ],
-  "release_hash": "68b8c23c7ca531d3072d659aa5b5d9024f4da2db53d8e4cfba0b3ff97b7e1b56"
+  "release_hash": "1f12369e9f22dc808b1e109112881b7e0a1730536891df6d654d69e32bf0d414"
 }
