@@ -46,10 +46,10 @@ For setup, use docs/START-HERE.md.
 
 ## Tag/release
 
-For RC3, the intended tag form is:
+For RC4, the intended tag form is:
 
 ~~~text
-v0.13.0rc3
+v0.13.0rc4
 ~~~
 
 Before tagging:
@@ -85,3 +85,12 @@ Do not reuse historical placeholder tags from older development phases.
 - [ ] Per-Employee storage and output paths are isolated.
 - [ ] Release backup/restore includes validated Meeting reports and quote operational stores.
 - [ ] Main CI Python 3.10–3.13 and release manifest match the committed code.
+
+## Guided RC4 release checks
+
+- [ ] Installers work from the repository root on macOS/Linux and Windows.
+- [ ] Guided-created Employees have both Skills, commercial Gates and sensitive_data.
+- [ ] Tax profiles and quote requests can be created without hand-editing JSON.
+- [ ] Every approval is individually reviewed; Enter means NO.
+- [ ] A prepare-only meeting saves a private prompt, never a false report.
+- [ ] All tests, documentation links, manifest and Python 3.10–3.13 CI pass.
