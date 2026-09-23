@@ -1,4 +1,4 @@
-# Command Reference — MANGO Employee CLI 0.13.0rc1
+# Command Reference — MANGO Employee CLI 0.13.0rc2
 
 This guide explains the CLI without assuming you already know MANGO terminology.
 
@@ -704,3 +704,32 @@ Opciones: --input, --meeting-date, --timezone, --title, --runtime, --model,
 --extraction, --formats, --out-dir, --prompt-out. Los formatos predeterminados
 son json,md. El reporte requiere revisión humana. Más información:
 meeting-intelligence/USER-GUIDE.md.
+
+# Quote Builder — perfil, cálculo, borrador y folio
+
+Los ejemplos de Quote Builder utilizan un Employee con commercial-quotation asignada.
+Todos los datos del directorio examples/quote-builder son **ficticios**.
+
+~~~bash
+mango quote profile init reference-employees/mango-chief-of-staff \
+  --from-file examples/quote-builder/issuer-profile.json
+
+mango quote profile list reference-employees/mango-chief-of-staff
+
+mango quote calculate reference-employees/mango-chief-of-staff \
+  --profile demo --request examples/quote-builder/request.json
+
+mango quote draft reference-employees/mango-chief-of-staff \
+  --profile demo --request examples/quote-builder/request.json \
+  --formats json,md,docx,pdf --out-dir ./mis-cotizaciones
+
+mango quote issue reference-employees/mango-chief-of-staff \
+  --draft DRAFT_ID --approved-by "Persona autorizada" \
+  --formats json,md,docx,pdf --out-dir ./mis-cotizaciones
+~~~
+
+Instala Word/PDF con python -m pip install -e ".[quote]".
+calculate no guarda ni asigna folio. draft guarda snapshot sin folio; issue
+requiere declaración humana y asigna folio SQLite, sin enviar ni facturar.
+approved-by **no autentica identidad**. Consulta
+[Manual Quote Builder](quote-builder/USER-GUIDE.md).
