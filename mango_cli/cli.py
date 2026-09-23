@@ -404,7 +404,7 @@ def cmd_release(args):
 
 def main():
     ap=argparse.ArgumentParser(prog="mango",description="CLI for MANGO Employee Specification")
-    ap.add_argument("--version",action="version",version="mango-employee-cli 0.13.0rc1")
+    ap.add_argument("--version",action="version",version="mango-employee-cli 0.13.0rc2")
     sub=ap.add_subparsers(dest="command",required=True)
     p=sub.add_parser("init",help="Interactively create a MANGO Employee project"); p.add_argument("directory",nargs="?",default="./my-mango-employee"); p.set_defaults(fn=cmd_init)
     p=sub.add_parser("run",help="Prepare or execute a task with an Employee + Skill")
