@@ -2,7 +2,7 @@
 
 Created by **Amílcar Zozaya**, creator of Método MANGO.
 
-Target: **MANGO Employee v0.12 RC1**
+Target: **MANGO Employee v0.12 RC2**
 
 The purpose of this release is to freeze feature growth and prove the control plane can be installed, migrated, audited, recovered and regression-tested before v1.0.
 
