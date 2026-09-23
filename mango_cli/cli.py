@@ -16,6 +16,11 @@ from .memory import connect as memory_connect, add as memory_add, search as memo
 from .chain import run_chain, resume_handoff, inspect_chain, HandoffError
 from .meeting import process_meeting, MeetingError
 from .quote import init_profile, list_profiles, make_quote, issue_quote, QuoteError
+from .guided import (
+    menu as guided_menu, setup as guided_setup,
+    profile_wizard, quote_wizard, meeting_wizard, approvals_wizard,
+    check as guided_check, GuidedCancelled,
+)
 from .operational_workflows import (
     meeting_workflow, meeting_resume, quote_draft_workflow, quote_issue_workflow,
     WorkflowError,
@@ -95,6 +100,35 @@ def cmd_run(args):
         return result["returncode"]
     except Exception as e:
         print("ERROR:",e)
+        return 1
+
+
+def cmd_guided(args):
+    try:
+        task=args.guided_command
+        if task=="setup":
+            result=guided_setup(args.directory)
+        elif task=="profile":
+            result=profile_wizard(args.target)
+        elif task=="quote":
+            result=quote_wizard(args.target)
+        elif task=="meeting":
+            result=meeting_wizard(args.target)
+        elif task=="approvals":
+            result=approvals_wizard(args.target,run_id=args.run_id)
+        elif task=="check":
+            result=guided_check()
+        else:
+            result=guided_menu(employee=args.target)
+        if result.get("status") not in ("closed","nothing_pending") and task!="check":
+            print("\nListo. Los registros operativos permanecen en tu Employee.")
+        return 0
+    except GuidedCancelled as exc:
+        print(str(exc))
+        return 2
+    except (ValueError, OSError, RuntimeError, QuoteError, MeetingError,
+            WorkflowError, FileExistsError) as exc:
+        print("ERROR:",exc,file=sys.stderr)
         return 1
 
 
@@ -442,8 +476,24 @@ def cmd_release(args):
 
 def main():
     ap=argparse.ArgumentParser(prog="mango",description="CLI for MANGO Employee Specification")
-    ap.add_argument("--version",action="version",version="mango-employee-cli 0.13.0rc3")
+    ap.add_argument("--version",action="version",version="mango-employee-cli 0.13.0rc4")
     sub=ap.add_subparsers(dest="command",required=True)
+    p=sub.add_parser("guided",help="Asistente guiado en español: crear Employee, emisor, cotizaciones, reuniones y aprobaciones")
+    menu=p.add_subparsers(dest="guided_command")
+    p.add_argument("--target",default=None,help="Ruta Employee al abrir el menú")
+    g=menu.add_parser("setup",help="Crear Employee con ambas Skills y Gates seguros, sin editar JSON")
+    g.add_argument("directory",nargs="?",default="./mi-mango")
+    g=menu.add_parser("profile",help="Configurar emisor mediante preguntas")
+    g.add_argument("target")
+    g=menu.add_parser("quote",help="Cotizar, calcular y solicitar aprobaciones paso a paso")
+    g.add_argument("target")
+    g=menu.add_parser("meeting",help="Analizar transcripción con privacidad y trazabilidad")
+    g.add_argument("target")
+    g=menu.add_parser("approvals",help="Revisar y resolver Approval Cards una por una")
+    g.add_argument("target")
+    g.add_argument("--run-id",default=None)
+    menu.add_parser("check",help="Diagnosticar Python, documentos y runtimes opcionales")
+    p.set_defaults(fn=cmd_guided)
     p=sub.add_parser("init",help="Interactively create a MANGO Employee project"); p.add_argument("directory",nargs="?",default="./my-mango-employee"); p.set_defaults(fn=cmd_init)
     p=sub.add_parser("run",help="Prepare or execute a task with an Employee + Skill")
     p.add_argument("target",help="Employee directory or employee.json")

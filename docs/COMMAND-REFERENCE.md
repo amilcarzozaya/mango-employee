@@ -1,4 +1,4 @@
-# Command Reference — MANGO Employee CLI 0.13.0rc3
+# Command Reference — MANGO Employee CLI 0.13.0rc4
 
 This guide explains the CLI without assuming you already know MANGO terminology.
 
@@ -766,3 +766,20 @@ No se crea CFDI ni se envía correo. El código de salida 2 significa
 `waiting_approval`.
 
 Manual completo: [Operational Workflows](OPERATIONAL-WORKFLOWS.md).
+
+# RC4: MANGO Guided (sin edición manual de JSON)
+
+~~~bash
+mango guided
+mango guided check
+mango guided setup ./mi-employee
+mango guided profile ./mi-employee
+mango guided quote ./mi-employee
+mango guided meeting ./mi-employee
+mango guided approvals ./mi-employee
+~~~
+
+Para usuarios nuevos se recomienda el menú interactivo. Las operaciones
+internas usan exactamente los mismos workflows persistentes y Gates:
+ningún botón o respuesta vacía autoriza acciones comerciales o
+transmisiones externas. Lee [el manual completo](GUIDED-SETUP.md).

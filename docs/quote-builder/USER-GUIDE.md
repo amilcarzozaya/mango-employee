@@ -1,9 +1,17 @@
 # MANGO Quote Builder — Manual de usuario desde cero
 
-Skill: commercial-quotation 1.0.0. CLI: MANGO Employee 0.13.0rc3.
+Skill: commercial-quotation 1.0.0. CLI: MANGO Employee 0.13.0rc4.
 
 Este manual no presupone que sepas utilizar terminales, Skills, Employees o
 modelos de IA. Quote Builder realiza **todos los cálculos sin IA**.
+
+## Primera cotización sin archivos JSON
+
+La nueva opción para principiantes es mango guided. Instala MANGO con
+install.sh (macOS/Linux) o install.ps1 (Windows), crea un Employee y
+responde a las preguntas para configurar emisor, impuestos y cliente.
+El motor de cálculo, el Run y los Gates son los mismos que utiliza
+el resto de este manual. [Pasos completos](../GUIDED-SETUP.md).
 
 ## 1. Qué hace
 

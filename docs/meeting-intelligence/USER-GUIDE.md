@@ -2,6 +2,15 @@
 
 Este manual no supone experiencia previa con MANGO Employee, la terminal, Skills ni modelos de IA.
 
+## Uso guiado para principiantes
+
+Abre mango guided y elige Analizar una reunión, o ejecuta
+mango guided meeting ./mi-employee. No es necesario editar JSON:
+selecciona una transcripción en texto, fecha y modo de análisis.
+Para utilizar un modelo externo se exige consentimiento y, cuando
+está activo el Gate sensitive_data, una aprobación vinculada al SHA256
+del archivo. [Manual de instalación guiada](../GUIDED-SETUP.md).
+
 ## 1. ¿Qué hace?
 
 Recibe una **transcripción o minuta existente** y prepara un reporte con:

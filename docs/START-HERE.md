@@ -33,6 +33,25 @@ For the simplest local test you need only:
 
 You do **not** need Codex, Claude Code, Gemini CLI, Hermes, or OpenClaw to validate MANGO or prepare prompts. The built-in runtime named **prepare** makes no model call.
 
+## Recommended for beginners: MANGO Guided
+
+You can start without writing JSON or memorizing commands. Install Python
+3.10–3.13 and download the repository, then run bash install.sh
+on macOS/Linux or install.ps1 from Windows PowerShell.
+Both installers offer the Spanish interactive menu.
+
+To open it later:
+
+~~~bash
+mango guided
+~~~
+
+The menu sets up both Skills, adds explicit commercial/privileged-data Gates,
+configures the seller, captures quotation details, requests approvals and
+guides meeting analysis. [Spanish beginner manual](GUIDED-SETUP.md).
+
+The commands below remain available when you need advanced automation.
+
 ## The first five commands you should understand
 
 ~~~bash

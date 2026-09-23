@@ -1,45 +1,36 @@
-# MANGO Employee v0.13 RC3 — Stage 4 Integration Release Checklist
+# MANGO Employee v0.13 RC4 — Guided Acceptance Checklist
 
-## Scope
+## Entregables
 
-- Meeting Intelligence v2 and Quote Builder v1 run independently on the
-  existing MANGO Employee control plane.
-- `mango workflow meeting` creates persistent State and provenance;
-  `meeting-resume` permits exact source-hash-authorized external execution
-  when the Employee declares a sensitive_data Gate.
-- `mango workflow quote-draft` creates an immutable snapshot and one Approval
-  Card for every configured commercial Gate (pricing/scope/deadline/legal).
-- `mango workflow quote-issue` checks every card, source Run and immutable
-  draft hash before allocating an atomic, idempotent commercial folio.
-- A direct `mango quote issue` cannot bypass a configured commercial Gate.
-- Release backup now includes verified Meeting reports, quote operational
-  stores, State and Observability — not original transcripts or full prompts.
+- [x] Menú en español para instalar/crear Employee, configurar emisor, cotizar,
+      analizar reuniones y revisar autorizaciones sin editar JSON.
+- [x] Instaladores macOS/Linux y Windows sin permisos de administrador.
+- [x] Detección de Python/pip, Word/PDF, Git y runtimes externos opcionales.
+- [x] Emisor e impuestos explícitos mediante preguntas, con validación canónica.
+- [x] Resumen comercial Decimal antes de confirmar y generar borrador.
+- [x] Approval Cards revisadas por separado: Enter no significa aprobación.
+- [x] Gate sensitive_data en nuevos Employees y consentimiento antes de
+      añadirlo a Employees existentes.
+- [x] Prepare genera un prompt privado, no un reporte ficticio.
+- [x] Todos los Runs, aprobaciones, folios y trazas usan el control plane existente.
+- [x] Manual desde cero, guía de comandos y especificación técnica.
 
-## Automated acceptance tests
+## Verificación antes del merge
 
-- [x] New CLI and shared State/Gate/Trace integration implemented.
-- [x] Meeting/Quote standalone APIs retained; direct quote issuance hardened.
-- [x] Formal approvals are bound to immutable source/draft content.
-- [x] Multi-card state transition changed to wait for all pending approvals.
-- [x] Per-Employee file output confinement and documented retention boundaries.
-- [x] Regression tests for rejection, hash tampering, concurrent folios and
-      rendering failure/retry.
-- [x] Beginner manual, normative specification and command reference updated.
-- [x] Release manifest rebuilt from canonical source content.
-- [ ] Verify CI Python 3.10–3.13 across full suite before merging.
-- [ ] Verify main CI following merge before tagging release.
+- [ ] Tests de Guided, Quote, Meeting, Workflows, Docs y Security.
+- [ ] CI Python 3.10, 3.11, 3.12 y 3.13.
+- [ ] RELEASE-MANIFEST.json regenerado y coincidente con el generador.
+- [ ] CI de main posterior al merge.
 
-## Release provenance
+## Provenance
 
-- Manifest format: mango-release-manifest-v1
-- Package: 0.13.0rc3
-- Canonical files: 37
-- Release hash: f41f59f8f74037eadfb4cb0eaea66632dbc15793631cb5c1aec5121514b68023
+Release: 0.13.0rc4
+Archivos canónicos: 39
+Release hash: 2ee84865656e5778ea5be2116baa973c80999a83dd5517531bc211a1c09e4e54
 
-## Explicit limitations
+## Límites
 
-Operator names in `mango approve` are CLI assertions, not corporate
-identity verification. These workflows do not send communications,
-auto-promote Memory, issue CFDI or infer tax treatment from business
-descriptions. A real enterprise deployment requires authenticated actor
-roles, storage encryption, retention rules and approved provider access.
+Este release ofrece una experiencia guiada de terminal, no una app web.
+Los operadores de CLI no están autenticados con SSO. Los impuestos son
+configurados por el emisor y no hay emisión de CFDI, envío de correo,
+transcripción de audio ni autorización implícita de información sensible.

@@ -7,8 +7,8 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def test_release_manifest_matches_package_version_and_chain():
     m=release_manifest(ROOT)
-    assert m["version"]==RC_VERSION=="0.13.0rc3"
-    assert m["release"]=="MANGO Employee v0.13 RC3"
+    assert m["version"]==RC_VERSION=="0.13.0rc4"
+    assert m["release"]=="MANGO Employee v0.13 RC4"
     assert m["format"]=="mango-release-manifest-v1"
     assert m["file_count"]==len(m["files"])
     paths={x["path"] for x in m["files"]}
@@ -16,6 +16,8 @@ def test_release_manifest_matches_package_version_and_chain():
     assert "MANGO-CHAIN-SPEC.md" in paths
     assert "mango_cli/operational_workflows.py" in paths
     assert "MANGO-OPERATIONAL-WORKFLOWS-SPEC.md" in paths
+    assert "MANGO-GUIDED-ONBOARDING-SPEC.md" in paths
+    assert "mango_cli/guided.py" in paths
     assert len(m["release_hash"])==64
 
 def test_release_manifest_fails_closed_on_version_drift(tmp_path):

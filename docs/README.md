@@ -4,6 +4,13 @@ This directory is the documentation hub for MANGO Employee.
 
 If you are new, do **not** start with the specification files. Start with the onboarding path below.
 
+## Beginner without JSON: guided installer
+
+Start with [MANGO Guided](GUIDED-SETUP.md). It covers downloading the
+repository, Python prerequisites, macOS/Linux and Windows installers,
+the Spanish menu, profile setup, quotations, meetings and individual
+Approval Cards. The wizard never skips State, formal Gates or Trace.
+
 ## Recommended reading order
 
 1. [START-HERE.md](START-HERE.md) — what MANGO Employee is and the shortest path to a first successful run.
@@ -62,7 +69,7 @@ The root-level MANGO specification files are normative/technical references. The
 
 ## Version context
 
-These docs target MANGO Employee CLI **0.13.0rc3** unless a page explicitly says otherwise.
+These docs target MANGO Employee CLI **0.13.0rc4** unless a page explicitly says otherwise.
 
 ## Etapa 4 — Integración operativa de dos Skills
 

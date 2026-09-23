@@ -412,6 +412,10 @@ def process_meeting(*, employee_path, repo_root, source_path, meeting_date=None,
         destination = Path(prompt_out)
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(prompt, encoding="utf-8")
+        try:
+            destination.chmod(0o600)
+        except OSError:
+            pass
     if extraction_path:
         raw = json.loads(Path(extraction_path).read_text(encoding="utf-8-sig"))
     elif runtime == "prepare":

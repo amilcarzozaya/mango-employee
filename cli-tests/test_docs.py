@@ -9,6 +9,7 @@ REQUIRED_DOCS=[
     "docs/START-HERE.md",
     "docs/PREREQUISITES.md",
     "docs/INSTALLATION.md",
+    "docs/GUIDED-SETUP.md",
     "docs/CONCEPTS.md",
     "docs/FIRST-EMPLOYEE.md",
     "docs/SKILLS.md",
@@ -27,15 +28,15 @@ def test_primary_navigation_points_to_start_here():
     docs_index=(ROOT/"docs/README.md").read_text(encoding="utf-8")
     assert "docs/START-HERE.md" in readme
     assert "START-HERE.md" in docs_index
-    assert "0.13.0rc3" in readme
+    assert "0.13.0rc4" in readme
 
 def test_cli_and_release_docs_have_no_stale_beginner_labels():
     cli=(ROOT/"CLI.md").read_text(encoding="utf-8")
     release=(ROOT/"docs/GITHUB-RELEASE-CHECKLIST.md").read_text(encoding="utf-8")
     assert "MANGO CLI v0.1" not in cli
-    assert "0.13.0rc3" in cli
+    assert "0.13.0rc4" in cli
     assert "v0.4.0" not in release
-    assert "v0.13.0rc3" in release
+    assert "v0.13.0rc4" in release
 
 def test_advanced_specs_send_new_users_to_onboarding():
     for p in sorted(ROOT.glob("MANGO-*-SPEC.md")):

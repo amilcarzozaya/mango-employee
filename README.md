@@ -6,6 +6,36 @@ Created by **Amílcar Zozaya**, creator of **Método MANGO**.
 
 > Diseña sistemas, no sólo prompts.
 
+## Start without editing JSON — Guided setup (RC4)
+
+Install Python 3.10–3.13, clone/download this repository, then run:
+
+~~~bash
+bash install.sh
+~~~
+
+Windows PowerShell:
+
+~~~powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
+~~~
+
+Both installers create an isolated local environment, install the optional
+Word/PDF libraries and open **mango guided**. The Spanish menu lets you
+create an Employee, configure an issuer once, capture and calculate a quote,
+review its Approval Cards one by one, and prepare/analyze meetings. No manual
+JSON editing is required. Model access is optional and never configured by
+the installer. All existing commercial and privacy Gates remain enforced.
+
+For an existing installation:
+
+~~~bash
+mango guided
+mango guided check
+~~~
+
+[Full from-zero manual](docs/GUIDED-SETUP.md).
+
 ## New here? Start with this path
 
 You do not need to understand agents, Skills, runtimes, or MANGO specifications before installing the project.
@@ -434,7 +464,7 @@ See [REFERENCE-EMPLOYEE.md](REFERENCE-EMPLOYEE.md).
 
 Current documentation target:
 
-**MANGO Employee CLI 0.13.0rc3**
+**MANGO Employee CLI 0.13.0rc4**
 
 Release provenance is stored in RELEASE-MANIFEST.json and RC-CHECKLIST.md.
 
