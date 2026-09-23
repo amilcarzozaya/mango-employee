@@ -28,6 +28,9 @@ Employee preflight → Run running → source digest/provenance →
                 → process → report → completed
 ~~~
 
+The underlying Meeting service also rejects direct live-model calls when
+sensitive_data is enabled without an approved content-bound Run.
+
 The source is read and checked before creating the Run. All outputs
 default to \`EMPLOYEE/meetings/output\`. An explicit external output path
 is rejected in tracked workflows. Original transcripts are not copied
