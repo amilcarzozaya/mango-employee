@@ -30,6 +30,6 @@ def test_restore_refuses_overwrite():
 def test_orphan_approval_detected():
  d=tmp(); migrate(d); c=sqlite3.connect(d/"state/state.db"); c.execute("INSERT INTO approvals(id,run_id,category,action,status,requested_at) VALUES('a','missing','x','x','pending','now')"); c.commit(); c.close(); assert not audit(d)["ok"]
 def test_manifest_hash():
- m=release_manifest(ROOT); assert m["version"]==RC_VERSION and m["version"]=="0.13.0rc1" and len(m["release_hash"])==64
+ m=release_manifest(ROOT); assert m["version"]==RC_VERSION and m["version"]=="0.13.0rc2" and len(m["release_hash"])==64
 def test_readiness():
  d=tmp(); assert readiness(d,ROOT)["ok"]
