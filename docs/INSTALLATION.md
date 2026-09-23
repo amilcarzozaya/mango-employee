@@ -107,7 +107,7 @@ mango --version
 Expected release for this documentation:
 
 ~~~text
-mango-employee-cli 0.13.0rc3
+mango-employee-cli 0.13.0rc4
 ~~~
 
 Then:
@@ -206,3 +206,13 @@ mango workflow --help
 
 Sigue el [manual de Operational Workflows](OPERATIONAL-WORKFLOWS.md);
 los ejemplos iniciales usan exclusivamente datos ficticios.
+
+## Instalación guiada: opción recomendada para nuevos usuarios
+
+Si no conoces las Skills ni los comandos de MANGO, sigue
+[GUIDED-SETUP.md](GUIDED-SETUP.md). Tras instalar Python 3.10–3.13
+y descargar el repositorio, macOS/Linux pueden ejecutar
+bash install.sh y Windows puede ejecutar el archivo install.ps1.
+Se crea un .venv aislado, se instala Word/PDF y se abre el menú
+mango guided. La configuración del emisor y las solicitudes comerciales
+se realiza respondiendo preguntas, sin editar JSON a mano.
