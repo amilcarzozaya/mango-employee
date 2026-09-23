@@ -28,9 +28,8 @@ def preflight_formats(formats):
 
 def _money(value, quote):
     places = quote["currency_decimals"]
-    return f"{quote['currency']} {float(value):,.{places}f}" if False else (
-        quote["currency"] + " " + f"{__import__('decimal').Decimal(value):,.{places}f}"
-    )
+    from decimal import Decimal
+    return quote["currency"] + " " + f"{Decimal(value):,.{places}f}"
 
 
 def _header(quote):
