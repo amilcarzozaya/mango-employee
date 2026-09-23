@@ -131,3 +131,16 @@ Meeting Intelligence transcriptions may contain personal or confidential informa
 A live runtime can transmit input to its configured model provider. Obtain appropriate
 consent/authorization and restrict output-file and --prompt-out access.
 The Meeting CLI does not automatically send reports or promote Memory candidates.
+
+## Quotation data and approvals
+
+Quote Builder stores seller profiles, customer names, pricing and issued
+documents under each Employee's quotes/ directory. Protect this directory
+and backups: never commit it to a public repository. The release backup
+includes the folio SQLite ledger and profiles/drafts/issued JSON snapshots,
+but not regenerated PDF/DOCX outputs.
+
+An issued quote requires approved-by, which is a manual statement, **not
+authenticated identity**. Do not use it as a replacement for enterprise
+SSO, roles or a formal Approval Card workflow when such controls are needed.
+A SHA256 draft digest detects accidental tampering but is not a signature.
