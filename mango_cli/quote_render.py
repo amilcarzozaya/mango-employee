@@ -251,7 +251,7 @@ def pdf_quote(quote, path):
               _money(line["tax_withheld"], quote), "BodyText"),
             P(_money(line["line_total"], quote), "BodyText")
         ])
-    table = Table(rows, repeatRows=1, hAlign="LEFT", colWidths=[165, 40, 70, 66, 90, 80])
+    table = Table(rows, repeatRows=1, hAlign="LEFT", colWidths=[155, 36, 65, 62, 86, 75])
     table.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#F9EBDC")),
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
@@ -308,6 +308,8 @@ def export_quote(quote, out_dir, formats=("json", "md"), allow_matching=False):
         actual = json.loads(guard.read_text(encoding="utf-8"))
         if actual.get("integrity") != quote.get("integrity") or actual != quote:
             raise ValueError("El JSON existente no coincide con la cotización aprobada.")
+        if any(path.is_symlink() for path in paths.values()):
+            raise ValueError("Enlaces simbólicos en salida: no permitidos.")
         if all(path.is_file() for path in paths.values()):
             return {k: str(v) for k, v in paths.items()}
         for path in paths.values():
