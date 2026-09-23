@@ -62,4 +62,12 @@ The root-level MANGO specification files are normative/technical references. The
 
 ## Version context
 
-These docs target MANGO Employee CLI **0.13.0rc2** unless a page explicitly says otherwise.
+These docs target MANGO Employee CLI **0.13.0rc3** unless a page explicitly says otherwise.
+
+## Etapa 4 — Integración operativa de dos Skills
+
+[Operational Workflows — manual desde cero](OPERATIONAL-WORKFLOWS.md):
+creación de Runs para Meeting Intelligence y Quote Builder, revisión de
+Approval Cards, autorización para modelos externos si existe el Gate
+sensitive_data, emisión de folios bajo los Gates comerciales y trazabilidad
+hasta los archivos y el respaldo verificado.
