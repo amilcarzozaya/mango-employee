@@ -342,16 +342,69 @@ El resumen debe distinguir hechos de hipótesis y reconocer ausencias importante
 """
 
 
+def _require_sensitive_approval(employee_path, packet, source_path, runtime, model, approval_run_id):
+    """Enforce sensitive_data even when calling mango meeting directly.
+
+    The only permitted live-model path with this Gate is an approved,
+    content-hash-bound operational meeting Run.
+    """
+    if not any(g.get("category") == "sensitive_data" for g in packet.get("gates", [])):
+        return
+    if not approval_run_id:
+        raise MeetingError(
+            "El Employee requiere aprobación sensitive_data antes de usar un "
+            "modelo externo. Usa mango workflow meeting / meeting-resume."
+        )
+    from hashlib import sha256
+    from .state import inspect, pending_approvals
+    source_digest = sha256(Path(source_path).read_bytes()).hexdigest()
+    try:
+        record = inspect(employee_path, approval_run_id)
+    except ValueError as exc:
+        raise MeetingError("Approval Run no encontrado.") from exc
+    run = record["run"]
+    if (run["skill_id"] != SKILL_ID or run["employee_id"] != packet["employee"]["id"]
+            or run["status"] != "running"):
+        raise MeetingError("Approval Run ajeno, bloqueado o no ejecutable.")
+    try:
+        cp = json.loads(run["checkpoint"] or "{}")
+    except json.JSONDecodeError as exc:
+        raise MeetingError("Checkpoint de autorización inválido.") from exc
+    if (cp.get("workflow") != "meeting"
+            or cp.get("stage") != "waiting_sensitive_approval"
+            or cp.get("source_sha256") != source_digest):
+        raise MeetingError("La autorización no corresponde a la transcripción original.")
+    if pending_approvals(employee_path, approval_run_id):
+        raise MeetingError("La autorización sensitive_data sigue pendiente.")
+    for card in record["approvals"]:
+        if card["category"] != "sensitive_data" or card["action"] != "meeting_external_model":
+            continue
+        try:
+            payload = json.loads(card["payload"] or "{}")
+        except json.JSONDecodeError as exc:
+            raise MeetingError("Payload de autorización sensible inválido.") from exc
+        if (card["status"] == "approved" and card["resolved_by"]
+                and payload.get("kind") == "meeting_external_model_v1"
+                and payload.get("source_sha256") == source_digest
+                and payload.get("runtime") == runtime and payload.get("model") == model):
+            return
+    raise MeetingError("No hay aprobación sensible válida para el contenido y modelo exactos.")
+
+
 def process_meeting(*, employee_path, repo_root, source_path, meeting_date=None,
                     timezone="America/Mexico_City", title=None, runtime="prepare",
                     model=None, extraction_path=None, formats=("json", "md"),
-                    out_dir="meeting-reports", prompt_out=None):
+                    out_dir="meeting-reports", prompt_out=None, approval_run_id=None):
     from .meeting_reports import export_report
     transcript = read_transcript(source_path)
     meeting_date_and_timezone(meeting_date, timezone)
     packet = build_package(
         employee_path, SKILL_ID, "Extraer decisiones, tareas, compromisos, "
         "pendientes y hasta tres puntos críticos de una reunión.", repo_root)
+    if runtime != "prepare" and not extraction_path:
+        _require_sensitive_approval(
+            employee_path, packet, source_path, runtime, model, approval_run_id
+        )
     prompt = build_extraction_prompt(
         render_prompt(packet), transcript, meeting_date=meeting_date,
         timezone=timezone, title=title)
