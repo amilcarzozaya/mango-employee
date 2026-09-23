@@ -214,3 +214,8 @@ envía datos al modelo hasta que la apruebes y reanudes con
 Las salidas por defecto están en `EMPLOYEE/meetings/output`.
 
 Manual desde cero: [Operational Workflows](../OPERATIONAL-WORKFLOWS.md).
+
+El servicio rechaza también el comando directo `mango meeting --runtime codex`
+si está activo el Gate `sensitive_data` y todavía no existe un Run
+formalmente aprobado. Utiliza siempre `mango workflow meeting` para
+obtener la Approval Card y `mango workflow meeting-resume` para reanudar.
