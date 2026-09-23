@@ -3,13 +3,63 @@
   "release": "MANGO Employee v0.12 RC2",
   "version": "0.12.0rc2",
   "schema_version": 1,
-  "generated_at": "2026-09-23T05:36:50.707+00:00",
+  "generated_at": "2026-09-23T05:38:33.765+00:00",
   "file_count": 29,
   "files": [
     {
       "bytes": 4601,
       "path": "CHANGELOG.md",
       "sha256": "662ca70ad4f48c679e280d5ac9a6863e1d4ce5f9b187ec327d9ee5a32d361f53"
+    },
+    {
+      "bytes": 3996,
+      "path": "MANGO-CHAIN-SPEC.md",
+      "sha256": "f68f0f75012cfc6dd0f96d4899c2beb7539974699d0a361f511748c151f5ac8f"
+    },
+    {
+      "bytes": 7125,
+      "path": "MANGO-EMPLOYEE-SPEC.md",
+      "sha256": "91506724f739e2a87ef338f32cc10d2977c69b394ad03844a272127d339d269c"
+    },
+    {
+      "bytes": 1063,
+      "path": "MANGO-EVALS-SPEC.md",
+      "sha256": "342731b0bdbf45fe7772070e39819c7a031464e85c5118cf1d54e6c569766d71"
+    },
+    {
+      "bytes": 1335,
+      "path": "MANGO-EXECUTION-SPEC.md",
+      "sha256": "d98d14e96a859ee1b689b596c15ba517cf4a8cf66d3abee3cd5fb7070c6901a6"
+    },
+    {
+      "bytes": 1672,
+      "path": "MANGO-MEMORY-SPEC.md",
+      "sha256": "bcfb9aa214d4e941bc55722b6b60c4bdb11f56935af35e897037fad928799a4d"
+    },
+    {
+      "bytes": 2076,
+      "path": "MANGO-OBSERVABILITY-SPEC.md",
+      "sha256": "c32c830ae07e60540329850d4d6e70e59863c3c80c6cd2bc9a43f97fda2c01c1"
+    },
+    {
+      "bytes": 1311,
+      "path": "MANGO-RELEASE-HARDENING-SPEC.md",
+      "sha256": "5387b56e8e7e7b6f463278564fc7a206f036a50beb45f4441386b29f19c5af16"
+    },
+    {
+      "bytes": 1955,
+      "path": "MANGO-STATE-SPEC.md",
+      "sha256": "687a96d322976ec0c2db5523b6c38af5d98bac25cfdf4e6bbff2c900020d4ef2"
+    },
+    {
+      "bytes": 951,
+      "path": "MANGO-TEAMS-SPEC.md",
+      "sha256": "286fd824f3f3d02c55b9353160f7d1af3fb569b81c4220a6de29020a8893a319"
+    },
+    {
+      "bytes": 10638,
+      "path": "README.md",
+      "sha256": "224f4c8df46d39573726887b71e950f42bceccbf3bf1397124736566ebfed592"
     },
     {
       "bytes": 26,
@@ -97,60 +147,10 @@
       "sha256": "cf4a5d916517bdfd8cbe04469f1434c08901948acbb8ee4249c19b5e74bbef56"
     },
     {
-      "bytes": 3996,
-      "path": "MANGO-CHAIN-SPEC.md",
-      "sha256": "f68f0f75012cfc6dd0f96d4899c2beb7539974699d0a361f511748c151f5ac8f"
-    },
-    {
-      "bytes": 7125,
-      "path": "MANGO-EMPLOYEE-SPEC.md",
-      "sha256": "91506724f739e2a87ef338f32cc10d2977c69b394ad03844a272127d339d269c"
-    },
-    {
-      "bytes": 1063,
-      "path": "MANGO-EVALS-SPEC.md",
-      "sha256": "342731b0bdbf45fe7772070e39819c7a031464e85c5118cf1d54e6c569766d71"
-    },
-    {
-      "bytes": 1335,
-      "path": "MANGO-EXECUTION-SPEC.md",
-      "sha256": "d98d14e96a859ee1b689b596c15ba517cf4a8cf66d3abee3cd5fb7070c6901a6"
-    },
-    {
-      "bytes": 1672,
-      "path": "MANGO-MEMORY-SPEC.md",
-      "sha256": "bcfb9aa214d4e941bc55722b6b60c4bdb11f56935af35e897037fad928799a4d"
-    },
-    {
-      "bytes": 2076,
-      "path": "MANGO-OBSERVABILITY-SPEC.md",
-      "sha256": "c32c830ae07e60540329850d4d6e70e59863c3c80c6cd2bc9a43f97fda2c01c1"
-    },
-    {
-      "bytes": 1311,
-      "path": "MANGO-RELEASE-HARDENING-SPEC.md",
-      "sha256": "5387b56e8e7e7b6f463278564fc7a206f036a50beb45f4441386b29f19c5af16"
-    },
-    {
-      "bytes": 1955,
-      "path": "MANGO-STATE-SPEC.md",
-      "sha256": "687a96d322976ec0c2db5523b6c38af5d98bac25cfdf4e6bbff2c900020d4ef2"
-    },
-    {
-      "bytes": 951,
-      "path": "MANGO-TEAMS-SPEC.md",
-      "sha256": "286fd824f3f3d02c55b9353160f7d1af3fb569b81c4220a6de29020a8893a319"
-    },
-    {
       "bytes": 444,
       "path": "pyproject.toml",
       "sha256": "86853f0d33a5f0dc347f586c5805c6f28cde294cf1162afbc3d99f255b95a5cd"
-    },
-    {
-      "bytes": 10638,
-      "path": "README.md",
-      "sha256": "224f4c8df46d39573726887b71e950f42bceccbf3bf1397124736566ebfed592"
     }
   ],
-  "release_hash": "06e1d0bd904a13c1751560613d28097053fab0878a4837e0f0c8bdbe6bf67e52"
+  "release_hash": "d95019d2c01fb636d33c4c0b062bca4824c35528b60cd65d0017d33321a43dd3"
 }
