@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/amilcarzozaya/mango-employee/skills/post-meeting-capture/extraction.schema.json",
+  "title": "MANGO Meeting Intelligence v2 — Model Extraction",
+  "description": "Untrusted model output; deterministic Python validator additionally requires every source_excerpt to appear verbatim in the input.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "meeting",
+    "executive_summary",
+    "decisions",
+    "tasks",
+    "commitments",
+    "pending",
+    "critical_points"
+  ],
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "source_excerpt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_timestamp": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^(?:[0-9]{1,3}:)?[0-5][0-9]:[0-5][0-9]$"
+        }
+      },
+      "required": [
+        "source_excerpt"
+      ],
+      "additionalProperties": true
+    },
+    "fact": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/evidence"
+        },
+        {
+          "type": "object",
+          "required": [
+            "description"
+          ],
+          "properties": {
+            "description": {
+              "type": "string",
+              "minLength": 1
+            },
+            "owner": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "action": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/fact"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "due_text": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "enum": [
+                "committed",
+                "proposed",
+                "pending"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "critical": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/evidence"
+        },
+        {
+          "type": "object",
+          "required": [
+            "title",
+            "reason",
+            "urgency",
+            "impact",
+            "dependency",
+            "risk"
+          ],
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "urgency": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "impact": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "dependency": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            "risk": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            }
+          }
+        }
+      ]
+    }
+  },
+  "properties": {
+    "meeting": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "objective": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "participants"
+      ]
+    },
+    "executive_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decisions": {
+      "type": "array",
+      "maxItems": 150,
+      "items": {
+        "$ref": "#/$defs/fact"
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "maxItems": 150,
+      "items": {
+        "$ref": "#/$defs/action"
+      }
+    },
+    "commitments": {
+      "type": "array",
+      "maxItems": 150,
+      "items": {
+        "$ref": "#/$defs/action"
+      }
+    },
+    "pending": {
+      "type": "array",
+      "maxItems": 150,
+      "items": {
+        "$ref": "#/$defs/fact"
+      }
+    },
+    "critical_points": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/critical"
+      }
+    }
+  }
+}
