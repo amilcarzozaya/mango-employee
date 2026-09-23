@@ -273,3 +273,29 @@ def test_cli_end_to_end_tracked_meeting(employee):
     data = json.loads(proc.stdout)
     assert get_run(employee, data["run_id"])["status"] == "completed"
     assert Path(data["files"]["json"]).is_file()
+
+
+def test_meeting_report_survives_verified_release_backup(employee, tmp_path):
+    from mango_cli.hardening import backup, verify_backup, restore
+    result = meeting_workflow(
+        employee, ROOT, TRANSCRIPT, meeting_date="2026-09-23",
+        extraction_path=MEETING_JSON, formats=("json", "md"))
+    rid = result["run_id"]
+    assert get_run(employee, rid)["status"] == "completed"
+    archive, manifest = backup(employee, tmp_path / "archives")
+    paths = {item["path"] for item in manifest["files"]}
+    assert any(path.startswith("meetings/output/") and path.endswith(".json")
+               for path in paths)
+    assert any(path.startswith("meetings/output/") and path.endswith(".md")
+               for path in paths)
+    assert verify_backup(archive)["ok"]
+    restored = tmp_path / "restored"
+    restored.mkdir()
+    output = restore(restored, archive)
+    assert output["ok"]
+    restored_reports = list((restored / "meetings" / "output").glob("*.json"))
+    assert restored_reports
+    raw = json.loads(restored_reports[0].read_text(encoding="utf-8"))
+    assert raw["schema_version"] == "2.0.0"
+    with pytest.raises(FileExistsError):
+        restore(restored, archive)
