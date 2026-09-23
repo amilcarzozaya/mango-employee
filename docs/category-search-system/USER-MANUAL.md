@@ -1,310 +1,492 @@
-# Manual de Usuario — MANGO Category Search System + LinkedIn Search Visibility
+# Manual completo — MANGO Category Search System + LinkedIn Search Visibility
 
-Versión del sistema: Category Search System 1.3.0 + LinkedIn Search Visibility 1.1.0 + MANGO CLI 0.12.0rc2
+Versiones:
 
-## 1. Objetivo
+- MANGO Employee CLI 0.12.0rc2
+- category-search-system 1.3.0
+- linkedin-search-visibility 1.1.0
 
-Este sistema sirve para construir autoridad temática de forma gobernada. Primero decide **qué preguntas vale la pena ocupar** y después convierte cada pregunta prioritaria en contenido LinkedIn útil, verificable y medible.
+Este manual es autocontenido: define conceptos, setup, ejecución, seguridad, operación y troubleshooting.
 
-No es un sistema que garantice rankings. Es un sistema de estrategia, producción, observación y aprendizaje.
+## 1. Propósito
 
-## 2. Arquitectura
+Category Search System busca construir una asociación temática gobernada entre:
 
-```text
-Category
-  ↓
-Query Brain
-  ↓
-Strategic Priority
-  ↓
-T1 Query
-  ↓
-category-search-system
-  ↓ handoff JSON
-linkedin-search-visibility
-  ↓
-LinkedIn draft
-  ↓
-Publish Gate
-  ↓
-Published asset
-  ↓
-Observation Engine
-  ↓
-Operational Priority
-  ↓
-Google Sheets Dashboard / Weekly Queue
-```
+- una entidad;
+- una categoría;
+- preguntas reales;
+- evidencia;
+- contenido;
+- observaciones posteriores.
 
-## 3. Roles de las dos skills
+No promete resultados de buscadores.
+
+## 2. Componentes
+
+### Employee
+
+Contrato del trabajador IA.
+
+Debe asignar ambas Skills.
 
 ### category-search-system
 
-Es el cerebro estratégico. Decide:
+Parent estratégico.
+
+Responsabilidades:
+
 - categorías;
-- queries;
+- Search Jobs;
+- Query Brain;
+- scoring estratégico;
 - T1/T2/T3;
-- entity association;
 - evidencia requerida;
-- contenido que debe existir;
-- qué atacar/reforzar cada semana.
+- content clusters;
+- Observation overlay;
+- weekly queue.
 
 ### linkedin-search-visibility
 
-Es el ejecutor LinkedIn. Decide:
-- forma del opening;
-- estructura del post;
-- densidad semántica natural;
-- claridad de la entidad;
-- qué claims deben validarse;
-- preview de discoverability;
-- queries de verificación.
+Child de ejecución LinkedIn.
 
-No puede cambiar silenciosamente la estrategia del padre.
+Responsabilidades:
 
-## 4. Instalación y registro
+- search brief;
+- openings;
+- final asset;
+- entity association;
+- claims-to-verify;
+- discoverability preview;
+- verification queries;
+- publish gate status.
 
-Las skills deben existir en:
-- `.agents/skills/.../SKILL.md`
-- `.claude/skills/.../SKILL.md`
-- `skills/<skill>/SKILL.md`
-- `skills/<skill>/<skill>.skill.json`
-- `skills/registry.json`
+### Chain Runtime
 
-Después:
+Orquesta parent→child dentro de un root Run.
 
-```bash
-mango validate ./employees/my-employee
-mango test ./employees/my-employee
-mango security ./employees/my-employee
-```
+### Publish Gate
 
-El Employee debe declarar ambas skills. Estar en el registry no asigna automáticamente la skill a todos los Employees.
+Separa draft de publicación externa.
 
-## 5. Flujo operativo completo
+### Observation
 
-### Paso A — Elegir query
+Registro fechado de lo que apareció en una superficie.
 
-El padre selecciona una T1 usando strategic priority y, cuando existe, operational priority.
+## 3. Instalación de MANGO desde cero
 
-### Paso B — Preparar handoff
+Ve a la raíz del repo:
 
-El padre emite un objeto conforme a `HANDOFF-CONTRACT.md`.
+~~~bash
+git clone https://github.com/amilcarzozaya/mango-employee.git
+cd mango-employee
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+mango --version
+~~~
+
+Windows PowerShell:
+
+~~~powershell
+git clone https://github.com/amilcarzozaya/mango-employee.git
+cd mango-employee
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e .
+mango --version
+~~~
+
+Para detalles: ../INSTALLATION.md.
+
+## 4. Crear un Employee
+
+~~~bash
+mango init ./employees/category-search-employee
+~~~
+
+Luego:
+
+~~~bash
+mango info ./employees/category-search-employee
+mango validate ./employees/category-search-employee
+mango test ./employees/category-search-employee
+mango security ./employees/category-search-employee
+~~~
+
+## 5. Asignar las Skills
+
+mango init no incluye actualmente Category Search en sus presets estándar.
+
+Debes asignar explícitamente:
+
+- category-search-system;
+- linkedin-search-visibility.
+
+Sigue ../SKILLS.md.
+
+No basta con que existan en skills/registry.json.
+
+Verifica:
+
+~~~bash
+mango info ./employees/category-search-employee
+~~~
+
+## 6. Autonomía
+
+Ambas Skills usan Level 2 actualmente.
+
+El Employee debe cumplir:
+
+~~~text
+Employee max autonomy >= Skill autonomy
+~~~
+
+No subas autonomía por comodidad. Revisa Gates y responsabilidades.
+
+## 7. Primer preflight
+
+~~~bash
+mango chain ./employees/category-search-employee \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Crea un Query Brain inicial y prepara la siguiente T1 para LinkedIn." \
+  --runtime prepare
+~~~
+
+Si esto falla, corrige setup antes de usar un modelo.
+
+## 8. Elegir runtime live
+
+Instala sólo uno inicialmente.
+
+Ejemplo Codex:
+
+~~~bash
+npm install -g @openai/codex
+codex
+mango doctor
+~~~
+
+Ver ../RUNTIMES.md para Claude/Gemini/Hermes/OpenClaw.
+
+## 9. Ejecutar el chain live
+
+~~~bash
+mango chain ./employees/category-search-employee \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Selecciona la siguiente T1 y prepara el asset LinkedIn." \
+  --runtime codex
+~~~
+
+La salida incluye RUN_ID.
+
+## 10. Lineage
+
+El root Run mantiene dos pasos:
+
+~~~text
+step 1: category-search-system
+step 2: linkedin-search-visibility
+~~~
+
+Inspección:
+
+~~~bash
+mango chain-status ./employees/category-search-employee RUN_ID
+mango trace explain ./employees/category-search-employee RUN_ID
+mango trace audit ./employees/category-search-employee RUN_ID
+~~~
+
+## 11. Handoff contract
 
 Campos críticos:
+
+- handoff_version;
+- from_skill;
+- to_skill;
 - query_id;
-- primary_query;
+- mode;
 - entity;
+- primary_query;
+- intent;
 - audience;
 - geography;
 - angle;
 - proof_required;
 - constraints.
 
-### Paso C — Resolver handoff
+Ver HANDOFF-CONTRACT.md.
 
-El child valida:
-- que el package venga del padre correcto;
-- que la query exista;
-- que no falten entity/audience;
-- que los claims tengan evidencia.
+## 12. Receipt
 
-Si falta evidencia, no inventa: devuelve `TBD_EVIDENCE`.
+El child debe devolver:
 
-### Paso D — Crear post
+- parent correcto;
+- child correcto;
+- mismo query_id;
+- status permitido.
 
-El child genera:
+Un receipt inválido hace fallar la cadena.
+
+Esto protege lineage.
+
+## 13. Query Brain
+
+Una query no es sólo una keyword.
+
+Debe representar un Search Job/intención.
+
+Ejemplo:
+
+~~~text
+¿Cómo implementar inteligencia artificial en una empresa en México?
+~~~
+
+Tiene:
+
+- audiencia;
+- problema;
+- geografía;
+- intención;
+- entidad objetivo;
+- evidencia requerida.
+
+## 14. Scoring estratégico
+
+La Skill define un scoring transparente basado en:
+
+- strategic fit;
+- commercial intent;
+- authority strength;
+- natural query;
+- differentiation;
+- evidence readiness.
+
+No lo describas como search volume, dificultad o probabilidad de ranking.
+
+## 15. Tiers
+
+T1:
+prioridad inmediata/portafolio principal.
+
+T2:
+expansión posterior.
+
+T3:
+reserva/long tail estratégico.
+
+Los tiers no son rankings de Google.
+
+## 16. Content Engine
+
+Para una T1 puede preparar:
+
+- anchor asset;
+- posts LinkedIn distintos;
+- visual/video brief;
+- FAQ web;
+- evidence card;
+- verification queries.
+
+No debe crear thin content para pequeñas variaciones de la misma intención.
+
+## 17. LinkedIn child
+
+El child mantiene una primary query por asset.
+
+Produce:
+
 1. search brief;
-2. tres openings;
+2. tres opening options;
 3. final asset;
 4. discoverability preview;
 5. verification queries;
 6. claims-to-verify;
-7. publish-gate status.
+7. publish gate status.
 
-### Paso E — Aprobar/publicar
+## 18. Evidencia
 
-Draft puede ser autónomo. Publicación requiere autoridad y Gate.
+Aceptable:
 
-### Paso F — Observar
+- experiencia propia claramente descrita;
+- datos proporcionados por el owner;
+- fuentes públicas verificadas;
+- inferencias claramente distinguidas.
 
-Después de publicación, el Observation Engine registra resultados por query/surface/fecha.
+No inventar:
 
-## 6. Cómo leer el handoff
-
-Ejemplo:
-
-```json
-{
-  "query_id": "Q-017",
-  "primary_query": "¿Cómo crear un agente de IA para una empresa?",
-  "entity": "Amílcar Zozaya + MANGO Employee",
-  "angle": "Diseña sistemas, no sólo prompts.",
-  "proof_required": ["metodología", "casos", "controles de seguridad"]
-}
-```
-
-Esto significa que el child **no debe** convertir el post en otra query como “mejores herramientas de IA”. Puede usar frases secundarias, pero conserva el search job.
-
-## 7. Modos de LinkedIn Search Visibility
-
-### single_post
-Un post completo para una query.
-
-### category_cluster
-6–12 intenciones distintas alrededor de una categoría.
-
-### authority_article
-Artículo largo + ángulos de distribución.
-
-### audit
-Revisión de un post existente.
-
-En handoffs T1, el default recomendado es `single_post`.
-
-## 8. Evidencia y claims
-
-Se permite:
-- hechos proporcionados por el usuario;
-- datos de fuentes públicas verificadas;
-- experiencia propia presentada como experiencia;
-- opiniones claramente distinguidas.
-
-No se permite inventar:
-- rankings;
-- número de clientes;
+- search volume;
+- ranking;
+- clientes;
 - revenue;
 - testimonios;
-- adopción;
 - resultados;
-- search volume;
-- posiciones Google/AI.
+- citas de IA;
+- posición “#1”.
 
-## 9. Publicación y seguridad
+## 19. Publish Gate
 
-Autonomía recomendada: **2 — Preparer**.
+La publicación es una acción externa.
 
-Con Level 2:
-- puede investigar;
-- puede escribir;
-- puede preparar handoffs;
-- puede auditar;
-- no debe publicar externamente sin aprobación.
+La finalización del chain no elimina el Gate.
 
-El output esperado antes de publicación:
+Output esperado cuando falta aprobación:
 
-`publish_gate_status: waiting_approval`
+~~~text
+waiting_approval
+~~~
 
-## 10. Observación
+## 20. Observation Engine
 
-Una vez publicado, verifica con fecha y superficie.
+Una observación es una medición fechada.
 
-Correcto:
+Registra:
 
-“Observado el 2026-10-03: el asset apareció para Q-017 en Perplexity.”
-
-Incorrecto:
-
-“Ahora rankea permanentemente para Q-017.”
-
-## 11. Dashboard
-
-El dashboard usa:
 - exact query;
-- surface;
-- target mention;
-- Amílcar mention;
-- MANGO mention;
-- owned URL citation;
-- competitors;
-- URLs cited;
-- operational score.
+- timestamp;
+- surface/provider;
+- target entity mention;
+- cited URLs;
+- owned citation;
+- entities;
+- competitor entities;
+- bounded answer evidence.
 
-DEMO y LIVE nunca deben mezclarse.
+Las preguntas de observación deben ser neutrales; no deben pedir al modelo que mencione al target.
 
-## 12. Troubleshooting
+## 21. Strategic vs Operational Priority
 
-### Skill not declared/found
-La skill puede estar registrada pero no asignada al Employee. Añádela al contrato del Employee.
+Strategic:
+qué quieres asociar a largo plazo.
 
-### Child not found
-Verifica `skills/registry.json` y el ID exacto `linkedin-search-visibility`.
+Operational:
+qué necesita trabajo ahora.
 
-### Handoff changes query
-Falla de contrato. El child debe preservar `primary_query`. Añade regression test.
+Operational puede subir/bajar con observación.
 
-### Missing evidence
-Usa TBD y elimina/qualifica el claim.
+Strategic sólo cambia por una decisión estratégica versionada.
+
+## 22. Share of Answer
+
+Definición del dashboard:
+
+~~~text
+observaciones donde aparece la entidad objetivo / observaciones recolectadas
+~~~
+
+No es market share.
+
+No es una métrica universal de GEO.
+
+## 23. Dashboard
+
+La arquitectura contempla una capa Google Sheets.
+
+El dashboard externo que se diseñó para este sistema no está incluido como componente core en el checkout actual de mango-employee.
+
+No prometas que un usuario nuevo tendrá ese Sheet automáticamente.
+
+La Skill sí define el tipo de feed/datos que esa capa puede consumir.
+
+## 24. Bloqueo de handoff
+
+Si el parent no devuelve un handoff válido:
+
+~~~text
+Run → blocked
+~~~
+
+No se pierde el parent output.
+
+Revisa:
+
+~~~bash
+mango chain-status EMPLOYEE RUN_ID
+~~~
+
+Corrige JSON y reanuda:
+
+~~~bash
+mango handoff EMPLOYEE RUN_ID --file corrected-handoff.json
+~~~
+
+## 25. Artefactos de Chain
+
+~~~text
+state/chains/RUN_ID/
+├── 01-parent-output.txt
+├── 02-handoff.json
+├── 03-child-output.txt
+├── 04-receipt.json
+└── 05-result.json
+~~~
+
+## 26. Operación semanal recomendada
+
+1. Revisa Query Brain/T1.
+2. Revisa observaciones recientes.
+3. Prioriza por strategic + operational overlay.
+4. Ejecuta una T1.
+5. Revisa evidence/claims.
+6. Aprueba/publica externamente sólo si corresponde.
+7. Observa después.
+8. Actualiza operational priority.
+9. Conserva lineage.
+
+## 27. Troubleshooting
+
+### Parent/child no aparecen en mango info
+
+No están asignados. Ver ../SKILLS.md.
+
+### Preflight prepare falla
+
+Corrige registro/asignación/autonomía antes de live runtime.
+
+### Runtime FOUND pero falla
+
+Prueba el runtime directamente; doctor sólo detecta binario.
+
+### Handoff query cambia
+
+Falla de contrato. El child debe preservar primary_query/query_id.
+
+### Falta evidencia
+
+Usa TBD/claims_to_verify. No rellenes inventando.
 
 ### Publish blocked
-Es comportamiento esperado si falta aprobación/permiso.
 
-### Runtime no encontrado
-Ejecuta `mango doctor` y valida el runtime externo.
+Correcto si no hay aprobación.
 
-### Resultado inesperado
-Usa `mango trace explain` cuando exista un Run persistente y revisa el paquete de contexto.
+### Dashboard no existe
 
-## 13. Checklist de un run bueno
+El dashboard externo no está bundled en core. Debe desplegarse aparte.
 
-- query_id conservado;
-- una sola primary query;
-- entity association explícita;
-- opening natural;
-- first useful answer cerca del inicio;
-- claims trazables;
-- no ranking guarantee;
-- verification queries;
-- publish gate;
-- handoff receipt.
+## 28. Definition of Done del flujo
 
-## 14. Definition of Done
+El flujo está completo cuando:
 
-El flujo padre→hijo está completo cuando:
-1. la query T1 fue seleccionada;
-2. existe un handoff válido;
-3. el child resolvió el mismo query_id;
-4. el draft está listo;
-5. claims están respaldados/TBD;
-6. publish gate es visible;
-7. hay verification queries;
-8. después de publicar puede observarse el mismo query_id.
+1. Employee válido;
+2. ambas Skills asignadas;
+3. preflight pasa;
+4. parent selecciona query;
+5. handoff válido;
+6. child preserva query_id;
+7. draft listo;
+8. claims respaldados/TBD;
+9. publish Gate visible;
+10. verification queries disponibles;
+11. después de publicación puede observarse el mismo query_id.
 
-## 15. Chain Runtime
+## 29. Documentos relacionados
 
-MANGO Employee ya puede ejecutar el flujo padre→hijo automáticamente dentro de un único Run:
-
-```bash
-mango chain EMPLOYEE \
-  --parent-skill category-search-system \
-  --child-skill linkedin-search-visibility \
-  --task "Selecciona la siguiente T1 y crea el asset LinkedIn" \
-  --runtime codex
-```
-
-El Run conserva:
-- parent y child;
-- package ID de cada etapa;
-- output del padre;
-- handoff validado;
-- output del child;
-- receipt;
-- spans/provenance;
-- checkpoints.
-
-Si el handoff del padre no cumple el contrato, el Run queda `blocked`. Corrige o aprueba un handoff y continúa el mismo Run:
-
-```bash
-mango handoff EMPLOYEE RUN_ID --file corrected-handoff.json
-```
-
-Inspección:
-
-```bash
-mango chain-status EMPLOYEE RUN_ID
-mango trace explain EMPLOYEE RUN_ID
-mango trace audit EMPLOYEE RUN_ID
-```
-
-La finalización de la cadena **no** equivale a autorización para publicar. El publish gate permanece independiente.
-
+- USER-GUIDE.md
+- HANDOFF-CONTRACT.md
+- ../SKILLS.md
+- ../RUNTIMES.md
+- ../COMMAND-REFERENCE.md
+- ../OBSERVABILITY.md
+- ../../MANGO-CHAIN-SPEC.md
