@@ -46,10 +46,10 @@ For setup, use docs/START-HERE.md.
 
 ## Tag/release
 
-For RC2, the intended tag form is:
+For RC3, the intended tag form is:
 
 ~~~text
-v0.13.0rc2
+v0.13.0rc3
 ~~~
 
 Before tagging:
@@ -72,3 +72,16 @@ Do not reuse historical placeholder tags from older development phases.
 - [ ] Quote backup includes ledger, profiles, drafts and issued snapshots.
 - [ ] Word/PDF outputs pass optional dependency tests.
 - [ ] No generated customer data is committed to the public repository.
+
+## Stage 4 operational integration checks
+
+- [ ] Meeting produces a persistent Run, provenance and validated report.
+- [ ] sensitive_data prevents external model use before approval and checks exact source SHA256 on resume.
+- [ ] Quote-draft creates all required commercial Approval Cards bound to exact draft SHA256.
+- [ ] Partial approvals never unlock pending commercial gates.
+- [ ] Rejected/tampered drafts cannot allocate folios.
+- [ ] Direct gated issue fails without a formally approved Run.
+- [ ] Quote crash/retry preserves folio and root Run.
+- [ ] Per-Employee storage and output paths are isolated.
+- [ ] Release backup/restore includes validated Meeting reports and quote operational stores.
+- [ ] Main CI Python 3.10–3.13 and release manifest match the committed code.
