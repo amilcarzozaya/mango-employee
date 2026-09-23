@@ -3,7 +3,7 @@
   "release": "MANGO Employee v0.13 RC1",
   "version": "0.13.0rc1",
   "schema_version": 1,
-  "generated_at": "2026-09-23T18:45:26.838Z",
+  "generated_at": "2026-09-23T18:47:24.890Z",
   "file_count": 32,
   "files": [
     {
@@ -112,9 +112,9 @@
       "sha256": "b2b8e0967981ec5ae963b963aa8b8385e64f1b60ac82adfe277af552de0f23c8"
     },
     {
-      "bytes": 17571,
+      "bytes": 18490,
       "path": "mango_cli/meeting.py",
-      "sha256": "a75e77b6389a8f02b776f292562ff19a3d658f02ab041f9604cd7064832d5d5d"
+      "sha256": "0a391fd6d43d8a84268d6e5407f5c373b1289d9cbdadde0b8b425e44873b8909"
     },
     {
       "bytes": 10040,
@@ -167,5 +167,5 @@
       "sha256": "0ec512f2ed5385d7fc01900431d8ef1a4cf10e5fd2199c76f76fb4f7dd2de1ee"
     }
   ],
-  "release_hash": "dd500813ef25e814ea99ab84754e1b5abff05735e752a8e87d29da104b564132"
+  "release_hash": "b52417ca4a77054d7d299cb18907f42bbdb6c3a72227fdf6b62d1a0a5ecfc00f"
 }
