@@ -1,6 +1,6 @@
 {
   "id": "category-search-system",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "objective": "Operate a governed Category Search System from strategic Query Brain through T1 content execution, neutral multi-surface observations, auditable operational reprioritization, and a Google Sheets dashboard/weekly content queue without fabricating demand or overwriting strategic truth.",
   "trigger": "When the user wants to build category authority, define 20-50+ strategic questions, create a search/query map, prioritize content for Google/LinkedIn/AI search, execute T1 content, observe search visibility, or run a weekly Category Search dashboard/queue.",
   "inputs": [
@@ -26,6 +26,7 @@
     "Generate and deduplicate distinct search jobs; score strategic priority without inventing search volume, keyword difficulty or ranking probability.",
     "Select a balanced T1 portfolio and define entity association, proof requirements, unique point of view and content mode.",
     "Execute T1 through the Content Engine using materially distinct assets and evidence cards.",
+    "For LinkedIn execution, emit a typed handoff package to linkedin-search-visibility and require the child to preserve query_id, primary_query, entity, audience, geography and constraints.",
     "Stop at the publish gate before external publication unless explicit authority exists.",
     "Observe exact queries neutrally across authorized search/AI surfaces and record timestamp, provider, target mention, citations, owned citations, entities and bounded answer evidence.",
     "Preserve strategic scores and calculate a separate operational-priority overlay.",
@@ -94,7 +95,8 @@
     "Operational priority can be recalculated without modifying the base strategic score.",
     "Google Sheets feed separates DEMO and LIVE data and produces a weekly content queue.",
     "No search outcome is promised.",
-    "No external publication occurs without required approval."
+    "No external publication occurs without required approval.",
+    "LinkedIn T1 execution returns a child handoff receipt with the same query_id when the child skill is used."
   ],
   "qa": [
     "No duplicate search jobs as separate thin-content targets.",
@@ -166,6 +168,40 @@
     {
       "name": "publish-request",
       "expected": "external publishing stops at publish gate without explicit approval"
+    },
+    {
+      "name": "linkedin-child-handoff",
+      "expected": "registered child consumes the typed handoff, preserves query_id and returns a handoff receipt"
     }
-  ]
+  ],
+  "dependencies": [
+    {
+      "skill_id": "linkedin-search-visibility",
+      "min_version": "1.1.0",
+      "required_for": [
+        "linkedin_execution"
+      ]
+    }
+  ],
+  "handoff_contract": {
+    "version": "1.0",
+    "to_skill": "linkedin-search-visibility",
+    "required_fields": [
+      "query_id",
+      "primary_query",
+      "entity",
+      "audience",
+      "geography",
+      "angle",
+      "proof_required",
+      "constraints"
+    ],
+    "receipt_fields": [
+      "from_skill",
+      "to_skill",
+      "query_id",
+      "status"
+    ],
+    "documentation": "docs/category-search-system/HANDOFF-CONTRACT.md"
+  }
 }
