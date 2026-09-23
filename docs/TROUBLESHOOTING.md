@@ -352,3 +352,16 @@ Si falta un responsable o una fecha, puede ser correcto: revisa
 review_required. Para DOCX/PDF instala python -m pip install -e ".[meeting]".
 El comando rechaza PDFs sin texto y no hace OCR ni transcripción de audio.
 Consulta meeting-intelligence/USER-GUIDE.md.
+
+## Quote Builder
+
+Si no aparece commercial-quotation en mango info EMPLOYEE, asígnala
+explícitamente y ejecuta mango validate/mango security.
+Si falta Word/PDF, instala python -m pip install -e ".[quote]".
+Si un impuesto no está configurado o vigente, consulta el perfil y confirma
+el tratamiento con tu asesor. Nunca fuerces la tasa desde una descripción.
+Si el borrador falla el control SHA256, restaura la versión original o
+genera un borrador nuevo. Si ya existe un archivo de salida utiliza un
+directorio nuevo; no lo sobrescribas. Folios ya asignados se reutilizan
+en reintentos de issue del mismo borrador/atestado.
+Consulta [Quote Builder](quote-builder/USER-GUIDE.md).
