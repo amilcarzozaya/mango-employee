@@ -115,6 +115,25 @@ docs/                       architecture, runtime compatibility and security doc
 - `mango security` — run offline security controls.
 - `mango doctor` — detect installed runtime CLIs.
 - `mango run` — prepare or execute Employee + Skill + Task.
+- `mango chain` — execute governed parent→child Skills inside one persistent Run.
+- `mango handoff` — resume a blocked chain Run with validated handoff JSON.
+- `mango chain-status` — inspect chain lineage.
+
+## MANGO Chain Runtime
+
+v0.12 RC2 adds governed Skill-to-Skill orchestration without creating a hidden second Run.
+
+```bash
+mango chain ./employees/my-employee \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Prepare the next T1 LinkedIn asset" \
+  --runtime codex
+```
+
+The runtime validates the handoff contract, records both package IDs and spans, and requires a child receipt that preserves lineage. If the handoff is invalid, the Run becomes `blocked` and can resume using `mango handoff`.
+
+See `MANGO-CHAIN-SPEC.md`.
 
 ## MANGO Teams & Handoffs
 
@@ -214,7 +233,7 @@ This is designed to make learning cumulative without silently expanding authorit
 
 ## Status
 
-**v0.12 RC1 — MANGO Release Candidate hardening.** The package has offline compatibility adapters for Codex, Claude Code, Gemini CLI, Hermes Agent and OpenClaw. Live end-to-end model execution requires those CLIs and their credentials; `mango doctor` reports what is available on the host.
+**v0.12 RC2 — Chain Runtime + MANGO Release Candidate hardening.** The package has offline compatibility adapters for Codex, Claude Code, Gemini CLI, Hermes Agent and OpenClaw. Live end-to-end model execution requires those CLIs and their credentials; `mango doctor` reports what is available on the host.
 
 ## Credits
 
