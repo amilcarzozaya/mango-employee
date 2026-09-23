@@ -2,6 +2,1211 @@
   "version": "1.0.0",
   "skills": [
     {
+      "id": "morning-command-center",
+      "version": "1.0.0",
+      "objective": "Convertir actividad reciente en una lista corta y verificable de prioridades para el owner.",
+      "trigger": "Al inicio de cada día laboral",
+      "inputs": [
+        "Actividad de las últimas 12–24 horas",
+        "Clientes/proyectos activos",
+        "Deadlines",
+        "Propuestas abiertas",
+        "Facturas vencidas"
+      ],
+      "sources": [
+        "CRM",
+        "Email",
+        "Calendar",
+        "Project system",
+        "Finance"
+      ],
+      "procedure": [
+        "Leer sólo fuentes autorizadas.",
+        "Extraer compromisos, deadlines, propuestas, bloqueos, facturas y riesgos.",
+        "Eliminar ruido informativo sin acción.",
+        "Ordenar por consecuencia, fecha y dependencia.",
+        "Entregar una línea por asunto con fuente."
+      ],
+      "rules": [
+        "No enviar mensajes.",
+        "No inventar fechas ni owners.",
+        "Separar hechos de inferencias.",
+        "Si dos fuentes chocan, mostrar conflicto."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "who",
+          "what",
+          "needs_from_owner",
+          "due_date",
+          "source",
+          "risk"
+        ]
+      },
+      "definition_of_done": [
+        "Cada ítem es accionable.",
+        "Cada fecha/claim tiene fuente.",
+        "Los conflictos están visibles."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [],
+      "autonomy_level": 1,
+      "updates_memory": [
+        "operational_state"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "pre-meeting-brief",
+      "version": "1.0.0",
+      "objective": "Preparar al owner para entrar a una reunión con contexto, compromisos y decisiones claras.",
+      "trigger": "Antes de una reunión",
+      "inputs": [
+        "Evento de calendario",
+        "Contacto/cuenta",
+        "Historial relevante"
+      ],
+      "sources": [
+        "Calendar",
+        "CRM",
+        "Email",
+        "Client File",
+        "Decision Log"
+      ],
+      "procedure": [
+        "Identificar participantes y objetivo.",
+        "Recuperar última interacción y compromisos.",
+        "Listar open loops y riesgos.",
+        "Separar hechos de hipótesis.",
+        "Proponer tres preguntas y la decisión deseada."
+      ],
+      "rules": [
+        "No atribuir intención sin evidencia.",
+        "No presentar datos viejos como actuales."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "context",
+          "last_touch",
+          "commitments",
+          "open_loops",
+          "risks",
+          "questions",
+          "desired_decision",
+          "sources"
+        ]
+      },
+      "definition_of_done": [
+        "Brief cabe en una pantalla.",
+        "Todo compromiso tiene owner/fuente cuando existe."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [],
+      "autonomy_level": 1,
+      "updates_memory": [],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "post-meeting-capture",
+      "version": "1.0.0",
+      "objective": "Convertir una conversación en decisiones, compromisos y siguientes pasos rastreables.",
+      "trigger": "Después de una reunión",
+      "inputs": [
+        "Notas/transcripción",
+        "Cuenta/proyecto"
+      ],
+      "sources": [
+        "Meeting notes",
+        "CRM",
+        "Client File"
+      ],
+      "procedure": [
+        "Extraer decisiones explícitas.",
+        "Extraer compromisos con owner y fecha.",
+        "Marcar owner/fecha ausente como NO DEFINIDO.",
+        "Detectar riesgos y cambios de alcance.",
+        "Preparar follow-up draft.",
+        "Proponer actualizaciones de estado."
+      ],
+      "rules": [
+        "No transformar una sugerencia en compromiso.",
+        "No enviar el follow-up sin autorización."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "decisions",
+          "commitments",
+          "undefined_fields",
+          "risks",
+          "followup_draft",
+          "state_updates"
+        ]
+      },
+      "definition_of_done": [
+        "No quedan compromisos ambiguos ocultos.",
+        "Cambios de alcance se escalan."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "external_send",
+        "scope"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [
+        "decision",
+        "commitment",
+        "operational_state"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "deliverable-qa",
+      "version": "1.0.0",
+      "objective": "Detectar errores verificables antes de que un entregable salga al cliente.",
+      "trigger": "Antes de una entrega",
+      "inputs": [
+        "Entregable",
+        "SOW/brief",
+        "Fuentes citadas"
+      ],
+      "sources": [
+        "Deliverable",
+        "Contract/SOW",
+        "Client File",
+        "Approved source material"
+      ],
+      "procedure": [
+        "Comprobar nombre/cliente/versión.",
+        "Validar números y claims contra fuentes.",
+        "Comparar contra alcance y requisitos.",
+        "Buscar placeholders, fechas, enlaces y asks incompletos.",
+        "Emitir PASS o lista de fallas."
+      ],
+      "rules": [
+        "No editar silenciosamente.",
+        "No aprobar un claim sin fuente."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "status",
+          "failures",
+          "sources",
+          "recommended_fixes"
+        ]
+      },
+      "definition_of_done": [
+        "PASS sólo si no hay fallas críticas.",
+        "Cada falla indica ubicación y corrección esperada."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [],
+      "autonomy_level": 1,
+      "updates_memory": [
+        "correction"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "revision-scope-log",
+      "version": "1.0.0",
+      "objective": "Registrar revisiones y evitar que trabajo adicional se convierta en alcance gratuito invisible.",
+      "trigger": "Al recibir feedback o cambios",
+      "inputs": [
+        "Solicitud de cambio",
+        "SOW",
+        "Historial de revisiones"
+      ],
+      "sources": [
+        "Client message",
+        "Contract/SOW",
+        "Revision Log"
+      ],
+      "procedure": [
+        "Registrar solicitud y ronda.",
+        "Clasificar dentro/fuera de alcance.",
+        "Asignar owner y estado.",
+        "Calcular días abierto.",
+        "Escalar fuera de alcance."
+      ],
+      "rules": [
+        "No aceptar scope adicional.",
+        "No fijar precio del cambio."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "revision_round",
+          "request",
+          "classification",
+          "owner",
+          "status",
+          "age_days",
+          "escalation"
+        ]
+      },
+      "definition_of_done": [
+        "Toda revisión tiene clasificación.",
+        "Fuera de alcance nunca se mezcla con trabajo aprobado."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "scope",
+        "pricing"
+      ],
+      "autonomy_level": 1,
+      "updates_memory": [
+        "operational_state"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "friday-status",
+      "version": "1.0.0",
+      "objective": "Preparar un status ejecutivo de cliente en máximo seis líneas.",
+      "trigger": "Viernes o cierre semanal",
+      "inputs": [
+        "Trabajo de la semana",
+        "Open loops",
+        "Fechas",
+        "Capacidad/presupuesto"
+      ],
+      "sources": [
+        "Project system",
+        "Client File",
+        "Decision Log",
+        "Contract/SOW"
+      ],
+      "procedure": [
+        "Resumir entregado.",
+        "Resumir en progreso.",
+        "Indicar espera del cliente.",
+        "Indicar próxima fecha.",
+        "Indicar capacidad/presupuesto si aplica.",
+        "Indicar un riesgo material."
+      ],
+      "rules": [
+        "Sólo datos verificables.",
+        "Máximo seis líneas salvo instrucción contraria.",
+        "No enviar."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "delivered",
+          "in_progress",
+          "waiting_on_client",
+          "next_date",
+          "capacity_or_budget",
+          "risk"
+        ]
+      },
+      "definition_of_done": [
+        "Es legible en menos de un minuto.",
+        "No contiene claims sin fuente."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "external_send"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "proposal-follow-up",
+      "version": "1.0.0",
+      "objective": "Mantener momentum comercial aportando valor nuevo en cada contacto.",
+      "trigger": "Días 3, 7 y 14 después de propuesta, o política equivalente",
+      "inputs": [
+        "Propuesta",
+        "Último contacto",
+        "Contexto del prospecto"
+      ],
+      "sources": [
+        "CRM",
+        "Email",
+        "Proposal",
+        "Research approved by owner"
+      ],
+      "procedure": [
+        "Confirmar etapa y última interacción.",
+        "Determinar si existe valor nuevo.",
+        "Preparar mensaje breve con un nuevo dato, recurso, insight o decisión.",
+        "Si no existe valor nuevo, recomendar no contactar.",
+        "Actualizar siguiente acción propuesta."
+      ],
+      "rules": [
+        "No inventar urgencia.",
+        "No usar presión falsa.",
+        "No enviar sin gate."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "touch_number",
+          "new_value",
+          "draft",
+          "recommended_next_step"
+        ]
+      },
+      "definition_of_done": [
+        "Cada draft aporta valor nuevo o recomienda omitir.",
+        "No repite el mensaje anterior."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "external_send",
+        "pricing"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [
+        "operational_state"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "invoice-watch",
+      "version": "1.0.0",
+      "objective": "Hacer visible y consistente la cobranza sin inventar consecuencias.",
+      "trigger": "Revisión diaria o semanal de cuentas por cobrar",
+      "inputs": [
+        "Facturas",
+        "Términos contractuales",
+        "Historial de contacto"
+      ],
+      "sources": [
+        "Finance",
+        "Contract",
+        "Email"
+      ],
+      "procedure": [
+        "Listar facturas abiertas.",
+        "Calcular días desde vencimiento.",
+        "Recuperar último contacto.",
+        "Aplicar escalera de seguimiento documentada.",
+        "Preparar draft y escalación."
+      ],
+      "rules": [
+        "No amenazar con consecuencias no contractuales.",
+        "No modificar montos.",
+        "No ejecutar movimientos financieros."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "client",
+          "invoice",
+          "amount",
+          "due_date",
+          "days_overdue",
+          "last_contact",
+          "draft",
+          "escalation"
+        ]
+      },
+      "definition_of_done": [
+        "Montos y fechas trazan a Finance.",
+        "Consecuencias trazan a contrato/política."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "external_send",
+        "spend"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [
+        "operational_state"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "scope-guard",
+      "version": "1.0.0",
+      "objective": "Comparar solicitudes contra el SOW y proteger margen y capacidad.",
+      "trigger": "Cuando una solicitud puede cambiar alcance, esfuerzo o fecha",
+      "inputs": [
+        "Solicitud",
+        "SOW",
+        "Estado del proyecto"
+      ],
+      "sources": [
+        "Contract/SOW",
+        "Client message",
+        "Project system"
+      ],
+      "procedure": [
+        "Descomponer la solicitud.",
+        "Comparar cada componente contra alcance.",
+        "Clasificar in-scope/out-of-scope/ambiguous.",
+        "Estimar impacto sólo si existe método autorizado.",
+        "Preparar respuesta y change-order placeholders.",
+        "Escalar decisión."
+      ],
+      "rules": [
+        "Nunca aceptar alcance adicional.",
+        "Precio y fecha nueva requieren decisión humana."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "classification",
+          "evidence",
+          "impact",
+          "reply_draft",
+          "change_order_placeholders"
+        ]
+      },
+      "definition_of_done": [
+        "Clasificación cita sección/fuente.",
+        "Ambigüedad no se resuelve por inferencia."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "scope",
+        "pricing",
+        "deadline",
+        "external_send"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [
+        "operational_state"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "weekly-ceo-review",
+      "version": "1.0.0",
+      "objective": "Convertir la operación en las tres decisiones más importantes del founder.",
+      "trigger": "Cierre semanal",
+      "inputs": [
+        "Pipeline",
+        "Cash",
+        "Delivery",
+        "Client health",
+        "Capacity",
+        "System errors"
+      ],
+      "sources": [
+        "CRM",
+        "Finance",
+        "Project system",
+        "Client Files",
+        "Correction Log"
+      ],
+      "procedure": [
+        "Resumir ventas.",
+        "Resumir caja.",
+        "Resumir delivery y clientes.",
+        "Revisar capacidad.",
+        "Revisar errores del sistema.",
+        "Proponer top 3 decisiones del owner."
+      ],
+      "rules": [
+        "Una página.",
+        "No confundir recomendación con decisión."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "sales",
+          "cash",
+          "delivery",
+          "clients",
+          "capacity",
+          "system",
+          "top_3_decisions"
+        ]
+      },
+      "definition_of_done": [
+        "Las tres decisiones tienen evidencia.",
+        "Los riesgos materiales están visibles."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [],
+      "autonomy_level": 1,
+      "updates_memory": [
+        "operational_state"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "prospecting-radar",
+      "version": "1.0.0",
+      "objective": "Priorizar cuentas/prospectos con señales relevantes para investigación humana o outreach.",
+      "trigger": "Cadencia comercial definida",
+      "inputs": [
+        "ICP",
+        "Lista de cuentas",
+        "Señales autorizadas"
+      ],
+      "sources": [
+        "CRM",
+        "Approved research sources",
+        "Company File"
+      ],
+      "procedure": [
+        "Aplicar filtros ICP.",
+        "Identificar señales observables.",
+        "Registrar evidencia y fecha.",
+        "Priorizar por fit y señal, no por atributos sensibles.",
+        "Preparar lista para revisión."
+      ],
+      "rules": [
+        "No inferir atributos sensibles.",
+        "No contactar automáticamente.",
+        "No fabricar señales."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "account",
+          "fit_evidence",
+          "signal",
+          "source",
+          "date",
+          "recommended_research"
+        ]
+      },
+      "definition_of_done": [
+        "Cada prioridad tiene evidencia.",
+        "No hay scoring basado en atributos sensibles."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "external_send"
+      ],
+      "autonomy_level": 1,
+      "updates_memory": [
+        "operational_state"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "research-brief",
+      "version": "1.0.0",
+      "objective": "Convertir investigación en un brief trazable que reduzca tiempo de decisión.",
+      "trigger": "Antes de una decisión, reunión, propuesta o pieza de contenido",
+      "inputs": [
+        "Pregunta",
+        "Audiencia",
+        "Horizonte temporal"
+      ],
+      "sources": [
+        "Approved internal sources",
+        "Approved external research sources"
+      ],
+      "procedure": [
+        "Reformular pregunta.",
+        "Definir evidencia necesaria.",
+        "Buscar fuentes autorizadas.",
+        "Separar hechos, estimaciones y opiniones.",
+        "Sintetizar hallazgos, contradicciones y huecos.",
+        "Entregar implicaciones y preguntas abiertas."
+      ],
+      "rules": [
+        "Citar procedencia.",
+        "Preferir fuentes primarias cuando existan.",
+        "No ocultar incertidumbre."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "question",
+          "findings",
+          "evidence",
+          "contradictions",
+          "unknowns",
+          "implications"
+        ]
+      },
+      "definition_of_done": [
+        "Cada afirmación material tiene soporte.",
+        "Las limitaciones son explícitas."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [],
+      "autonomy_level": 1,
+      "updates_memory": [],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "crm-hygiene",
+      "version": "1.0.0",
+      "objective": "Mantener CRM útil sin sobrescribir decisiones humanas.",
+      "trigger": "Después de interacción comercial y revisión periódica",
+      "inputs": [
+        "Interacciones",
+        "Registro CRM actual"
+      ],
+      "sources": [
+        "CRM",
+        "Email",
+        "Meeting notes"
+      ],
+      "procedure": [
+        "Detectar campos faltantes/obsoletos.",
+        "Proponer etapa, next step, owner y fecha basados en evidencia.",
+        "Identificar duplicados.",
+        "Preparar cambios.",
+        "Aplicar sólo campos autorizados."
+      ],
+      "rules": [
+        "No cerrar oportunidades por inferencia.",
+        "No cambiar precio.",
+        "No cambiar etapa si la política exige aprobación."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "proposed_updates",
+          "evidence",
+          "conflicts",
+          "applied_updates"
+        ]
+      },
+      "definition_of_done": [
+        "Cada cambio tiene evidencia.",
+        "Campos de autoridad quedan intactos salvo permiso."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "pricing"
+      ],
+      "autonomy_level": 3,
+      "updates_memory": [
+        "operational_state"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "proposal-builder",
+      "version": "1.0.0",
+      "objective": "Preparar una propuesta consistente con oferta, alcance y evidencia comercial.",
+      "trigger": "Oportunidad calificada y solicitud de propuesta",
+      "inputs": [
+        "Discovery",
+        "Oferta",
+        "SOW template",
+        "Caso de negocio"
+      ],
+      "sources": [
+        "CRM",
+        "Offer catalog",
+        "Approved pricing source",
+        "Proposal templates"
+      ],
+      "procedure": [
+        "Resumir problema y resultado.",
+        "Mapear requerimientos a oferta.",
+        "Identificar exclusiones y dependencias.",
+        "Construir alcance y estructura.",
+        "Insertar pricing sólo desde fuente autorizada o placeholder.",
+        "Ejecutar QA."
+      ],
+      "rules": [
+        "No inventar descuentos.",
+        "No prometer fechas sin fuente.",
+        "No modificar términos legales."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "proposal_draft",
+          "assumptions",
+          "exclusions",
+          "tbd",
+          "sources"
+        ]
+      },
+      "definition_of_done": [
+        "Alcance y exclusiones claros.",
+        "Pricing/fechas tienen fuente o TBD."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "pricing",
+        "scope",
+        "deadline",
+        "legal",
+        "external_send"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "content-repurposing",
+      "version": "1.0.0",
+      "objective": "Convertir contenido fuente en formatos derivados sin alterar hechos ni voz.",
+      "trigger": "Existe una pieza fuente aprobada",
+      "inputs": [
+        "Contenido fuente",
+        "Canal",
+        "Audiencia",
+        "Guía editorial"
+      ],
+      "sources": [
+        "Approved source content",
+        "Brand guide",
+        "Company File"
+      ],
+      "procedure": [
+        "Extraer tesis y claims.",
+        "Identificar qué debe conservarse.",
+        "Adaptar estructura al canal.",
+        "Mantener voz y terminología.",
+        "Marcar claims que requieren verificación.",
+        "Entregar variantes solicitadas."
+      ],
+      "rules": [
+        "No inventar testimonios o resultados.",
+        "No publicar.",
+        "No convertir especulación en hecho."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "channel",
+          "drafts",
+          "claims_to_verify",
+          "source_map"
+        ]
+      },
+      "definition_of_done": [
+        "Cada claim material traza al contenido fuente o está marcado.",
+        "Formato corresponde al canal."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "publish"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [
+        "preference"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "customer-health",
+      "version": "1.0.0",
+      "objective": "Detectar señales operativas de riesgo u oportunidad sin diagnosticar intención del cliente.",
+      "trigger": "Revisión semanal/mensual de clientes",
+      "inputs": [
+        "Delivery",
+        "Feedback",
+        "Usage/engagement",
+        "Open loops",
+        "Commercial state"
+      ],
+      "sources": [
+        "Project system",
+        "CRM",
+        "Email",
+        "Client File",
+        "Finance"
+      ],
+      "procedure": [
+        "Reunir señales observables.",
+        "Clasificar señal positiva/neutral/riesgo.",
+        "Explicar evidencia.",
+        "Identificar acción preventiva.",
+        "Escalar riesgos de scope, cobro o relación."
+      ],
+      "rules": [
+        "No inferir satisfacción sin evidencia.",
+        "No usar una única señal como certeza."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "client",
+          "signals",
+          "evidence",
+          "risk",
+          "recommended_action",
+          "owner"
+        ]
+      },
+      "definition_of_done": [
+        "Cada riesgo tiene al menos una evidencia observable.",
+        "Recomendación no se presenta como decisión."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [],
+      "autonomy_level": 1,
+      "updates_memory": [
+        "operational_state"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "knowledge-curator",
+      "version": "1.0.0",
+      "objective": "Mantener conocimiento operacional útil, vigente y no redundante.",
+      "trigger": "Nueva decisión, política, corrección o documento relevante",
+      "inputs": [
+        "Nuevo conocimiento",
+        "Base actual"
+      ],
+      "sources": [
+        "Company File",
+        "Client Files",
+        "Decision Log",
+        "Correction Log",
+        "Approved docs"
+      ],
+      "procedure": [
+        "Clasificar tipo de conocimiento.",
+        "Buscar duplicado/conflicto.",
+        "Determinar destino.",
+        "Proponer alta, actualización, reemplazo o expiración.",
+        "Añadir fuente y vigencia.",
+        "Solicitar aprobación si cambia política."
+      ],
+      "rules": [
+        "No promover conversación efímera a política.",
+        "No borrar historial requerido para auditoría."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "classification",
+          "destination",
+          "change",
+          "source",
+          "expiry",
+          "approval_required"
+        ]
+      },
+      "definition_of_done": [
+        "No quedan reglas contradictorias sin marcar.",
+        "Toda memoria nueva tiene procedencia."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "permissions"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [
+        "rule",
+        "decision",
+        "commitment",
+        "preference",
+        "correction"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
       "id": "approval-gate",
       "version": "1.0.0",
       "objective": "Detener acciones sensibles y presentar al humano exactamente qué debe decidir.",
@@ -70,6 +1275,80 @@
       "autonomy_level": 0,
       "updates_memory": [
         "decision"
+      ],
+      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
+      "tests": [
+        {
+          "name": "normal"
+        },
+        {
+          "name": "missing_information"
+        },
+        {
+          "name": "conflicting_sources"
+        },
+        {
+          "name": "gate_required"
+        }
+      ]
+    },
+    {
+      "id": "correction-learning-loop",
+      "version": "1.0.0",
+      "objective": "Convertir correcciones repetibles en mejoras versionadas sin crear políticas accidentales.",
+      "trigger": "El humano corrige un resultado o comportamiento",
+      "inputs": [
+        "Output original",
+        "Corrección",
+        "Contexto",
+        "Skill/version"
+      ],
+      "sources": [
+        "Correction Log",
+        "Current skill",
+        "Company File",
+        "Client File"
+      ],
+      "procedure": [
+        "Clasificar el error.",
+        "Determinar causa.",
+        "Elegir destino mínimo: regla, fuente, skill, gate o test.",
+        "Proponer cambio.",
+        "Solicitar aprobación si cambia política/autoridad.",
+        "Añadir regression test.",
+        "Incrementar versión."
+      ],
+      "rules": [
+        "No generalizar una excepción sin evidencia.",
+        "No cambiar autoridad automáticamente."
+      ],
+      "output": {
+        "format": "structured",
+        "fields": [
+          "error_class",
+          "root_cause",
+          "proposed_change",
+          "destination",
+          "regression_test",
+          "version_bump"
+        ]
+      },
+      "definition_of_done": [
+        "La corrección tiene destino.",
+        "Existe prueba que habría detectado el error."
+      ],
+      "qa": [
+        "Verify source traceability",
+        "Verify missing information is explicit",
+        "Verify gates before restricted action"
+      ],
+      "gates": [
+        "permissions"
+      ],
+      "autonomy_level": 2,
+      "updates_memory": [
+        "correction",
+        "rule"
       ],
       "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
       "tests": [
@@ -255,1285 +1534,6 @@
         {
           "name": "publish-request",
           "expected": "external publishing stops at publish gate without explicit approval"
-        }
-      ]
-    },
-    {
-      "id": "content-repurposing",
-      "version": "1.0.0",
-      "objective": "Convertir contenido fuente en formatos derivados sin alterar hechos ni voz.",
-      "trigger": "Existe una pieza fuente aprobada",
-      "inputs": [
-        "Contenido fuente",
-        "Canal",
-        "Audiencia",
-        "Guía editorial"
-      ],
-      "sources": [
-        "Approved source content",
-        "Brand guide",
-        "Company File"
-      ],
-      "procedure": [
-        "Extraer tesis y claims.",
-        "Identificar qué debe conservarse.",
-        "Adaptar estructura al canal.",
-        "Mantener voz y terminología.",
-        "Marcar claims que requieren verificación.",
-        "Entregar variantes solicitadas."
-      ],
-      "rules": [
-        "No inventar testimonios o resultados.",
-        "No publicar.",
-        "No convertir especulación en hecho."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "channel",
-          "drafts",
-          "claims_to_verify",
-          "source_map"
-        ]
-      },
-      "definition_of_done": [
-        "Cada claim material traza al contenido fuente o está marcado.",
-        "Formato corresponde al canal."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "publish"
-      ],
-      "autonomy_level": 2,
-      "updates_memory": [
-        "preference"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "correction-learning-loop",
-      "version": "1.0.0",
-      "objective": "Convertir correcciones repetibles en mejoras versionadas sin crear políticas accidentales.",
-      "trigger": "El humano corrige un resultado o comportamiento",
-      "inputs": [
-        "Output original",
-        "Corrección",
-        "Contexto",
-        "Skill/version"
-      ],
-      "sources": [
-        "Correction Log",
-        "Current skill",
-        "Company File",
-        "Client File"
-      ],
-      "procedure": [
-        "Clasificar el error.",
-        "Determinar causa.",
-        "Elegir destino mínimo: regla, fuente, skill, gate o test.",
-        "Proponer cambio.",
-        "Solicitar aprobación si cambia política/autoridad.",
-        "Añadir regression test.",
-        "Incrementar versión."
-      ],
-      "rules": [
-        "No generalizar una excepción sin evidencia.",
-        "No cambiar autoridad automáticamente."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "error_class",
-          "root_cause",
-          "proposed_change",
-          "destination",
-          "regression_test",
-          "version_bump"
-        ]
-      },
-      "definition_of_done": [
-        "La corrección tiene destino.",
-        "Existe prueba que habría detectado el error."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "permissions"
-      ],
-      "autonomy_level": 2,
-      "updates_memory": [
-        "correction",
-        "rule"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "crm-hygiene",
-      "version": "1.0.0",
-      "objective": "Mantener CRM útil sin sobrescribir decisiones humanas.",
-      "trigger": "Después de interacción comercial y revisión periódica",
-      "inputs": [
-        "Interacciones",
-        "Registro CRM actual"
-      ],
-      "sources": [
-        "CRM",
-        "Email",
-        "Meeting notes"
-      ],
-      "procedure": [
-        "Detectar campos faltantes/obsoletos.",
-        "Proponer etapa, next step, owner y fecha basados en evidencia.",
-        "Identificar duplicados.",
-        "Preparar cambios.",
-        "Aplicar sólo campos autorizados."
-      ],
-      "rules": [
-        "No cerrar oportunidades por inferencia.",
-        "No cambiar precio.",
-        "No cambiar etapa si la política exige aprobación."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "proposed_updates",
-          "evidence",
-          "conflicts",
-          "applied_updates"
-        ]
-      },
-      "definition_of_done": [
-        "Cada cambio tiene evidencia.",
-        "Campos de autoridad quedan intactos salvo permiso."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "pricing"
-      ],
-      "autonomy_level": 3,
-      "updates_memory": [
-        "operational_state"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "customer-health",
-      "version": "1.0.0",
-      "objective": "Detectar señales operativas de riesgo u oportunidad sin diagnosticar intención del cliente.",
-      "trigger": "Revisión semanal/mensual de clientes",
-      "inputs": [
-        "Delivery",
-        "Feedback",
-        "Usage/engagement",
-        "Open loops",
-        "Commercial state"
-      ],
-      "sources": [
-        "Project system",
-        "CRM",
-        "Email",
-        "Client File",
-        "Finance"
-      ],
-      "procedure": [
-        "Reunir señales observables.",
-        "Clasificar señal positiva/neutral/riesgo.",
-        "Explicar evidencia.",
-        "Identificar acción preventiva.",
-        "Escalar riesgos de scope, cobro o relación."
-      ],
-      "rules": [
-        "No inferir satisfacción sin evidencia.",
-        "No usar una única señal como certeza."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "client",
-          "signals",
-          "evidence",
-          "risk",
-          "recommended_action",
-          "owner"
-        ]
-      },
-      "definition_of_done": [
-        "Cada riesgo tiene al menos una evidencia observable.",
-        "Recomendación no se presenta como decisión."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [],
-      "autonomy_level": 1,
-      "updates_memory": [
-        "operational_state"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "deliverable-qa",
-      "version": "1.0.0",
-      "objective": "Detectar errores verificables antes de que un entregable salga al cliente.",
-      "trigger": "Antes de una entrega",
-      "inputs": [
-        "Entregable",
-        "SOW/brief",
-        "Fuentes citadas"
-      ],
-      "sources": [
-        "Deliverable",
-        "Contract/SOW",
-        "Client File",
-        "Approved source material"
-      ],
-      "procedure": [
-        "Comprobar nombre/cliente/versión.",
-        "Validar números y claims contra fuentes.",
-        "Comparar contra alcance y requisitos.",
-        "Buscar placeholders, fechas, enlaces y asks incompletos.",
-        "Emitir PASS o lista de fallas."
-      ],
-      "rules": [
-        "No editar silenciosamente.",
-        "No aprobar un claim sin fuente."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "status",
-          "failures",
-          "sources",
-          "recommended_fixes"
-        ]
-      },
-      "definition_of_done": [
-        "PASS sólo si no hay fallas críticas.",
-        "Cada falla indica ubicación y corrección esperada."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [],
-      "autonomy_level": 1,
-      "updates_memory": [
-        "correction"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "friday-status",
-      "version": "1.0.0",
-      "objective": "Preparar un status ejecutivo de cliente en máximo seis líneas.",
-      "trigger": "Viernes o cierre semanal",
-      "inputs": [
-        "Trabajo de la semana",
-        "Open loops",
-        "Fechas",
-        "Capacidad/presupuesto"
-      ],
-      "sources": [
-        "Project system",
-        "Client File",
-        "Decision Log",
-        "Contract/SOW"
-      ],
-      "procedure": [
-        "Resumir entregado.",
-        "Resumir en progreso.",
-        "Indicar espera del cliente.",
-        "Indicar próxima fecha.",
-        "Indicar capacidad/presupuesto si aplica.",
-        "Indicar un riesgo material."
-      ],
-      "rules": [
-        "Sólo datos verificables.",
-        "Máximo seis líneas salvo instrucción contraria.",
-        "No enviar."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "delivered",
-          "in_progress",
-          "waiting_on_client",
-          "next_date",
-          "capacity_or_budget",
-          "risk"
-        ]
-      },
-      "definition_of_done": [
-        "Es legible en menos de un minuto.",
-        "No contiene claims sin fuente."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "external_send"
-      ],
-      "autonomy_level": 2,
-      "updates_memory": [],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "invoice-watch",
-      "version": "1.0.0",
-      "objective": "Hacer visible y consistente la cobranza sin inventar consecuencias.",
-      "trigger": "Revisión diaria o semanal de cuentas por cobrar",
-      "inputs": [
-        "Facturas",
-        "Términos contractuales",
-        "Historial de contacto"
-      ],
-      "sources": [
-        "Finance",
-        "Contract",
-        "Email"
-      ],
-      "procedure": [
-        "Listar facturas abiertas.",
-        "Calcular días desde vencimiento.",
-        "Recuperar último contacto.",
-        "Aplicar escalera de seguimiento documentada.",
-        "Preparar draft y escalación."
-      ],
-      "rules": [
-        "No amenazar con consecuencias no contractuales.",
-        "No modificar montos.",
-        "No ejecutar movimientos financieros."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "client",
-          "invoice",
-          "amount",
-          "due_date",
-          "days_overdue",
-          "last_contact",
-          "draft",
-          "escalation"
-        ]
-      },
-      "definition_of_done": [
-        "Montos y fechas trazan a Finance.",
-        "Consecuencias trazan a contrato/política."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "external_send",
-        "spend"
-      ],
-      "autonomy_level": 2,
-      "updates_memory": [
-        "operational_state"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "knowledge-curator",
-      "version": "1.0.0",
-      "objective": "Mantener conocimiento operacional útil, vigente y no redundante.",
-      "trigger": "Nueva decisión, política, corrección o documento relevante",
-      "inputs": [
-        "Nuevo conocimiento",
-        "Base actual"
-      ],
-      "sources": [
-        "Company File",
-        "Client Files",
-        "Decision Log",
-        "Correction Log",
-        "Approved docs"
-      ],
-      "procedure": [
-        "Clasificar tipo de conocimiento.",
-        "Buscar duplicado/conflicto.",
-        "Determinar destino.",
-        "Proponer alta, actualización, reemplazo o expiración.",
-        "Añadir fuente y vigencia.",
-        "Solicitar aprobación si cambia política."
-      ],
-      "rules": [
-        "No promover conversación efímera a política.",
-        "No borrar historial requerido para auditoría."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "classification",
-          "destination",
-          "change",
-          "source",
-          "expiry",
-          "approval_required"
-        ]
-      },
-      "definition_of_done": [
-        "No quedan reglas contradictorias sin marcar.",
-        "Toda memoria nueva tiene procedencia."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "permissions"
-      ],
-      "autonomy_level": 2,
-      "updates_memory": [
-        "rule",
-        "decision",
-        "commitment",
-        "preference",
-        "correction"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "morning-command-center",
-      "version": "1.0.0",
-      "objective": "Convertir actividad reciente en una lista corta y verificable de prioridades para el owner.",
-      "trigger": "Al inicio de cada día laboral",
-      "inputs": [
-        "Actividad de las últimas 12–24 horas",
-        "Clientes/proyectos activos",
-        "Deadlines",
-        "Propuestas abiertas",
-        "Facturas vencidas"
-      ],
-      "sources": [
-        "CRM",
-        "Email",
-        "Calendar",
-        "Project system",
-        "Finance"
-      ],
-      "procedure": [
-        "Leer sólo fuentes autorizadas.",
-        "Extraer compromisos, deadlines, propuestas, bloqueos, facturas y riesgos.",
-        "Eliminar ruido informativo sin acción.",
-        "Ordenar por consecuencia, fecha y dependencia.",
-        "Entregar una línea por asunto con fuente."
-      ],
-      "rules": [
-        "No enviar mensajes.",
-        "No inventar fechas ni owners.",
-        "Separar hechos de inferencias.",
-        "Si dos fuentes chocan, mostrar conflicto."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "who",
-          "what",
-          "needs_from_owner",
-          "due_date",
-          "source",
-          "risk"
-        ]
-      },
-      "definition_of_done": [
-        "Cada ítem es accionable.",
-        "Cada fecha/claim tiene fuente.",
-        "Los conflictos están visibles."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [],
-      "autonomy_level": 1,
-      "updates_memory": [
-        "operational_state"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "post-meeting-capture",
-      "version": "1.0.0",
-      "objective": "Convertir una conversación en decisiones, compromisos y siguientes pasos rastreables.",
-      "trigger": "Después de una reunión",
-      "inputs": [
-        "Notas/transcripción",
-        "Cuenta/proyecto"
-      ],
-      "sources": [
-        "Meeting notes",
-        "CRM",
-        "Client File"
-      ],
-      "procedure": [
-        "Extraer decisiones explícitas.",
-        "Extraer compromisos con owner y fecha.",
-        "Marcar owner/fecha ausente como NO DEFINIDO.",
-        "Detectar riesgos y cambios de alcance.",
-        "Preparar follow-up draft.",
-        "Proponer actualizaciones de estado."
-      ],
-      "rules": [
-        "No transformar una sugerencia en compromiso.",
-        "No enviar el follow-up sin autorización."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "decisions",
-          "commitments",
-          "undefined_fields",
-          "risks",
-          "followup_draft",
-          "state_updates"
-        ]
-      },
-      "definition_of_done": [
-        "No quedan compromisos ambiguos ocultos.",
-        "Cambios de alcance se escalan."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "external_send",
-        "scope"
-      ],
-      "autonomy_level": 2,
-      "updates_memory": [
-        "decision",
-        "commitment",
-        "operational_state"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "pre-meeting-brief",
-      "version": "1.0.0",
-      "objective": "Preparar al owner para entrar a una reunión con contexto, compromisos y decisiones claras.",
-      "trigger": "Antes de una reunión",
-      "inputs": [
-        "Evento de calendario",
-        "Contacto/cuenta",
-        "Historial relevante"
-      ],
-      "sources": [
-        "Calendar",
-        "CRM",
-        "Email",
-        "Client File",
-        "Decision Log"
-      ],
-      "procedure": [
-        "Identificar participantes y objetivo.",
-        "Recuperar última interacción y compromisos.",
-        "Listar open loops y riesgos.",
-        "Separar hechos de hipótesis.",
-        "Proponer tres preguntas y la decisión deseada."
-      ],
-      "rules": [
-        "No atribuir intención sin evidencia.",
-        "No presentar datos viejos como actuales."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "context",
-          "last_touch",
-          "commitments",
-          "open_loops",
-          "risks",
-          "questions",
-          "desired_decision",
-          "sources"
-        ]
-      },
-      "definition_of_done": [
-        "Brief cabe en una pantalla.",
-        "Todo compromiso tiene owner/fuente cuando existe."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [],
-      "autonomy_level": 1,
-      "updates_memory": [],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "proposal-builder",
-      "version": "1.0.0",
-      "objective": "Preparar una propuesta consistente con oferta, alcance y evidencia comercial.",
-      "trigger": "Oportunidad calificada y solicitud de propuesta",
-      "inputs": [
-        "Discovery",
-        "Oferta",
-        "SOW template",
-        "Caso de negocio"
-      ],
-      "sources": [
-        "CRM",
-        "Offer catalog",
-        "Approved pricing source",
-        "Proposal templates"
-      ],
-      "procedure": [
-        "Resumir problema y resultado.",
-        "Mapear requerimientos a oferta.",
-        "Identificar exclusiones y dependencias.",
-        "Construir alcance y estructura.",
-        "Insertar pricing sólo desde fuente autorizada o placeholder.",
-        "Ejecutar QA."
-      ],
-      "rules": [
-        "No inventar descuentos.",
-        "No prometer fechas sin fuente.",
-        "No modificar términos legales."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "proposal_draft",
-          "assumptions",
-          "exclusions",
-          "tbd",
-          "sources"
-        ]
-      },
-      "definition_of_done": [
-        "Alcance y exclusiones claros.",
-        "Pricing/fechas tienen fuente o TBD."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "pricing",
-        "scope",
-        "deadline",
-        "legal",
-        "external_send"
-      ],
-      "autonomy_level": 2,
-      "updates_memory": [],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "proposal-follow-up",
-      "version": "1.0.0",
-      "objective": "Mantener momentum comercial aportando valor nuevo en cada contacto.",
-      "trigger": "Días 3, 7 y 14 después de propuesta, o política equivalente",
-      "inputs": [
-        "Propuesta",
-        "Último contacto",
-        "Contexto del prospecto"
-      ],
-      "sources": [
-        "CRM",
-        "Email",
-        "Proposal",
-        "Research approved by owner"
-      ],
-      "procedure": [
-        "Confirmar etapa y última interacción.",
-        "Determinar si existe valor nuevo.",
-        "Preparar mensaje breve con un nuevo dato, recurso, insight o decisión.",
-        "Si no existe valor nuevo, recomendar no contactar.",
-        "Actualizar siguiente acción propuesta."
-      ],
-      "rules": [
-        "No inventar urgencia.",
-        "No usar presión falsa.",
-        "No enviar sin gate."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "touch_number",
-          "new_value",
-          "draft",
-          "recommended_next_step"
-        ]
-      },
-      "definition_of_done": [
-        "Cada draft aporta valor nuevo o recomienda omitir.",
-        "No repite el mensaje anterior."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "external_send",
-        "pricing"
-      ],
-      "autonomy_level": 2,
-      "updates_memory": [
-        "operational_state"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "prospecting-radar",
-      "version": "1.0.0",
-      "objective": "Priorizar cuentas/prospectos con señales relevantes para investigación humana o outreach.",
-      "trigger": "Cadencia comercial definida",
-      "inputs": [
-        "ICP",
-        "Lista de cuentas",
-        "Señales autorizadas"
-      ],
-      "sources": [
-        "CRM",
-        "Approved research sources",
-        "Company File"
-      ],
-      "procedure": [
-        "Aplicar filtros ICP.",
-        "Identificar señales observables.",
-        "Registrar evidencia y fecha.",
-        "Priorizar por fit y señal, no por atributos sensibles.",
-        "Preparar lista para revisión."
-      ],
-      "rules": [
-        "No inferir atributos sensibles.",
-        "No contactar automáticamente.",
-        "No fabricar señales."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "account",
-          "fit_evidence",
-          "signal",
-          "source",
-          "date",
-          "recommended_research"
-        ]
-      },
-      "definition_of_done": [
-        "Cada prioridad tiene evidencia.",
-        "No hay scoring basado en atributos sensibles."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "external_send"
-      ],
-      "autonomy_level": 1,
-      "updates_memory": [
-        "operational_state"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "research-brief",
-      "version": "1.0.0",
-      "objective": "Convertir investigación en un brief trazable que reduzca tiempo de decisión.",
-      "trigger": "Antes de una decisión, reunión, propuesta o pieza de contenido",
-      "inputs": [
-        "Pregunta",
-        "Audiencia",
-        "Horizonte temporal"
-      ],
-      "sources": [
-        "Approved internal sources",
-        "Approved external research sources"
-      ],
-      "procedure": [
-        "Reformular pregunta.",
-        "Definir evidencia necesaria.",
-        "Buscar fuentes autorizadas.",
-        "Separar hechos, estimaciones y opiniones.",
-        "Sintetizar hallazgos, contradicciones y huecos.",
-        "Entregar implicaciones y preguntas abiertas."
-      ],
-      "rules": [
-        "Citar procedencia.",
-        "Preferir fuentes primarias cuando existan.",
-        "No ocultar incertidumbre."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "question",
-          "findings",
-          "evidence",
-          "contradictions",
-          "unknowns",
-          "implications"
-        ]
-      },
-      "definition_of_done": [
-        "Cada afirmación material tiene soporte.",
-        "Las limitaciones son explícitas."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [],
-      "autonomy_level": 1,
-      "updates_memory": [],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "revision-scope-log",
-      "version": "1.0.0",
-      "objective": "Registrar revisiones y evitar que trabajo adicional se convierta en alcance gratuito invisible.",
-      "trigger": "Al recibir feedback o cambios",
-      "inputs": [
-        "Solicitud de cambio",
-        "SOW",
-        "Historial de revisiones"
-      ],
-      "sources": [
-        "Client message",
-        "Contract/SOW",
-        "Revision Log"
-      ],
-      "procedure": [
-        "Registrar solicitud y ronda.",
-        "Clasificar dentro/fuera de alcance.",
-        "Asignar owner y estado.",
-        "Calcular días abierto.",
-        "Escalar fuera de alcance."
-      ],
-      "rules": [
-        "No aceptar scope adicional.",
-        "No fijar precio del cambio."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "revision_round",
-          "request",
-          "classification",
-          "owner",
-          "status",
-          "age_days",
-          "escalation"
-        ]
-      },
-      "definition_of_done": [
-        "Toda revisión tiene clasificación.",
-        "Fuera de alcance nunca se mezcla con trabajo aprobado."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "scope",
-        "pricing"
-      ],
-      "autonomy_level": 1,
-      "updates_memory": [
-        "operational_state"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "scope-guard",
-      "version": "1.0.0",
-      "objective": "Comparar solicitudes contra el SOW y proteger margen y capacidad.",
-      "trigger": "Cuando una solicitud puede cambiar alcance, esfuerzo o fecha",
-      "inputs": [
-        "Solicitud",
-        "SOW",
-        "Estado del proyecto"
-      ],
-      "sources": [
-        "Contract/SOW",
-        "Client message",
-        "Project system"
-      ],
-      "procedure": [
-        "Descomponer la solicitud.",
-        "Comparar cada componente contra alcance.",
-        "Clasificar in-scope/out-of-scope/ambiguous.",
-        "Estimar impacto sólo si existe método autorizado.",
-        "Preparar respuesta y change-order placeholders.",
-        "Escalar decisión."
-      ],
-      "rules": [
-        "Nunca aceptar alcance adicional.",
-        "Precio y fecha nueva requieren decisión humana."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "classification",
-          "evidence",
-          "impact",
-          "reply_draft",
-          "change_order_placeholders"
-        ]
-      },
-      "definition_of_done": [
-        "Clasificación cita sección/fuente.",
-        "Ambigüedad no se resuelve por inferencia."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [
-        "scope",
-        "pricing",
-        "deadline",
-        "external_send"
-      ],
-      "autonomy_level": 2,
-      "updates_memory": [
-        "operational_state"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
-        }
-      ]
-    },
-    {
-      "id": "weekly-ceo-review",
-      "version": "1.0.0",
-      "objective": "Convertir la operación en las tres decisiones más importantes del founder.",
-      "trigger": "Cierre semanal",
-      "inputs": [
-        "Pipeline",
-        "Cash",
-        "Delivery",
-        "Client health",
-        "Capacity",
-        "System errors"
-      ],
-      "sources": [
-        "CRM",
-        "Finance",
-        "Project system",
-        "Client Files",
-        "Correction Log"
-      ],
-      "procedure": [
-        "Resumir ventas.",
-        "Resumir caja.",
-        "Resumir delivery y clientes.",
-        "Revisar capacidad.",
-        "Revisar errores del sistema.",
-        "Proponer top 3 decisiones del owner."
-      ],
-      "rules": [
-        "Una página.",
-        "No confundir recomendación con decisión."
-      ],
-      "output": {
-        "format": "structured",
-        "fields": [
-          "sales",
-          "cash",
-          "delivery",
-          "clients",
-          "capacity",
-          "system",
-          "top_3_decisions"
-        ]
-      },
-      "definition_of_done": [
-        "Las tres decisiones tienen evidencia.",
-        "Los riesgos materiales están visibles."
-      ],
-      "qa": [
-        "Verify source traceability",
-        "Verify missing information is explicit",
-        "Verify gates before restricted action"
-      ],
-      "gates": [],
-      "autonomy_level": 1,
-      "updates_memory": [
-        "operational_state"
-      ],
-      "missing_information_policy": "Mark UNKNOWN/TBD and stop if critical.",
-      "tests": [
-        {
-          "name": "normal"
-        },
-        {
-          "name": "missing_information"
-        },
-        {
-          "name": "conflicting_sources"
-        },
-        {
-          "name": "gate_required"
         }
       ]
     }
