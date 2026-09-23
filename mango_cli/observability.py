@@ -115,4 +115,14 @@ def audit(ep,run_id):
   if a["status"]=="approved" and not a["resolved_by"]: issues.append("approved_without_actor")
  for s in r["spans"]:
   if s["status"]=="running" and r["run"]["status"] in ("completed","failed","cancelled"): issues.append(f"orphan_span:{s['id']}")
+ if str(r["run"].get("skill_id","")).startswith("chain:"):
+  steps=r.get("chain_steps",[])
+  if not steps: issues.append("chain_missing_steps")
+  ordinals=[x.get("ordinal") for x in steps]
+  if len(ordinals)!=len(set(ordinals)): issues.append("chain_duplicate_step_ordinal")
+  if r["run"]["status"]=="completed":
+   if len(steps)!=2: issues.append("completed_chain_must_have_two_steps")
+   if any(x.get("status")!="completed" for x in steps): issues.append("completed_chain_has_incomplete_step")
+   if not any(p["kind"]=="handoff" and p["relation"]=="emitted_by_parent" for p in r["provenance"]): issues.append("missing_parent_handoff_provenance")
+   if not any(p["kind"]=="handoff" and p["relation"]=="consumed_by_child" for p in r["provenance"]): issues.append("missing_child_handoff_provenance")
  return {"ok":not issues,"issues":issues,"run_id":run_id,"trace_id":r["trace_id"]}
