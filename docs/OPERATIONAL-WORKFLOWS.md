@@ -1,6 +1,6 @@
 # Integración operativa MANGO Employee — Meeting Intelligence + Quote Builder
 
-Versión del CLI: **0.13.0rc3**. Esta guía explica desde cero cómo usar dos
+Versión del CLI: **0.13.0rc4**. Esta guía explica desde cero cómo usar dos
 Skills de manera independiente, con un único Run trazable por operación,
 persistencia local, permisos del Employee y aprobaciones vinculadas al contenido.
 
@@ -284,3 +284,13 @@ Las aprobaciones registran actores proporcionados al CLI; la
 autenticación de identidad real y las autorizaciones empresariales
 requieren integrar un proveedor externo de identidad y roles. El motor
 de impuestos no infiere la normativa aplicable ni emite facturas.
+
+## RC4: experiencia guiada en español
+
+Para configurar ambas Skills y utilizar sus Runs sin escribir archivos
+JSON a mano ni memorizar los comandos anteriores, utiliza
+mango guided. El asistente solicita datos comerciales, muestra los
+cálculos determinísticos y guía cada Approval Card individualmente.
+El modelo externo para reuniones es una opción explícita.
+
+[Instalación y manual desde cero](GUIDED-SETUP.md).
