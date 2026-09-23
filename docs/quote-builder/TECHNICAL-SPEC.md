@@ -113,3 +113,23 @@ cli-tests/test_quote.py: golden decimals, redondeo, tasa incluida,
 retenciones simuladas, exento/tasa cero como códigos distintos,
 códigos vencidos, descuentos inválidos, snapshots, concurrencia,
 idempotencia, manipulación, CLI y paridad Word/PDF.
+
+## RC3: integración con el control plane existente
+
+El comando `mango workflow quote-draft` guarda un Run, un snapshot
+SHA256 del borrador y crea una Approval Card por cada Gate comercial
+activado (pricing, scope, deadline, legal). `state.resolve_approval`
+mantiene el Run en waiting_approval hasta resolver todas las tarjetas.
+
+`mango workflow quote-issue` sólo permite emitir cuando el Run y
+todas las tarjetas se vinculan al mismo Employee, Skill, borrador, hash,
+total, moneda y fechas. `quote.issue_quote` repite esta comprobación
+inmediatamente antes de la transacción SQLite. La emisión directa
+con nombre manual se rechaza en Employees con Gates comerciales.
+
+La salida por defecto de ambos workflows está restringida al directorio
+del Employee. Ante un fallo de renderización tras asignar folio, repetir
+el mismo RUN_ID conserva el folio. Esta versión no valida criptográficamente
+la identidad humana.
+
+Consulta [Operational Workflows](../OPERATIONAL-WORKFLOWS.md).

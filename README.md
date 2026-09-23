@@ -152,37 +152,56 @@ u otro runtime compatible. El comando no envía mensajes ni crea tareas
 externas, y no promueve automáticamente la memoria.
 
 Manual: [MANGO Meeting Intelligence](docs/meeting-intelligence/USER-GUIDE.md).
-## MANGO Quote Builder
+## Operational Workflows — two independent Skills, one control plane
 
-La nueva Skill `commercial-quotation` genera cotizaciones comerciales
-determinísticas. Guarda el emisor una sola vez, valida descuentos, calcula
-impuestos configurados mediante Decimal, prepara un borrador sin folio y
-asigna un folio secuencial único sólo tras aprobación humana declarada.
+**MANGO Employee v0.13 RC3** connects Meeting Intelligence and Quote Builder
+to persistent Runs, formal Approval Cards, Observability, and release backup.
+Neither Skill sends messages, issues CFDI or promotes Memory automatically.
+
+A tracked meeting report using fictional data (no model call):
 
 ~~~bash
-python -m pip install -e ".[quote]"
+mango workflow meeting reference-employees/mango-chief-of-staff \
+  --input examples/meeting-intelligence/transcript.md \
+  --meeting-date 2026-09-23 \
+  --extraction examples/meeting-intelligence/extraction.json \
+  --formats json,md,docx,pdf
+~~~
+
+A tracked quotation with content-bound commercial approval:
+
+~~~bash
 mango quote profile init reference-employees/mango-chief-of-staff \
   --from-file examples/quote-builder/issuer-profile.json
-mango quote calculate reference-employees/mango-chief-of-staff \
-  --profile demo --request examples/quote-builder/request.json
-mango quote draft reference-employees/mango-chief-of-staff \
+
+mango workflow quote-draft reference-employees/mango-chief-of-staff \
   --profile demo --request examples/quote-builder/request.json \
   --formats json,md,docx,pdf
 ~~~
 
-La respuesta de draft entrega DRAFT_ID. Luego:
+Copy RUN_ID and the APR_ID values from the response. Review the documents,
+approve **each** pending category with
+`mango approve EMPLOYEE APR_ID --actor "Reviewer"`, then issue:
 
 ~~~bash
-mango quote issue reference-employees/mango-chief-of-staff \
-  --draft DRAFT_ID --approved-by "Nombre de aprobador humano" \
-  --formats json,md,docx,pdf
+mango workflow quote-issue EMPLOYEE RUN_ID --formats json,md,docx,pdf
+mango trace audit EMPLOYEE RUN_ID
 ~~~
 
-Los datos de ejemplo son ficticios. Las tasas fiscales las configura el
-emisor; no hay recomendación tributaria, autenticación de identidad,
-CFDI ni envío automático.
+A workflow awaiting human approval returns status `waiting_approval`
+and exit code 2. Both outputs default to private directories inside
+the Employee. A direct `mango quote issue` cannot bypass commercial
+Gates when they are configured.
 
-[Manual completo desde cero](docs/quote-builder/USER-GUIDE.md).
+Install optional Word/PDF support:
+
+~~~bash
+python -m pip install -e ".[meeting,quote]"
+~~~
+
+See the [from-zero Operational Workflows guide](docs/OPERATIONAL-WORKFLOWS.md),
+[Meeting Intelligence guide](docs/meeting-intelligence/USER-GUIDE.md),
+and [Quote Builder guide](docs/quote-builder/USER-GUIDE.md).
 
 ## Core terms in one minute
 
@@ -415,7 +434,7 @@ See [REFERENCE-EMPLOYEE.md](REFERENCE-EMPLOYEE.md).
 
 Current documentation target:
 
-**MANGO Employee CLI 0.13.0rc2**
+**MANGO Employee CLI 0.13.0rc3**
 
 Release provenance is stored in RELEASE-MANIFEST.json and RC-CHECKLIST.md.
 

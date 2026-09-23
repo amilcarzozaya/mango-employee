@@ -144,3 +144,24 @@ An issued quote requires approved-by, which is a manual statement, **not
 authenticated identity**. Do not use it as a replacement for enterprise
 SSO, roles or a formal Approval Card workflow when such controls are needed.
 A SHA256 draft digest detects accidental tampering but is not a signature.
+
+## Formal Approval Cards para cotizaciones y reuniones (RC3)
+
+La emisión comercial de un Employee que tenga Gates activos
+pricing/scope/deadline/legal no puede utilizar sólo el argumento
+--approved-by. Requiere tarjetas aprobadas vinculadas al Run y al SHA256
+del borrador exacto. Cada tarjeta configurada debe estar aprobada.
+
+Si el Employee activa sensitive_data y utiliza un runtime externo para
+una transcripción, el workflow solicita aprobación vinculada al hash
+del archivo y a runtime/modelo ANTES de enviarlo. Una fuente alterada
+invalida esa aprobación. Las salidas rastreables se guardan dentro
+del Employee. Los backups incluyen informes validados, pero no
+transcripciones originales ni prompts completos por defecto.
+
+El CLI registra decisiones de operadores pero no autentica su identidad.
+Una empresa debe implementar SSO, roles, cifrado y políticas de conservación.
+
+La comprobación `sensitive_data` se realiza tanto en el workflow como
+en el propio servicio de Meeting Intelligence. El comando directo
+no permite saltarse una aprobación formal antes de utilizar un modelo externo.

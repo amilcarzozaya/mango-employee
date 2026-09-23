@@ -107,7 +107,7 @@ mango --version
 Expected release for this documentation:
 
 ~~~text
-mango-employee-cli 0.13.0rc2
+mango-employee-cli 0.13.0rc3
 ~~~
 
 Then:
@@ -193,3 +193,16 @@ For beginners, the recommended setup is:
 ## Next page
 
 Read [CONCEPTS.md](CONCEPTS.md), then [FIRST-EMPLOYEE.md](FIRST-EMPLOYEE.md).
+
+## Primer Workflow trazable
+
+Para utilizar ambas Skills con State/Approval/Trace instala también las
+dependencias opcionales:
+
+~~~bash
+python -m pip install -e ".[meeting,quote]"
+mango workflow --help
+~~~
+
+Sigue el [manual de Operational Workflows](OPERATIONAL-WORKFLOWS.md);
+los ejemplos iniciales usan exclusivamente datos ficticios.

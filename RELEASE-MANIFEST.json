@@ -1,15 +1,15 @@
 {
   "format": "mango-release-manifest-v1",
-  "release": "MANGO Employee v0.13 RC2",
-  "version": "0.13.0rc2",
+  "release": "MANGO Employee v0.13 RC3",
+  "version": "0.13.0rc3",
   "schema_version": 1,
-  "generated_at": "2026-09-23T19:04:19.890Z",
-  "file_count": 35,
+  "generated_at": "2026-09-23T19:39:16.121Z",
+  "file_count": 37,
   "files": [
     {
-      "bytes": 5844,
+      "bytes": 6890,
       "path": "CHANGELOG.md",
-      "sha256": "d5a1a307b97b980e0ed054a95bb9d43751bf768b1dab3c35f9b4bd438d387038"
+      "sha256": "269a7c1c86199dd31c79465ac25d4f4609d60bb07e3df98dc7ec8005bab8fb73"
     },
     {
       "bytes": 3996,
@@ -32,9 +32,9 @@
       "sha256": "d98d14e96a859ee1b689b596c15ba517cf4a8cf66d3abee3cd5fb7070c6901a6"
     },
     {
-      "bytes": 2611,
+      "bytes": 3330,
       "path": "MANGO-MEETING-INTELLIGENCE-SPEC.md",
-      "sha256": "87fb95e4d0dbbd43894b34918d39251aacaba392dd6c1544caadfeacb9c7b8ec"
+      "sha256": "a76ea8e7b30452099f6855431f6118b57470bb9f30b80505f8c850f5ce9a4a26"
     },
     {
       "bytes": 1672,
@@ -47,9 +47,14 @@
       "sha256": "c32c830ae07e60540329850d4d6e70e59863c3c80c6cd2bc9a43f97fda2c01c1"
     },
     {
-      "bytes": 2660,
+      "bytes": 5457,
+      "path": "MANGO-OPERATIONAL-WORKFLOWS-SPEC.md",
+      "sha256": "c30986854a1cfaa6444b8b92cc189b55279294bc7bc1d962ae94d33e5ab35568"
+    },
+    {
+      "bytes": 3697,
       "path": "MANGO-QUOTE-BUILDER-SPEC.md",
-      "sha256": "9a2a91681cd900cbb9739efd85864ea1f65fb076f851e8419c221660896c5742"
+      "sha256": "1c374a3fd561dbc754c95484ad7d10717227ac6015f86e69c198a4fb284e4849"
     },
     {
       "bytes": 1311,
@@ -67,9 +72,9 @@
       "sha256": "286fd824f3f3d02c55b9353160f7d1af3fb569b81c4220a6de29020a8893a319"
     },
     {
-      "bytes": 12828,
+      "bytes": 13429,
       "path": "README.md",
-      "sha256": "8f40ec7a6294cb7ed44e26b311229aecdeec76150a46b6a5b82c23e97269e1ab"
+      "sha256": "1e046ddf558b40870972c86bf572c41a5daf59281331e7020d3cd15244a6370b"
     },
     {
       "bytes": 26,
@@ -92,9 +97,9 @@
       "sha256": "7592340aba4aeffbb9b431cc4c1d10d50ff0b986472ae6f05b099d32a569bc59"
     },
     {
-      "bytes": 37604,
+      "bytes": 41894,
       "path": "mango_cli/cli.py",
-      "sha256": "7cdde6ace5c1f2ea708927ce855277063560028da299ad8cb736b5bb8d02a643"
+      "sha256": "04af29aff3f008d88f290cce0c40a3c97cbe19c287d903a7939ddd1ce52921c9"
     },
     {
       "bytes": 5499,
@@ -102,9 +107,9 @@
       "sha256": "1b0109d47e8e2fc9b88b072b6a77ac5d34011a50331e1533cf3eef8cd643719b"
     },
     {
-      "bytes": 11417,
+      "bytes": 12225,
       "path": "mango_cli/hardening.py",
-      "sha256": "d4a6ebf318328f97de6be6a7d7d06f3797071d9a5e86428de8e89d224e69c180"
+      "sha256": "b727f082d8ae3b73cd5e423962ce939d86571a033e5252b0350874b56cf32244"
     },
     {
       "bytes": 2443,
@@ -117,9 +122,9 @@
       "sha256": "b2b8e0967981ec5ae963b963aa8b8385e64f1b60ac82adfe277af552de0f23c8"
     },
     {
-      "bytes": 18490,
+      "bytes": 21198,
       "path": "mango_cli/meeting.py",
-      "sha256": "0a391fd6d43d8a84268d6e5407f5c373b1289d9cbdadde0b8b425e44873b8909"
+      "sha256": "4a5916fe3e2a96069969d427f28550cea6ed3bd2ccf8f198cd6696d6bf6c04a1"
     },
     {
       "bytes": 10040,
@@ -137,9 +142,14 @@
       "sha256": "3a880869c635bb4fdb68a9d74967ab54abc12952ce5f29c477d092aa645559ab"
     },
     {
-      "bytes": 26132,
+      "bytes": 17263,
+      "path": "mango_cli/operational_workflows.py",
+      "sha256": "8914aaafc779556f367c01e46340544bf6fed965a92ff47d210d729f8741e9ef"
+    },
+    {
+      "bytes": 29200,
       "path": "mango_cli/quote.py",
-      "sha256": "e89f1c0a3a2abdf61ff7ed25be286cdcdf84901cd623799f2f6f175022989531"
+      "sha256": "dbc151e00029ecfbcd159aa08e80d23fa8fb271b3fdba2eddcc8e941fa0ec51c"
     },
     {
       "bytes": 15559,
@@ -157,9 +167,9 @@
       "sha256": "1d7e3100c208ac632a9609dc8119a299504cac4382f098113ca24f55f92a24de"
     },
     {
-      "bytes": 7224,
+      "bytes": 7449,
       "path": "mango_cli/state.py",
-      "sha256": "c78e4792f52a5cc81328749c7b8f4b020c9a3ce83b83c7bf41312fba65ad5bc4"
+      "sha256": "6724108488609de0acb0c65389dddf2083e8e699bb247321f6186d8c159037c8"
     },
     {
       "bytes": 5933,
@@ -179,8 +189,8 @@
     {
       "bytes": 605,
       "path": "pyproject.toml",
-      "sha256": "ab2fd8a49bf65801cb186b202a985ff7196f5b52cea1fe2712919d5e39ed9165"
+      "sha256": "dba74d88c791390071850a0862070e098971915b62b564d0b551a57c26f6aaad"
     }
   ],
-  "release_hash": "f7bcc12adad1354f731549b8aba7e0bbf72ebcebe62644756aaa75bb2ec1dda9"
+  "release_hash": "f41f59f8f74037eadfb4cb0eaea66632dbc15793631cb5c1aec5121514b68023"
 }

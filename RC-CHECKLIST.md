@@ -1,37 +1,45 @@
-# MANGO Employee v0.13 RC2 — Validation Checklist
+# MANGO Employee v0.13 RC3 — Stage 4 Integration Release Checklist
 
-## Alcance
+## Scope
 
-- Meeting Intelligence v2: post-meeting-capture 2.0.0 (sin cambios de contrato respecto a RC1).
-- Quote Builder v1: commercial-quotation 1.0.0, independiente de proposal-builder.
-- Comandos mango quote profile init/list, calculate, draft e issue.
-- Cálculos Decimal, impuestos configurados explícitamente, descuentos y retenciones.
-- Borradores con snapshots e integridad SHA256; folio atómico por prefijo/año.
-- Emisión requiere --approved-by (atestación declarada, no autenticación).
-- Salidas JSON/Markdown/Word/PDF desde un mismo objeto calculado.
-- Backups/audit/restauración incluyen perfiles, borradores, emitidos y ledger SQLite.
-- Sin facturación CFDI, pagos, envío de correo ni consulta automática de impuestos.
+- Meeting Intelligence v2 and Quote Builder v1 run independently on the
+  existing MANGO Employee control plane.
+- `mango workflow meeting` creates persistent State and provenance;
+  `meeting-resume` permits exact source-hash-authorized external execution
+  when the Employee declares a sensitive_data Gate.
+- `mango workflow quote-draft` creates an immutable snapshot and one Approval
+  Card for every configured commercial Gate (pricing/scope/deadline/legal).
+- `mango workflow quote-issue` checks every card, source Run and immutable
+  draft hash before allocating an atomic, idempotent commercial folio.
+- A direct `mango quote issue` cannot bypass a configured commercial Gate.
+- Release backup now includes verified Meeting reports, quote operational
+  stores, State and Observability — not original transcripts or full prompts.
 
-## Checklist de release
+## Automated acceptance tests
 
-- [x] Skill canónica y copias .agents/.claude registradas.
-- [x] Esquemas, fixtures ficticios, manual de usuario y especificación técnica.
-- [x] Employee de referencia asigna ambas Skills de propósito general.
-- [x] Golden tests de descuentos, decimales, fiscalidad explícita, folios concurrentes e idempotencia.
-- [x] Pruebas de CLI, respaldo de datos y generación Word/PDF.
-- [x] Manifest regenerado después de las modificaciones de código/specs.
-- [ ] CI final de Python 3.10–3.13: confirmar al cerrar el PR.
-- [ ] Verificar el commit de merge en main antes de publicar tag RC2.
+- [x] New CLI and shared State/Gate/Trace integration implemented.
+- [x] Meeting/Quote standalone APIs retained; direct quote issuance hardened.
+- [x] Formal approvals are bound to immutable source/draft content.
+- [x] Multi-card state transition changed to wait for all pending approvals.
+- [x] Per-Employee file output confinement and documented retention boundaries.
+- [x] Regression tests for rejection, hash tampering, concurrent folios and
+      rendering failure/retry.
+- [x] Beginner manual, normative specification and command reference updated.
+- [x] Release manifest rebuilt from canonical source content.
+- [ ] Verify CI Python 3.10–3.13 across full suite before merging.
+- [ ] Verify main CI following merge before tagging release.
 
-## Provenance
+## Release provenance
 
-- Format: mango-release-manifest-v1
-- Package: 0.13.0rc2
-- Canonical files: 35
-- Release hash: f7bcc12adad1354f731549b8aba7e0bbf72ebcebe62644756aaa75bb2ec1dda9
+- Manifest format: mango-release-manifest-v1
+- Package: 0.13.0rc3
+- Canonical files: 37
+- Release hash: f41f59f8f74037eadfb4cb0eaea66632dbc15793631cb5c1aec5121514b68023
 
-## Limitaciones operativas
+## Explicit limitations
 
-La cotización requiere revisión profesional de impuestos y condiciones.
---approved-by no sustituye SSO/Gates corporativos ni firma electrónica.
-Los ejemplos de reglas fiscales son educativos; RET10SIM NO es asesoría tributaria.
+Operator names in `mango approve` are CLI assertions, not corporate
+identity verification. These workflows do not send communications,
+auto-promote Memory, issue CFDI or infer tax treatment from business
+descriptions. A real enterprise deployment requires authenticated actor
+roles, storage encryption, retention rules and approved provider access.

@@ -199,3 +199,23 @@ No realiza grabación, diarización, OCR, envío de minutas ni seguimiento autom
 de compromisos. Esas capacidades requieren módulos o permisos adicionales.
 
 Para desarrolladores: [Especificación técnica](TECHNICAL-SPEC.md).
+
+## 13. Modo persistente con State y privacidad
+
+Para crear un Run que puedas rastrear, reemplaza `mango meeting` por
+`mango workflow meeting` con las mismas opciones principales.
+Guarda el RUN_ID del resultado: `mango status EMPLOYEE RUN_ID`
+y `mango trace audit EMPLOYEE RUN_ID` permiten verificarlo.
+
+Si el Employee tiene un Gate `sensitive_data`, ejecutar una
+transcripción con un runtime externo genera una Approval Card; no
+envía datos al modelo hasta que la apruebes y reanudes con
+`mango workflow meeting-resume EMPLOYEE RUN_ID`.
+Las salidas por defecto están en `EMPLOYEE/meetings/output`.
+
+Manual desde cero: [Operational Workflows](../OPERATIONAL-WORKFLOWS.md).
+
+El servicio rechaza también el comando directo `mango meeting --runtime codex`
+si está activo el Gate `sensitive_data` y todavía no existe un Run
+formalmente aprobado. Utiliza siempre `mango workflow meeting` para
+obtener la Approval Card y `mango workflow meeting-resume` para reanudar.

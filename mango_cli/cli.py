@@ -16,6 +16,10 @@ from .memory import connect as memory_connect, add as memory_add, search as memo
 from .chain import run_chain, resume_handoff, inspect_chain, HandoffError
 from .meeting import process_meeting, MeetingError
 from .quote import init_profile, list_profiles, make_quote, issue_quote, QuoteError
+from .operational_workflows import (
+    meeting_workflow, meeting_resume, quote_draft_workflow, quote_issue_workflow,
+    WorkflowError,
+)
 
 def icon(ok): return "PASS" if ok else "FAIL"
 
@@ -94,6 +98,39 @@ def cmd_run(args):
         return 1
 
 
+def cmd_workflow(args):
+    """Persistent State/Approval/Trace layer above both independent Skills."""
+    ep = discover_employee(args.target)
+    repo_root = Path(__file__).resolve().parents[1]
+    try:
+        if args.workflow_command == "meeting":
+            data = meeting_workflow(
+                ep, repo_root, args.input, meeting_date=args.meeting_date,
+                timezone=args.timezone, title=args.title, runtime=args.runtime,
+                model=args.model, extraction_path=args.extraction,
+                formats=tuple(x.strip() for x in args.formats.split(",") if x.strip()),
+                out_dir=args.out_dir, prompt_out=args.prompt_out)
+        elif args.workflow_command == "meeting-resume":
+            data = meeting_resume(ep, repo_root, args.run_id)
+        elif args.workflow_command == "quote-draft":
+            data = quote_draft_workflow(
+                ep, repo_root, args.profile, args.request,
+                formats=tuple(x.strip() for x in args.formats.split(",") if x.strip()),
+                out_dir=args.out_dir)
+        elif args.workflow_command == "quote-issue":
+            data = quote_issue_workflow(
+                ep, repo_root, args.run_id, approved_by=args.approved_by,
+                formats=tuple(x.strip() for x in args.formats.split(",") if x.strip()),
+                out_dir=args.out_dir)
+        else:
+            raise WorkflowError("Workflow desconocido.")
+        print(json.dumps(data, ensure_ascii=False, indent=2))
+        return 2 if data["status"] == "waiting_approval" else 0
+    except (WorkflowError, MeetingError, QuoteError, ValueError, OSError, RuntimeError) as exc:
+        print("ERROR:", exc, file=sys.stderr)
+        return 1
+
+
 def cmd_quote(args):
     ep=discover_employee(args.target)
     repo_root=Path(__file__).resolve().parents[1]
@@ -113,7 +150,8 @@ def cmd_quote(args):
         elif args.quote_command=="issue":
             formats=tuple(x.strip() for x in args.formats.split(",") if x.strip())
             result=issue_quote(ep,repo_root,args.draft,args.approved_by,
-                               out_dir=args.out_dir,formats=formats)
+                               out_dir=args.out_dir,formats=formats,
+                               approval_run_id=args.approval_run)
         else:
             raise QuoteError("Operación desconocida.")
         print(json.dumps(result,ensure_ascii=False,indent=2))
@@ -404,7 +442,7 @@ def cmd_release(args):
 
 def main():
     ap=argparse.ArgumentParser(prog="mango",description="CLI for MANGO Employee Specification")
-    ap.add_argument("--version",action="version",version="mango-employee-cli 0.13.0rc2")
+    ap.add_argument("--version",action="version",version="mango-employee-cli 0.13.0rc3")
     sub=ap.add_subparsers(dest="command",required=True)
     p=sub.add_parser("init",help="Interactively create a MANGO Employee project"); p.add_argument("directory",nargs="?",default="./my-mango-employee"); p.set_defaults(fn=cmd_init)
     p=sub.add_parser("run",help="Prepare or execute a task with an Employee + Skill")
@@ -445,9 +483,48 @@ def main():
     q.add_argument("target")
     q.add_argument("--draft",required=True,help="draft_id printed by mango quote draft")
     q.add_argument("--approved-by",required=True,help="Human approver name (self-attestation, not verified identity)")
+    q.add_argument("--approval-run",default=None,help="Approved State Run ID, required when commercial Gates apply")
     q.add_argument("--formats",default="json,md",help="json,md,docx,pdf")
     q.add_argument("--out-dir",default=None)
     p.set_defaults(fn=cmd_quote)
+    p=sub.add_parser("workflow",help="Persistent State, Approval and Trace for Meeting and Quote Skills")
+    ops=p.add_subparsers(dest="workflow_command",required=True)
+
+    w=ops.add_parser("meeting",help="Tracked meeting report; request approval before a sensitive external model call")
+    w.add_argument("target",help="Employee directory or employee.json")
+    w.add_argument("--input",required=True,help="Transcript/minutes TXT,MD,JSON,DOCX or text PDF")
+    w.add_argument("--meeting-date",help="Real meeting date YYYY-MM-DD")
+    w.add_argument("--timezone",default="America/Mexico_City")
+    w.add_argument("--title",default=None)
+    w.add_argument("--runtime",choices=list(SUPPORTED_RUNTIMES),default="prepare")
+    w.add_argument("--model",default=None)
+    w.add_argument("--extraction",default=None,help="Offline model JSON extraction; no external call")
+    w.add_argument("--formats",default="json,md",help="json,md,docx,pdf")
+    w.add_argument("--out-dir",default=None,help="Inside Employee only")
+    w.add_argument("--prompt-out",default=None,help="Sensitive file inside Employee only")
+    w.set_defaults(fn=cmd_workflow)
+
+    w=ops.add_parser("meeting-resume",help="Resume the SAME meeting Run after sensitive_data approval")
+    w.add_argument("target")
+    w.add_argument("run_id")
+    w.set_defaults(fn=cmd_workflow)
+
+    w=ops.add_parser("quote-draft",help="Tracked exact quote draft and bound commercial Approval Cards")
+    w.add_argument("target")
+    w.add_argument("--profile",required=True)
+    w.add_argument("--request",required=True)
+    w.add_argument("--formats",default="json,md",help="json,md,docx,pdf")
+    w.add_argument("--out-dir",default=None,help="Inside Employee only")
+    w.set_defaults(fn=cmd_workflow)
+
+    w=ops.add_parser("quote-issue",help="Issue exact linked draft only after all required approvals")
+    w.add_argument("target")
+    w.add_argument("run_id",help="RUN_ID from workflow quote-draft")
+    w.add_argument("--approved-by",default=None,help="Required only when no formal commercial Gates are configured")
+    w.add_argument("--formats",default="json,md",help="json,md,docx,pdf")
+    w.add_argument("--out-dir",default=None,help="Inside Employee only")
+    w.set_defaults(fn=cmd_workflow)
+
     p=sub.add_parser("meeting",help="Meeting Intelligence: transcript → verified report")
     p.add_argument("target",help="Employee directory or employee.json; must assign post-meeting-capture")
     p.add_argument("--input",required=True,help="Transcript/minutes TXT, MD, JSON, DOCX or text PDF")

@@ -1,6 +1,6 @@
 # MANGO Quote Builder — Manual de usuario desde cero
 
-Skill: commercial-quotation 1.0.0. CLI: MANGO Employee 0.13.0rc2.
+Skill: commercial-quotation 1.0.0. CLI: MANGO Employee 0.13.0rc3.
 
 Este manual no presupone que sepas utilizar terminales, Skills, Employees o
 modelos de IA. Quote Builder realiza **todos los cálculos sin IA**.
@@ -165,50 +165,74 @@ La solicitud ficticia completa arroja:
 El motor usa Decimal y ROUND_HALF_UP por renglón. No llama a modelos y no
 crea archivos. Comprueba los datos comerciales antes de continuar.
 
-## 6. Generar borrador en Word/PDF
+## 6. Guardar borrador trazable y generar Word/PDF
+
+Con un Employee que tenga Gates comerciales activos, usa siempre
+el **workflow persistente**, no una emisión directa:
 
 ~~~bash
-mango quote draft reference-employees/mango-chief-of-staff \
+mango workflow quote-draft reference-employees/mango-chief-of-staff \
   --profile demo \
   --request examples/quote-builder/request.json \
-  --formats json,md,docx,pdf \
-  --out-dir ./mis-cotizaciones
+  --formats json,md,docx,pdf
 ~~~
 
-La respuesta incluye un identificador que comienza con qd-. Guárdalo;
-en los siguientes comandos lo llamamos DRAFT_ID.
+La respuesta entrega RUN_ID, DRAFT_ID, total, los archivos del borrador
+y las Approval Cards exigidas por el Employee. Guarda RUN_ID y DRAFT_ID.
+El borrador queda en quotes/drafts/DRAFT_ID.json, con snapshot del perfil
+e integridad SHA256. La cotización aún no tiene folio.
 
-El Employee conserva quotes/drafts/DRAFT_ID.json, una instantánea
-del perfil, datos del cliente y cálculo con huella SHA256.
-En el directorio de salida aparecerán los cuatro formatos.
-Los documentos se marcan como BORRADOR, sin folio comercial.
+La operación puede terminar con código **2** y estado
+waiting_approval: significa que el borrador se creó correctamente,
+pero todavía requiere decisiones humanas. Si sólo deseas calcular,
+usa mango quote calculate como se explica en la sección anterior.
 
-## 7. Revisar y emitir
+## 7. Revisar, aprobar y emitir dentro del mismo Run
 
-Antes de emitir, confirma responsable, cliente, descripción, cantidad,
-precio, descuento, moneda, códigos fiscales y su vigencia, retenciones,
-exclusiones, condiciones y fecha de entrega.
+Antes de emitir revisa cliente, cantidad, descripción, precios,
+descuentos, impuestos configurados y su vigencia, retenciones,
+moneda, exclusiones, condiciones y fecha de entrega.
 
 ~~~bash
-mango quote issue reference-employees/mango-chief-of-staff \
-  --draft DRAFT_ID \
-  --approved-by "Nombre de quien revisó y aprobó" \
-  --formats json,md,docx,pdf \
-  --out-dir ./mis-cotizaciones
+mango approvals reference-employees/mango-chief-of-staff --run-id RUN_ID
 ~~~
 
-Sustituye DRAFT_ID por el identificador real que imprimió draft.
-Se asigna un folio como COT-DEMO-2026-0001, dentro de una transacción SQLite
-que evita duplicados si varios operadores emiten simultáneamente.
+Para cada tarjeta que aparezca, una persona autorizada debe aprobarla
+expresamente; reemplaza APPROVAL_ID por el valor mostrado:
 
-**approved-by es una declaración manual, no una identidad autenticada.**
-Para un circuito empresarial se necesitará integrar SSO, roles y Approval
-Cards formales. MANGO no envía el documento al cliente.
+~~~bash
+mango approve reference-employees/mango-chief-of-staff APPROVAL_ID \
+  --actor "Responsable autorizado"
+~~~
 
-Si el renderizado falla después de emitir, repetir el comando con el mismo
-DRAFT_ID y aprobador reutiliza el mismo folio. Si hay archivos incompletos,
-elige un directorio de salida distinto; no se sobrescribe un PDF existente
-silenciosamente.
+El Employee de referencia exige pricing, scope, deadline y legal:
+las cuatro categorías deben estar aprobadas. Una aprobación aislada
+NO es suficiente.
+
+Cuando todas estén aprobadas, emite:
+
+~~~bash
+mango workflow quote-issue reference-employees/mango-chief-of-staff RUN_ID \
+  --formats json,md,docx,pdf
+~~~
+
+El mismo Run conserva el snapshot del borrador, los hashes y las
+decisiones. El sistema asigna entonces un folio único mediante SQLite
+y genera los documentos emitidos, sin enviarlos.
+
+Si Word/PDF falla tras asignar un folio, repite
+mango workflow quote-issue con el mismo RUN_ID: reutilizará el folio,
+sin consumir uno nuevo.
+
+**Advertencia:** el actor indicado en mango approve es una declaración
+operativa registrada, no autenticación de identidad ni firma digital.
+Una implementación empresarial deberá conectar SSO y roles reales.
+
+La emisión directa mediante mango quote issue sigue disponible
+para Employees sin Gates comerciales. Para un Employee con Gates
+pricing/scope/deadline/legal, --approved-by por sí solo no basta:
+debes usar este workflow o proporcionar un --approval-run formalmente
+aprobado. Se recomienda el workflow para conservar la trazabilidad.
 
 ## 8. Cotización frente a factura
 

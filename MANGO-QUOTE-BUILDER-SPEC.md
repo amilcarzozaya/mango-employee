@@ -29,6 +29,26 @@ Amílcar Zozaya, creator of Método MANGO and MANGO Employee.
 9. Generated DOCX/PDF/Markdown are rendered from the same validated JSON payload.
 10. Nothing sends emails, debits accounts, changes CRM or issues CFDI automatically.
 
+## Stage 4: formal commercial approval
+
+The independent Skill now has a tracked workflow using
+`mango workflow quote-draft` and `mango workflow quote-issue`. Each
+configured pricing, scope, deadline and legal Gate creates its own
+Approval Card, bound to the Run ID and exact immutable draft SHA256.
+The quote service revalidates all cards, category scope, Employee ID,
+draft hash, total, currency and commercial dates **at mutation time**.
+
+The direct `mango quote issue` command is deliberately rejected for
+Employees with commercial Gates unless `--approval-run RUN_ID` supplies
+the formally authorized Run; using the workflow command is preferred so
+the same Run is completed and its Trace is preserved. `--approved-by`
+alone remains possible only for legitimately ungated Employees and
+does not authenticate identity.
+
+The quote workflow retains the same folio across rendering failure/retry
+and never sends commercial documents externally. For setup and exact CLI
+syntax see [Operational Workflows](docs/OPERATIONAL-WORKFLOWS.md).
+
 ## Limitations and controls
 
 An `approved_by` string is a manual operator statement, not authenticated identity, a digital signature or a replacement for formal organizational approval. Tax rules are configurable data, not a tax-law inference engine. The example withholding is simulated arithmetic only. No CFDI/PAC implementation exists.

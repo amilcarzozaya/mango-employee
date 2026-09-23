@@ -371,3 +371,17 @@ The parent/child pair is not contract-compatible.
 ## Next
 
 For command syntax, read [COMMAND-REFERENCE.md](COMMAND-REFERENCE.md).
+
+## Ejecución persistente de Meeting Intelligence y Quote Builder
+
+Ambas Skills siguen siendo independientes. Para un Employee que las tenga
+asignadas, `mango workflow meeting` genera un Run trazable y
+`mango workflow quote-draft` crea las tarjetas formales exigidas por los
+Gates comerciales configurados. `mango workflow quote-issue` comprueba
+cada aprobación antes de asignar un folio.
+
+El nombre `--approved-by` NO sustituye un Gate comercial:
+una emisión directa queda bloqueada cuando el Employee exige permisos
+de pricing/scope/deadline/legal.
+
+Guía completa: [Operational Workflows](OPERATIONAL-WORKFLOWS.md).
