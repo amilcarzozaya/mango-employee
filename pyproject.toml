@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mango-employee-cli"
-version = "0.12.0rc1"
+version = "0.12.0rc2"
 description = "Portable runtime, specification and safety framework for MANGO AI Employees"
 requires-python = ">=3.10"
 license = "MIT"
