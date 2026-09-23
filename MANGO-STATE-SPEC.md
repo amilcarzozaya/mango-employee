@@ -15,6 +15,7 @@ Alternative controlled paths include `blocked`, `failed`, `cancelled`, and retry
 - **Approval Card** — explicit human decision required by a Gate.
 - **Run Event** — append-only operational audit event.
 - **Attempt** — a retry linked to its parent run.
+- **Chain Step** — an ordered parent/child Skill execution stored inside one root Run.
 
 ## Principles
 1. No invisible work: every persistent execution has a Run ID.
@@ -26,3 +27,22 @@ Alternative controlled paths include `blocked`, `failed`, `cancelled`, and retry
 
 ## Canonical storage
 SQLite in `state/state.db` for v0.1.
+
+
+## Chain Runs
+
+A chain Run uses one root Run ID with synthetic Skill identity:
+
+`chain:<parent_skill>-><child_skill>`
+
+Ordered `chain_steps` record:
+- role (parent/child);
+- Skill ID;
+- runtime;
+- package ID;
+- span ID;
+- status;
+- output path;
+- completion time.
+
+A blocked handoff remains resumable within the same Run using `mango handoff`.
