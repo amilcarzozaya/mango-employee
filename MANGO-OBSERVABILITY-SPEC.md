@@ -12,7 +12,8 @@ Every persistent Run has a deterministic Trace ID. A trace contains:
 - provenance edges: Employee, Skill, Memory, Source and Tool usage;
 - human decisions: Approval Cards and actors;
 - run events: checkpoints, transitions and execution events;
-- metrics: context count, memory retrieval count, tool calls and runtime exit status.
+- metrics: context count, memory retrieval count, tool calls and runtime exit status;
+- chain lineage: ordered Skill steps, handoff provenance, package IDs and receipt preservation.
 
 ## Provenance graph
 `Run → Employee → Skill → Sources + Memory → Tools → Human Decisions → Result`
@@ -30,3 +31,13 @@ Observability stores hashes for span inputs/outputs by default rather than raw m
 
 ## Explainability
 `mango trace explain` produces a human-readable operational explanation without exposing hidden chain-of-thought.
+
+
+## Chain audit laws
+
+For a completed chain Run:
+1. exactly two completed chain steps must exist for the current parent→child runtime;
+2. parent handoff provenance must exist;
+3. child handoff-consumption provenance must exist;
+4. terminal Runs must contain no orphan running spans;
+5. the child receipt must preserve the handoff `query_id`.
