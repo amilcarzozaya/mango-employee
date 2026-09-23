@@ -201,3 +201,31 @@ def test_optional_docx_pdf_outputs(tmp_path):
     assert Path(paths["pdf"]).stat().st_size > 2000
     reader = pypdf.PdfReader(paths["pdf"])
     assert "MANGO Meeting Intelligence" in (reader.pages[0].extract_text() or "")
+
+def test_reject_invented_deadline_even_with_a_real_quote():
+    raw = extraction()
+    raw["tasks"][0]["due_text"] = "pasado mañana"  # exact quote only says mañana
+    with pytest.raises(MeetingError, match="due_text no aparece"):
+        validate(raw)
+
+
+def test_reject_owner_not_supported_by_quote_or_speaker():
+    raw = extraction()
+    raw["tasks"][0]["owner"] = "Luz"  # the cited speaker is Ana
+    with pytest.raises(MeetingError, match="owner no está respaldado"):
+        validate(raw)
+
+
+def test_proposal_language_cannot_be_confirmed_by_model_label_alone():
+    raw = extraction()
+    raw["commitments"] = [{
+        "description": "Contratar a alguien externo",
+        "owner": None, "due_text": None, "status": "committed",
+        "source_excerpt": "Podríamos contratar a alguien externo; habría que evaluarlo.",
+        "source_timestamp": "00:01:04"
+    }]
+    report = validate(raw)
+    assert report["commitments"][0]["status"] == "proposed"
+    assert not any(x["subject"] == "Contratar a alguien externo"
+                   for x in report["memory_candidates"])
+    assert any("compromiso ambiguo" in x for x in report["review_required"])
