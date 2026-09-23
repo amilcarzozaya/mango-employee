@@ -1,4 +1,4 @@
-# MANGO Employee CLI — 0.13.0rc2
+# MANGO Employee CLI — 0.13.0rc3
 
 This file is the short CLI entry point.
 
@@ -149,17 +149,41 @@ mango meeting reference-employees/mango-chief-of-staff \
 Word y PDF son opcionales: python -m pip install -e ".[meeting]".
 Manual: docs/meeting-intelligence/USER-GUIDE.md.
 
-## Quote Builder — cotizaciones comerciales
+## Operational Workflows — persistent Runs and approvals
+
+Both independent Skills can now use the same existing State, Approval Cards
+and Trace services. See [the full guide](docs/OPERATIONAL-WORKFLOWS.md).
+
+Meeting, using fictional data without a model:
+
+~~~bash
+mango workflow meeting EMPLOYEE \
+  --input examples/meeting-intelligence/transcript.md \
+  --meeting-date 2026-09-23 \
+  --extraction examples/meeting-intelligence/extraction.json
+~~~
+
+A live meeting with a sensitive_data Gate returns an approval ID; after
+`mango approve EMPLOYEE APPROVAL_ID --actor "Reviewer"`, resume the same Run:
+
+~~~bash
+mango workflow meeting-resume EMPLOYEE RUN_ID
+~~~
+
+Quote Builder:
 
 ~~~bash
 mango quote profile init EMPLOYEE --from-file issuer.json
-mango quote profile list EMPLOYEE
 mango quote calculate EMPLOYEE --profile mi_empresa --request solicitud.json
-mango quote draft EMPLOYEE --profile mi_empresa --request solicitud.json \
-  --formats json,md,docx,pdf
-mango quote issue EMPLOYEE --draft DRAFT_ID \
-  --approved-by "Nombre de quien aprueba" --formats json,md,docx,pdf
+mango workflow quote-draft EMPLOYEE \
+  --profile mi_empresa --request solicitud.json --formats json,md,docx,pdf
+mango approvals EMPLOYEE --run-id RUN_ID
+mango approve EMPLOYEE APPROVAL_ID --actor "Reviewer"
+mango workflow quote-issue EMPLOYEE RUN_ID --formats json,md,docx,pdf
+mango trace audit EMPLOYEE RUN_ID
 ~~~
 
-Cálculos Decimal, impuestos explícitos, folios únicos, sin CFDI ni envíos.
-Guía: docs/quote-builder/USER-GUIDE.md.
+Approve **every** configured commercial Gate. The same Run retains its
+draft hash, approval cards and issued folio. `mango quote issue` remains
+available for ungated Employees; it rejects a mere self-attestation when
+commercial Gates are configured. No CFDI, external send or payment occurs.
