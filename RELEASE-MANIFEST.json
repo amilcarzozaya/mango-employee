@@ -3,7 +3,7 @@
   "release": "MANGO Employee v0.13 RC3",
   "version": "0.13.0rc3",
   "schema_version": 1,
-  "generated_at": "2026-09-23T19:37:03.764Z",
+  "generated_at": "2026-09-23T19:39:16.121Z",
   "file_count": 37,
   "files": [
     {
@@ -47,9 +47,9 @@
       "sha256": "c32c830ae07e60540329850d4d6e70e59863c3c80c6cd2bc9a43f97fda2c01c1"
     },
     {
-      "bytes": 5318,
+      "bytes": 5457,
       "path": "MANGO-OPERATIONAL-WORKFLOWS-SPEC.md",
-      "sha256": "14812447743db5d5bfa3639eaf78825a14288b5930abdbe3aefef52ca0ad9607"
+      "sha256": "c30986854a1cfaa6444b8b92cc189b55279294bc7bc1d962ae94d33e5ab35568"
     },
     {
       "bytes": 3697,
@@ -122,9 +122,9 @@
       "sha256": "b2b8e0967981ec5ae963b963aa8b8385e64f1b60ac82adfe277af552de0f23c8"
     },
     {
-      "bytes": 18490,
+      "bytes": 21198,
       "path": "mango_cli/meeting.py",
-      "sha256": "0a391fd6d43d8a84268d6e5407f5c373b1289d9cbdadde0b8b425e44873b8909"
+      "sha256": "4a5916fe3e2a96069969d427f28550cea6ed3bd2ccf8f198cd6696d6bf6c04a1"
     },
     {
       "bytes": 10040,
@@ -142,14 +142,14 @@
       "sha256": "3a880869c635bb4fdb68a9d74967ab54abc12952ce5f29c477d092aa645559ab"
     },
     {
-      "bytes": 17209,
+      "bytes": 17263,
       "path": "mango_cli/operational_workflows.py",
-      "sha256": "6d1863c503dde66756942b7bd20838eefc750de0b32298a9935d27aa3ff0d7f3"
+      "sha256": "8914aaafc779556f367c01e46340544bf6fed965a92ff47d210d729f8741e9ef"
     },
     {
-      "bytes": 29148,
+      "bytes": 29200,
       "path": "mango_cli/quote.py",
-      "sha256": "c1f3905fe23c011d0c330e2c37d77abe03c3057f733bb2574e904f0eb08c5d53"
+      "sha256": "dbc151e00029ecfbcd159aa08e80d23fa8fb271b3fdba2eddcc8e941fa0ec51c"
     },
     {
       "bytes": 15559,
@@ -192,5 +192,5 @@
       "sha256": "dba74d88c791390071850a0862070e098971915b62b564d0b551a57c26f6aaad"
     }
   ],
-  "release_hash": "1f12369e9f22dc808b1e109112881b7e0a1730536891df6d654d69e32bf0d414"
+  "release_hash": "f41f59f8f74037eadfb4cb0eaea66632dbc15793631cb5c1aec5121514b68023"
 }
