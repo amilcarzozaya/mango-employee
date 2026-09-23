@@ -1,12 +1,26 @@
-# MANGO Employee v0.13 RC2 — Release Candidate Guide
+# MANGO Employee v0.13 RC3 — Release Candidate Guide
 
-This page is for maintainers/operators preparing the RC2 repository state.
+This page is for maintainers/operators preparing the RC3 repository state.
 
 New users should start at docs/START-HERE.md.
 
-## RC2 scope
+## RC3 scope
 
-RC2 adds independent MANGO Quote Builder v1.0.0: issuer profiles,
+RC3 implements Stage 4: tracked `mango workflow meeting` and
+`mango workflow quote-draft/quote-issue` using the existing State,
+Approval Cards and Observability services. A configured sensitive_data
+Gate prevents external meeting transmission before consent; commercial
+Gates each require approval bound to the exact quote draft hash.
+Direct quote issuance cannot bypass active commercial Gates.
+The release backup now includes validated Meeting reports along with
+quote operational stores, while original transcripts and prompts are
+excluded by default.
+
+See [the full Stage 4 guide](OPERATIONAL-WORKFLOWS.md).
+
+## Prior releases
+
+RC3 adds independent MANGO Quote Builder v1.0.0: issuer profiles,
 exact Decimal commercial quote engine, explicitly configured tax codes,
 immutable drafts, SQLite-issued folios with manual approval statement,
 Word/PDF export and release backup of operational quotation stores.
@@ -84,7 +98,7 @@ RELEASE-MANIFEST.json records:
 
 Because README.md and MANGO-*-SPEC.md files are part of the canonical manifest set, changing them requires manifest regeneration before calling the release snapshot clean.
 
-## RC2 provenance
+## RC3 provenance
 
 The exact release hash can change when tracked release documentation/runtime/spec files are updated.
 
@@ -92,7 +106,7 @@ Therefore, treat RELEASE-MANIFEST.json in the current branch/main as the source 
 
 ## Promotion criteria
 
-Promotion beyond RC2 should require:
+Promotion beyond RC3 should require:
 
 - automated suite green;
 - clean install;
