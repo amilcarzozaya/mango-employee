@@ -6,7 +6,7 @@ Version: 1.0
 
 This contract lets `category-search-system` hand one approved query to `linkedin-search-visibility` without losing strategic context.
 
-The contract makes the handoff resolvable inside the same MANGO Employee registry. It does **not** claim that the current CLI automatically chains two `mango run` executions. Automatic chaining requires an orchestrator/runtime feature; today the contract makes the second skill invocation deterministic and portable.
+The contract is executable by the MANGO Chain Runtime. `mango chain` runs the parent and child inside one persistent Run; `mango handoff` resumes that same Run when a handoff is blocked or corrected.
 
 ## Package
 
@@ -83,3 +83,22 @@ The child returns:
 - Missing primary query/entity → `BLOCKED_INVALID_HANDOFF`
 - Missing proof for material claim → `TBD_EVIDENCE`
 - Publish requested without authority → `WAITING_APPROVAL`
+
+
+## Runtime execution
+
+Automatic execution:
+
+```bash
+mango chain EMPLOYEE \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Prepare the next T1 LinkedIn asset" \
+  --runtime codex
+```
+
+The runtime requires the parent to emit the handoff JSON between `BEGIN_MANGO_HANDOFF` and `END_MANGO_HANDOFF`.
+
+The child must return its receipt between `BEGIN_MANGO_HANDOFF_RECEIPT` and `END_MANGO_HANDOFF_RECEIPT`.
+
+Invalid handoff → root Run becomes `blocked`; use `mango handoff` to continue the same Run.
