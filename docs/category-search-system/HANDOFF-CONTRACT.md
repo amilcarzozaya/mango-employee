@@ -2,15 +2,45 @@
 
 Version: 1.0
 
+This is an advanced contract reference.
+
+If you are a first-time user, read USER-GUIDE.md before this file.
+
 ## Purpose
 
-This contract lets `category-search-system` hand one approved query to `linkedin-search-visibility` without losing strategic context.
+The contract lets category-search-system hand one approved Search Job to linkedin-search-visibility while preserving strategic context and lineage.
 
-The contract is executable by the MANGO Chain Runtime. `mango chain` runs the parent and child inside one persistent Run; `mango handoff` resumes that same Run when a handoff is blocked or corrected.
+mango chain executes this contract inside one persistent root Run.
 
-## Package
+mango handoff can resume that same Run after a corrected handoff.
 
-```json
+## Required installation state
+
+Before the contract can execute:
+
+- MANGO installed;
+- Employee valid;
+- parent registered;
+- child registered;
+- parent assigned to Employee;
+- child assigned to Employee;
+- versions satisfy dependency;
+- autonomy allowed;
+- runtime available for live execution.
+
+## Handoff envelope
+
+The parent runtime output must contain valid JSON between:
+
+~~~text
+BEGIN_MANGO_HANDOFF
+...
+END_MANGO_HANDOFF
+~~~
+
+Example:
+
+~~~json
 {
   "handoff_version": "1.0",
   "from_skill": "category-search-system",
@@ -23,7 +53,11 @@ The contract is executable by the MANGO Chain Runtime. `mango chain` runs the pa
   "audience": "Operaciones / Innovación / Emprendedores",
   "geography": "México / LATAM",
   "angle": "Diseña sistemas, no sólo prompts.",
-  "proof_required": ["metodología", "casos o ejemplos verificables", "controles de seguridad"],
+  "proof_required": [
+    "metodología",
+    "casos o ejemplos verificables",
+    "controles de seguridad"
+  ],
   "approved_claims": [],
   "source_assets": [],
   "voice": "español México, ejecutivo, práctico",
@@ -35,70 +69,146 @@ The contract is executable by the MANGO Chain Runtime. `mango chain` runs the pa
     "publish_gate_required": true
   }
 }
-```
+~~~
+
+## Required fields
+
+The current parent contract requires:
+
+- handoff_version;
+- from_skill;
+- to_skill;
+- query_id;
+- mode;
+- entity;
+- primary_query;
+- intent;
+- audience;
+- geography;
+- angle;
+- proof_required;
+- constraints.
+
+proof_required must be an array.
+
+constraints must be an object.
+
+preserve_primary_query cannot be false in governed execution.
 
 ## Parent responsibilities
 
 The parent decides:
+
 - query ID;
-- primary search job;
+- Search Job;
 - strategic priority;
 - entity association;
 - audience/geography;
-- content angle;
+- angle;
 - proof required;
-- approved claims/source assets.
+- source assets/approved claims when available.
+
+The parent does not grant publish authority through the handoff.
 
 ## Child responsibilities
 
 The child:
-- validates the package;
-- preserves the primary query;
-- drafts LinkedIn content;
-- returns three opening options;
-- returns a final asset;
-- identifies unsupported claims;
+
+- accepts only a compatible handoff;
+- preserves query_id;
+- preserves primary_query when required;
+- creates LinkedIn output;
+- surfaces unsupported claims;
 - returns verification queries;
-- stops at the publish gate.
+- respects publish Gate.
 
-## Receipt
+## Child receipt
 
-The child returns:
+The child output must contain a receipt envelope:
 
-```json
+~~~text
+BEGIN_MANGO_HANDOFF_RECEIPT
+...
+END_MANGO_HANDOFF_RECEIPT
+~~~
+
+Example:
+
+~~~json
 {
-  "handoff_receipt": {
-    "from_skill": "category-search-system",
-    "to_skill": "linkedin-search-visibility",
-    "query_id": "Q-017",
-    "status": "resolved"
-  },
-  "publish_gate_status": "waiting_approval"
+  "from_skill": "category-search-system",
+  "to_skill": "linkedin-search-visibility",
+  "query_id": "Q-017",
+  "status": "resolved"
 }
-```
+~~~
 
-## Failure states
+The runtime validates that receipt lineage matches the handoff.
 
-- Child not installed/registered → `BLOCKED_CHILD_SKILL_NOT_FOUND`
-- Missing primary query/entity → `BLOCKED_INVALID_HANDOFF`
-- Missing proof for material claim → `TBD_EVIDENCE`
-- Publish requested without authority → `WAITING_APPROVAL`
+## Automatic execution
 
-
-## Runtime execution
-
-Automatic execution:
-
-```bash
+~~~bash
 mango chain EMPLOYEE \
   --parent-skill category-search-system \
   --child-skill linkedin-search-visibility \
   --task "Prepare the next T1 LinkedIn asset" \
   --runtime codex
-```
+~~~
 
-The runtime requires the parent to emit the handoff JSON between `BEGIN_MANGO_HANDOFF` and `END_MANGO_HANDOFF`.
+## Preflight without model
 
-The child must return its receipt between `BEGIN_MANGO_HANDOFF_RECEIPT` and `END_MANGO_HANDOFF_RECEIPT`.
+~~~bash
+mango chain EMPLOYEE \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Prepare the next T1 LinkedIn asset" \
+  --runtime prepare
+~~~
 
-Invalid handoff → root Run becomes `blocked`; use `mango handoff` to continue the same Run.
+prepare validates setup and prints the parent prompt without creating live model execution.
+
+## Blocked handoff
+
+If extraction/validation fails, the root Run becomes blocked.
+
+Inspect:
+
+~~~bash
+mango chain-status EMPLOYEE RUN_ID
+~~~
+
+Resume:
+
+~~~bash
+mango handoff EMPLOYEE RUN_ID --file corrected-handoff.json
+~~~
+
+## Runtime security
+
+Trusted Runtime Handoff means MANGO validated lineage/structure.
+
+It does not mean the handoff can:
+
+- expand Employee permissions;
+- increase autonomy;
+- add Tools;
+- bypass Gates;
+- override governance;
+- authorize publication.
+
+## Failure classes
+
+Examples:
+
+- parent/child Skill not assigned;
+- dependency mismatch;
+- contract version mismatch;
+- missing required field;
+- wrong from_skill/to_skill;
+- blank query/entity/audience;
+- invalid proof_required/constraints type;
+- preserve_primary_query disabled;
+- missing receipt;
+- receipt query_id mismatch.
+
+Use trace audit for final provenance verification.

@@ -1,28 +1,94 @@
-# MANGO Employee v0.12 RC2
+# MANGO Employee v0.12 RC2 — Release Candidate Guide
 
-v0.12 RC2 combines release hardening with the governed Chain Runtime added after RC1.
+This page is for maintainers/operators preparing the RC2 repository state.
 
-```bash
+New users should start at docs/START-HERE.md.
+
+## RC2 scope
+
+RC2 combines:
+
+- release hardening;
+- governed State/Memory/Observability;
+- Tool/Approval layers;
+- Teams/Handoffs;
+- MANGO Chain Runtime;
+- Category Search parent→LinkedIn child Skill support.
+
+## Employee release checks
+
+~~~bash
 mango release migrate EMPLOYEE
 mango release audit EMPLOYEE
 mango release readiness EMPLOYEE
 mango release backup EMPLOYEE --out ./backups
-mango release verify-backup EMPLOYEE ./backups/mango-backup-...
-mango release restore EMPLOYEE ./backups/mango-backup-... --force
-mango release manifest EMPLOYEE --out release-manifest.json
-```
+~~~
 
-Promotion to v1.0 should require the complete automated suite, clean installation, release readiness, backup/restore round-trip and real Employee pilots without unresolved critical violations.
+Verify the printed backup directory:
 
+~~~bash
+mango release verify-backup EMPLOYEE BACKUP_DIRECTORY
+~~~
 
-## Manifest hygiene
+Restore test only when intentionally validating recovery:
 
-`mango release manifest` now fails closed if the hardening release version and `pyproject.toml` version diverge.
+~~~bash
+mango release restore EMPLOYEE BACKUP_DIRECTORY --force
+~~~
 
-Current RC2 provenance:
-- manifest format: `mango-release-manifest-v1`;
-- package version: `0.12.0rc2`;
-- canonical file count: 29;
-- release hash: `0adca72dbc9c10a955cb3bbad0824c53cd0a25459cca59d8e37ba1e30ec128a8`.
+## Repository validation
 
-The manifest includes the runtime Python modules and MANGO `*-SPEC.md` documents, including Chain Runtime.
+~~~bash
+python -m pip install -e .
+pytest -q
+mango validate reference-employees/mango-chief-of-staff
+mango test reference-employees/mango-chief-of-staff
+mango security reference-employees/mango-chief-of-staff
+~~~
+
+CI should pass the supported Python matrix.
+
+## Release manifest
+
+The repository manifest uses format:
+
+~~~text
+mango-release-manifest-v1
+~~~
+
+The generator fails closed if hardening RC_VERSION and pyproject.toml version diverge.
+
+RELEASE-MANIFEST.json records:
+
+- release label;
+- package version;
+- schema version;
+- generated timestamp;
+- canonical file count;
+- file paths/hashes/sizes;
+- release hash.
+
+Because README.md and MANGO-*-SPEC.md files are part of the canonical manifest set, changing them requires manifest regeneration before calling the release snapshot clean.
+
+## RC2 provenance
+
+The exact release hash can change when tracked release documentation/runtime/spec files are updated.
+
+Therefore, treat RELEASE-MANIFEST.json in the current branch/main as the source of truth rather than copying an older hash from this prose.
+
+## Promotion criteria
+
+Promotion beyond RC2 should require:
+
+- automated suite green;
+- clean install;
+- release readiness;
+- backup/restore round-trip;
+- security pass;
+- no unresolved critical Gate/permission issues;
+- real Employee pilot evidence;
+- final licensing/IP/public-API decisions appropriate to the release.
+
+## Upgrade guide
+
+See UPGRADE.md.

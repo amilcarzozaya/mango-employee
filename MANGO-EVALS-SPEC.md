@@ -1,5 +1,8 @@
 # MANGO Evals & Benchmark Specification (MEBS) v0.1
 
+> **Advanced / normative reference.** If you are new to MANGO Employee, start with `docs/START-HERE.md`, then `docs/CONCEPTS.md` and `docs/COMMAND-REFERENCE.md`. This file assumes the basic terms Employee, Skill, Runtime, Run, Gate, Tool, Memory, and Handoff are already understood.
+
+
 Created by **Amílcar Zozaya**, creator of Método MANGO.
 
 MEBS defines reproducible operational evaluation for MANGO Employees.

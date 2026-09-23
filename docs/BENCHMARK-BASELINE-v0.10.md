@@ -1,6 +1,10 @@
-# MANGO Employee Benchmark — bench_790f7eb69baf
+# Historical Benchmark Baseline — MANGO Employee v0.10
 
-- Runtime: `prepare`
+> Historical artifact. This file records a deterministic prepare-mode regression baseline from v0.10. It is not a current model leaderboard and should not be interpreted as general AI intelligence.
+
+Benchmark ID: bench_790f7eb69baf
+
+- Runtime: prepare
 - Cases: 30
 - Passed: 30
 - Pass rate: 100.0%
@@ -42,6 +46,17 @@
 | T029 | approval-gate | 100.0 | YES | - |
 | T030 | weekly-ceo-review | 100.0 | YES | - |
 
-## Interpretation
+## Correct interpretation
 
-This is a deterministic operational regression benchmark. It does not claim to measure general model intelligence. Live-runtime results depend on the installed CLI, model version, credentials and provider behavior.
+This benchmark validates deterministic operational expectations in prepare mode.
+
+Live-runtime results depend on:
+
+- installed runtime;
+- model version;
+- credentials/provider;
+- runtime updates;
+- date;
+- execution conditions.
+
+Use docs/EVALS-BENCHMARK.md for current benchmark workflow.

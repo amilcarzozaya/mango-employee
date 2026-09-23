@@ -1,254 +1,381 @@
 # MANGO Employee
 
-**Portable specification, Skill system, safety layer and runtime for supervised AI Employees.**
+**Portable specification, Skill system, safety layer, State/Memory plane, and multi-runtime CLI for supervised AI Employees.**
 
 Created by **Amílcar Zozaya**, creator of **Método MANGO**.
 
-MANGO Employee is an open implementation of a simple idea: an AI Employee should not be a giant prompt. It should be a portable, auditable and versionable operational contract describing **what it is trying to achieve, who it serves, what context it may use, which Skills it can perform, what tools it may access, how much autonomy it has, and where a human must remain in control**.
-
 > Diseña sistemas, no sólo prompts.
+
+## New here? Start with this path
+
+You do not need to understand agents, Skills, runtimes, or MANGO specifications before installing the project.
+
+Read in this order:
+
+1. [docs/START-HERE.md](docs/START-HERE.md)
+2. [docs/PREREQUISITES.md](docs/PREREQUISITES.md)
+3. [docs/INSTALLATION.md](docs/INSTALLATION.md)
+4. [docs/CONCEPTS.md](docs/CONCEPTS.md)
+5. [docs/FIRST-EMPLOYEE.md](docs/FIRST-EMPLOYEE.md)
+6. [docs/SKILLS.md](docs/SKILLS.md)
+7. [docs/COMMAND-REFERENCE.md](docs/COMMAND-REFERENCE.md)
+8. [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
+
+The complete documentation index is [docs/README.md](docs/README.md).
+
+## What MANGO Employee is
+
+MANGO Employee treats an AI worker as an operational contract rather than one giant prompt.
+
+The contract can define:
+
+- identity, role, mission, and human owner;
+- MANGO framing;
+- context and sources;
+- assigned Skills;
+- tool permissions;
+- autonomy limits;
+- human Approval Gates;
+- routines;
+- governed Memory;
+- persistent State;
+- evaluation and learning;
+- trace/audit;
+- parent→child Skill handoffs.
+
+The same bounded Runtime Package can be prepared for different model CLIs without rewriting the Employee.
 
 ## Método MANGO
 
-Método MANGO is a framework created by **Amílcar Zozaya** for designing clearer instructions and AI systems:
+Método MANGO is a framework created by Amílcar Zozaya for clearer instructions and AI systems:
 
-- **M — Meta clara:** What result should be achieved?
-- **A — Audiencia específica:** Who will consume, receive or be affected by the result?
-- **N — Nivel de detalle:** What depth, frequency, precision and autonomy are appropriate?
-- **G — Guía contextual:** Which sources, rules, examples, constraints and business context govern the work?
-- **O — Opciones y formato:** What exact deliverable, structure and output format is required?
+- **M — Meta clara:** what result should be achieved?
+- **A — Audiencia específica:** who consumes or is affected by the result?
+- **N — Nivel de detalle:** how much depth, precision, frequency, and autonomy are appropriate?
+- **G — Guía contextual:** which sources, rules, examples, constraints, and business context govern the work?
+- **O — Opciones y formato:** what exact deliverable, structure, and output are required?
 
-MANGO Employee extends that framework from prompting into an operating architecture:
+MANGO Employee extends that idea into:
 
-**MANGO → Context → Sources → Memory → Skills → Tools → Autonomy → Gates → Routines → Evaluation → Learning → Governance**
+**MANGO → Context → Sources → Memory → Skills → Tools → Autonomy → Gates → State → Evaluation → Learning → Governance**
 
-## Why this exists
+## Minimum prerequisites
 
-Most AI agents mix instructions, context, memory, permissions and execution into one opaque layer. MANGO Employee separates them. The canonical Employee Specification can be version-controlled and the same runtime package can be prepared for different agent CLIs without rewriting the employee.
+Required for MANGO itself:
 
-Current adapters:
+- Python 3.10 or newer;
+- pip;
+- a terminal;
+- Git if you clone/update with Git.
 
-| Runtime | Adapter | Safety posture |
-|---|---|---|
-| OpenAI Codex CLI | `--runtime codex` | ephemeral + read-only sandbox |
-| Claude Code | `--runtime claude` | print mode + Bash/Edit/Write denied by adapter |
-| Google Gemini CLI | `--runtime gemini` | stdin/headless execution |
-| Hermes Agent | `--runtime hermes` | one-shot query from stdin |
-| OpenClaw | `--runtime openclaw` | isolated `agent exec` |
+Third-party model CLIs are optional.
 
-Runtime availability depends on the corresponding CLI being installed and authenticated on the host. MANGO itself does not bundle those third-party runtimes.
+You can validate Employees and prepare Runtime Packages without any live model.
 
-## Quick start
+See [docs/PREREQUISITES.md](docs/PREREQUISITES.md).
 
-```bash
+## Install from zero
+
+~~~bash
+git clone https://github.com/amilcarzozaya/mango-employee.git
+cd mango-employee
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+python -m pip install --upgrade pip
 python -m pip install -e .
 
 mango --version
+~~~
+
+Windows PowerShell:
+
+~~~powershell
+git clone https://github.com/amilcarzozaya/mango-employee.git
+cd mango-employee
+
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+python -m pip install --upgrade pip
+python -m pip install -e .
+
+mango --version
+~~~
+
+Full installation details: [docs/INSTALLATION.md](docs/INSTALLATION.md).
+
+## First successful run without a model
+
+~~~bash
 mango doctor
+mango info reference-employees/mango-chief-of-staff
 mango validate reference-employees/mango-chief-of-staff
 mango test reference-employees/mango-chief-of-staff
 mango security reference-employees/mango-chief-of-staff
-```
+~~~
 
-Prepare a task without calling a model:
+Then prepare one task:
 
-```bash
+~~~bash
 mango run reference-employees/mango-chief-of-staff \
   --skill pre-meeting-brief \
-  --task "Prepárame para la reunión con Acme" \
+  --task "Prepare me for a fictional Acme meeting" \
   --runtime prepare \
-  --package run-package.json \
-  --prompt-out run-prompt.md
-```
+  --package ./run-package.json \
+  --prompt-out ./run-prompt.md
+~~~
 
-Execute the same Employee + Skill through another runtime:
+**prepare** is a built-in runtime mode. It builds the package/prompt and makes no model call.
 
-```bash
-mango run reference-employees/mango-chief-of-staff --skill pre-meeting-brief --task "Prepárame para Acme" --runtime codex
-mango run reference-employees/mango-chief-of-staff --skill pre-meeting-brief --task "Prepárame para Acme" --runtime claude
-mango run reference-employees/mango-chief-of-staff --skill pre-meeting-brief --task "Prepárame para Acme" --runtime gemini
-mango run reference-employees/mango-chief-of-staff --skill pre-meeting-brief --task "Prepárame para Acme" --runtime hermes
-mango run reference-employees/mango-chief-of-staff --skill pre-meeting-brief --task "Prepárame para Acme" --runtime openclaw
-```
+## Core terms in one minute
 
-## Build your own Employee
+- **Employee** — who the AI worker is, what it may do, and who owns final authority.
+- **Skill** — one repeatable job/procedure.
+- **Runtime** — execution surface such as prepare, Codex, Claude Code, Gemini, Hermes, or OpenClaw.
+- **Run** — persistent execution record.
+- **Gate** — human approval boundary for high-impact actions.
+- **Tool** — controlled action surface with explicit capabilities.
+- **Memory** — governed durable knowledge with provenance/status.
+- **Handoff** — typed transfer from one controlled actor/Skill to another.
+- **Chain** — parent Skill → child Skill inside one persistent root Run.
+- **Trace** — operational provenance, not hidden model reasoning.
 
-```bash
+See [docs/CONCEPTS.md](docs/CONCEPTS.md).
+
+## Create your own Employee
+
+~~~bash
 mango init ./employees/my-employee
+
+mango info ./employees/my-employee
 mango validate ./employees/my-employee
 mango test ./employees/my-employee
 mango security ./employees/my-employee
-```
+~~~
 
-Presets include `chief-of-staff`, `sales-ops`, `client-ops`, and `founder-ops`.
+mango init is interactive. Current presets are:
 
-## Security model
+- chief-of-staff;
+- sales-ops;
+- client-ops;
+- founder-ops.
 
-MANGO uses defense in depth rather than trusting model behavior alone. Context is explicitly labeled **untrusted data**. Employee autonomy is bounded per Skill. High-impact actions use human Approval Gates. Context paths are confined to the Employee directory. Common secret patterns are redacted before context packaging. Runtime adapters default toward restricted/headless execution where the upstream CLI supports it.
+Guide: [docs/FIRST-EMPLOYEE.md](docs/FIRST-EMPLOYEE.md).
 
-The included offline security suite tests path traversal, Skill assignment, autonomy limits, prompt-injection boundaries, secret redaction, Approval Gate policy, learning-loop policy and adapter safety flags.
+## Skills: registry vs assignment
 
-**Important:** this project is an application-level control layer, not a security sandbox or formal proof. The host runtime, OS permissions, credentials, plugins/MCP servers and model behavior remain part of the security boundary. Review each upstream runtime before granting write, network, send, spend or production permissions.
+A Skill in skills/registry.json is **not automatically available** to every Employee.
 
-## Repository map
+The Employee must also explicitly assign it in employee.json.
 
-```text
-mango_cli/                  CLI, runtime, initializer, validator, security audit
-schema/                     MANGO Employee JSON schema
-skills/                     machine-readable official Skill library + registry
-.agents/skills/             agent-oriented Skill files
-.claude/skills/             Claude-oriented Skill files
-reference-employees/        canonical MANGO Chief of Staff implementation
-cli-tests/                  CLI/runtime tests
-security-tests/             adversarial and boundary tests
-docs/                       architecture, runtime compatibility and security docs
-.github/workflows/          CI validation
-```
+Check assignments:
 
-## Commands
+~~~bash
+mango info ./employees/my-employee
+~~~
 
-- `mango init` — scaffold a MANGO Employee.
-- `mango info` — inspect an Employee.
-- `mango validate` — validate the operational contract.
-- `mango test` — validate the Golden Set structure.
-- `mango evals` — export behavioral eval prompts.
-- `mango security` — run offline security controls.
-- `mango doctor` — detect installed runtime CLIs.
-- `mango run` — prepare or execute Employee + Skill + Task.
-- `mango chain` — execute governed parent→child Skills inside one persistent Run.
-- `mango handoff` — resume a blocked chain Run with validated handoff JSON.
-- `mango chain-status` — inspect chain lineage.
+Guide: [docs/SKILLS.md](docs/SKILLS.md).
+
+## Optional live runtimes
+
+Supported runtime names:
+
+| Runtime name | External CLI | Default MANGO posture |
+|---|---|---|
+| prepare | none | no model call |
+| codex | Codex CLI | ephemeral + read-only sandbox |
+| claude | Claude Code | print mode + Bash/Edit/Write denied |
+| gemini | Gemini CLI | stdin/headless invocation |
+| hermes | Hermes Agent | query-file/stdin |
+| openclaw | OpenClaw | isolated agent exec |
+
+Install/authenticate the runtime separately, then:
+
+~~~bash
+mango doctor
+~~~
+
+mango doctor confirms binary discovery only. It does not prove authentication, quota, provider access, or billing.
+
+Current setup instructions: [docs/RUNTIMES.md](docs/RUNTIMES.md).
+
+## Single-Skill execution
+
+Prepare only:
+
+~~~bash
+mango run ./employees/my-employee \
+  --skill SKILL_ID \
+  --task "Describe the task" \
+  --runtime prepare
+~~~
+
+Live runtime:
+
+~~~bash
+mango run ./employees/my-employee \
+  --skill SKILL_ID \
+  --task "Describe the task" \
+  --runtime codex
+~~~
+
+Use mango start instead of mango run when you need persistent State, Run ID, trace, approvals, checkpoints, retry, or history.
+
+## Persistent Runs
+
+~~~bash
+mango start ./employees/my-employee \
+  --skill SKILL_ID \
+  --task "Describe the task" \
+  --runtime prepare
+~~~
+
+The CLI prints RUN_ID.
+
+Inspect:
+
+~~~bash
+mango status ./employees/my-employee RUN_ID
+mango trace show ./employees/my-employee RUN_ID
+~~~
+
+See [docs/STATE-CONTROL-PLANE.md](docs/STATE-CONTROL-PLANE.md).
 
 ## MANGO Chain Runtime
 
-v0.12 RC2 adds governed Skill-to-Skill orchestration without creating a hidden second Run.
+MANGO CLI 0.12 RC2 supports governed parent→child Skill execution inside one persistent root Run.
 
-```bash
+Example:
+
+~~~bash
 mango chain ./employees/my-employee \
   --parent-skill category-search-system \
   --child-skill linkedin-search-visibility \
-  --task "Prepare the next T1 LinkedIn asset" \
+  --task "Select the next T1 and prepare the LinkedIn asset" \
   --runtime codex
-```
+~~~
 
-The runtime validates the handoff contract, records both package IDs and spans, and requires a child receipt that preserves lineage. If the handoff is invalid, the Run becomes `blocked` and can resume using `mango handoff`.
+Both Skills must be:
 
-See `MANGO-CHAIN-SPEC.md`.
+1. registered;
+2. explicitly assigned to the Employee;
+3. autonomy-compatible;
+4. handoff-contract compatible.
 
-## MANGO Teams & Handoffs
+If the parent produces an invalid handoff, the root Run becomes blocked instead of losing lineage.
 
-v0.11 adds controlled multi-Employee collaboration with roles, delegation, scoped memory, Handoff Contracts and linked Runs. See `MANGO-TEAMS-SPEC.md`.
+Resume the same Run:
 
-## MANGO v0.12 Release Candidate
+~~~bash
+mango handoff ./employees/my-employee RUN_ID --file corrected-handoff.json
+~~~
 
-v0.12 freezes feature growth and hardens migrations, integrity checks, backup/restore, release provenance and clean installation before v1.0.
+Inspect:
 
-**Migrations ∩ Integrity ∩ Security ∩ Tests ∩ Clean Install ∩ Recovery = RC Ready**
+~~~bash
+mango chain-status ./employees/my-employee RUN_ID
+mango trace audit ./employees/my-employee RUN_ID
+~~~
 
-See `MANGO-RELEASE-HARDENING-SPEC.md`, `THREAT-MODEL.md`, `docs/RELEASE-CANDIDATE.md` and `docs/OPERATIONS-RUNBOOK.md`.
+See [MANGO-CHAIN-SPEC.md](MANGO-CHAIN-SPEC.md) and [docs/category-search-system/USER-GUIDE.md](docs/category-search-system/USER-GUIDE.md).
 
-## MANGO Teams & Handoffs
+## Security model
 
-v0.11 adds controlled multi-Employee collaboration through explicit Team roles and Handoff Contracts.
+MANGO uses defense in depth:
 
-## MANGO Evals & Benchmark
+- explicit Employee/Skill assignment;
+- per-Skill autonomy bounded by Employee max;
+- Employee-relative context path confinement;
+- context size limits;
+- secret-pattern redaction;
+- context marked as untrusted data;
+- human Gates for high-impact categories;
+- corrections do not auto-promote to policy;
+- restrictive runtime adapter modes where available;
+- trace and provenance for persistent Runs.
 
-v0.10 converts the Golden Set into a reproducible operational benchmark. It measures contract behavior rather than general model intelligence.
+Important: MANGO is an application-level control layer, not an OS sandbox, credential vault, malware scanner, or formal verification system.
 
-Commands: `mango benchmark run`, `report`, and `compare`.
+Review [docs/SECURITY.md](docs/SECURITY.md), [SECURITY.md](SECURITY.md), and [THREAT-MODEL.md](THREAT-MODEL.md).
 
-See `MANGO-EVALS-SPEC.md` and `docs/EVALS-BENCHMARK.md`.
+## Command families
 
-## MANGO Observability & Audit
+Use [docs/COMMAND-REFERENCE.md](docs/COMMAND-REFERENCE.md) for syntax and examples.
 
-v0.9 makes MANGO Employees inspectable.
+Top-level areas include:
 
-**What did this Employee do, what information did it use, what did a human approve, and what happened?**
+- init / info / validate / test / security / evals / doctor;
+- run / start / status / history / checkpoint;
+- chain / handoff / chain-status;
+- approvals;
+- memory;
+- tools;
+- action;
+- trace;
+- team;
+- benchmark;
+- release.
 
-Every persistent Run now produces trace spans, provenance edges, human-decision records and operational metrics. `mango trace explain` generates a human-readable explanation without exposing hidden chain-of-thought.
+## Repository map
 
-See `MANGO-OBSERVABILITY-SPEC.md` and `docs/OBSERVABILITY.md`.
-
-## MANGO Approval & Execution Engine
-
-v0.8 closes the controlled action loop:
-
-**THINK → PREPARE → AUTHORIZE → ASK → APPROVE → RE-AUTHORIZE → ACT → RECORD**
-
-Every prepared action receives an ID and SHA-256 binding over the exact Run, Tool, Capability and arguments. A human approval authorizes that exact action—not a vague intention. Permissions are checked again immediately before execution.
-
-See `MANGO-EXECUTION-SPEC.md` and `docs/APPROVAL-EXECUTION.md`.
-
-## MANGO Tool Protocol
-
-MANGO Tool Protocol standardizes how Employees act on systems while keeping permissions independent from the model.
-
-**Registered Tool ∩ Capability ∩ Employee Permission ∩ Gate = Allowed Action**
-
-Capabilities: `read`, `draft`, `write`, `send`, `delete`, `spend`, `admin`.
-
-The reference build includes a contained local filesystem adapter. Email, Calendar, CRM and Finance are declared as external adapters but are not falsely simulated.
-
-See `MANGO-TOOL-PROTOCOL.md` and `docs/TOOLS.md`.
-
-## MANGO State / Control Plane
-
-MANGO State makes execution persistent. Every bounded execution can have a Run ID, lifecycle, checkpoints, Approval Cards, retries and an event history.
-
-**Memory answers “what does the Employee know?” State answers “what is the Employee doing now?”**
-
-Run lifecycle:
-
-`queued → running → waiting_approval → running → completed`
-
-with controlled `blocked`, `failed`, `cancelled` and linked retry paths.
-
-Commands include `mango start`, `status`, `checkpoint`, `request-approval`, `approvals`, `approve`, `reject`, `retry`, `cancel`, and `history`.
-
-See `MANGO-STATE-SPEC.md` and `docs/STATE-CONTROL-PLANE.md`.
-
-## MANGO Memory
-
-MANGO Memory is the portable operational-memory layer. It stores governed memory with provenance, authority, confidence, scope and lifecycle rather than dumping chat history into prompts.
-
-> **Data cannot become Authority.**
-
-`mango run` now retrieves a bounded **Memory Pack** containing only relevant verified/promoted non-sensitive memories.
-
-Commands: `mango memory add`, `search`, `verify`, `approve`, `reject`, `supersede`, `forget`, `explain`, `audit`, and `consolidate`.
-
-See `MANGO-MEMORY-SPEC.md` and `docs/MEMORY.md`.
+~~~text
+mango_cli/                  CLI/runtime/state/memory/security implementation
+schema/                     Employee JSON schema
+skills/                     canonical machine-readable Skill library
+.agents/skills/             portable agent Skill files
+.claude/skills/             Claude-oriented Skill files
+reference-employees/        canonical working Employee
+docs/                       onboarding + operational documentation
+cli-tests/                  CLI/runtime regression tests
+security-tests/             security/hardening tests
+.github/workflows/          CI
+~~~
 
 ## Reference Employee
 
-`reference-employees/mango-chief-of-staff/` is the canonical working example. It includes six core Skills, Company File, Operating Policy, memory, safe fictional fixtures and a 30-case Golden Set.
+The canonical example is:
 
-## Learning loop
+~~~text
+reference-employees/mango-chief-of-staff/
+~~~
 
-MANGO does not silently turn every correction into permanent policy:
+It is intentionally bounded: it can read/analyze/draft but does not silently send, set price, accept scope, promise deadlines, modify legal terms, or move money.
 
-**Correction → classify → propose change → human approval → update rule/Skill → regression test → version**
+See [REFERENCE-EMPLOYEE.md](REFERENCE-EMPLOYEE.md).
 
-This is designed to make learning cumulative without silently expanding authority.
+## State, Memory, Tools, and Observability
 
-## Status
+- State: [docs/STATE-CONTROL-PLANE.md](docs/STATE-CONTROL-PLANE.md)
+- Memory: [docs/MEMORY.md](docs/MEMORY.md)
+- Tools: [docs/TOOLS.md](docs/TOOLS.md)
+- Approval/Execution: [docs/APPROVAL-EXECUTION.md](docs/APPROVAL-EXECUTION.md)
+- Observability: [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md)
+- Teams/Handoffs: [docs/TEAMS-HANDOFFS.md](docs/TEAMS-HANDOFFS.md)
+- Upgrade/Recovery: [docs/UPGRADE.md](docs/UPGRADE.md)
+- Troubleshooting: [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
 
-**v0.12 RC2 — Chain Runtime + MANGO Release Candidate hardening.** The package has offline compatibility adapters for Codex, Claude Code, Gemini CLI, Hermes Agent and OpenClaw. Live end-to-end model execution requires those CLIs and their credentials; `mango doctor` reports what is available on the host.
+## Release status
+
+Current documentation target:
+
+**MANGO Employee CLI 0.12.0rc2**
+
+Release provenance is stored in RELEASE-MANIFEST.json and RC-CHECKLIST.md.
 
 ## Credits
 
 **Método MANGO and MANGO Employee were created by Amílcar Zozaya.**
 
-Concept, methodology, MANGO framework, AI Employee architecture and product direction: **Amílcar Zozaya**.
-
-This repository includes implementation code and documentation developed to operationalize that methodology as a portable specification, Skill library, safety layer, test harness and multi-runtime CLI.
+Concept, methodology, MANGO framework, AI Employee architecture, and product direction: **Amílcar Zozaya**.
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. See LICENSE.
 
 ## Citation
 
-If you use MANGO Employee in research, teaching, products or derivative frameworks, please credit:
+If you use MANGO Employee in research, teaching, products, or derivative frameworks, please credit:
 
 **Zozaya, Amílcar. “MANGO Employee Specification and Método MANGO.” 2026.**

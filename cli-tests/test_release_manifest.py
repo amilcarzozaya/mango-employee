@@ -20,3 +20,11 @@ def test_release_manifest_fails_closed_on_version_drift(tmp_path):
     (tmp_path/"pyproject.toml").write_text('[project]\nversion = "9.9.9"\n',encoding="utf-8")
     with pytest.raises(RuntimeError,match="Release version mismatch"):
         release_manifest(tmp_path)
+
+
+def test_committed_release_manifest_matches_generator():
+    import json
+    committed=json.loads((ROOT/"RELEASE-MANIFEST.json").read_text(encoding="utf-8"))
+    generated=release_manifest(ROOT)
+    for key in ("format","release","version","schema_version","file_count","files","release_hash"):
+        assert committed[key]==generated[key], key

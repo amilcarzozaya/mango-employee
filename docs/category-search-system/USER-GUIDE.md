@@ -1,99 +1,326 @@
-# Guía rápida de usuario — MANGO Category Search + LinkedIn + Chain Runtime
+# Guía desde cero — MANGO Category Search + LinkedIn
 
-## Qué problema resuelve
+Esta guía no asume que conoces MANGO Employee, Skills, Query Brain, Chain Runtime ni los comandos.
 
-Convierte una categoría estratégica en preguntas priorizadas y después convierte cada pregunta T1 en contenido LinkedIn trazable.
+Versiones de referencia:
 
-`Category Search → Query Brain → T1 → Handoff → LinkedIn Search Visibility → Draft → Publish Gate → Observation`
+- MANGO Employee CLI 0.12.0rc2
+- category-search-system 1.3.0
+- linkedin-search-visibility 1.1.0
 
-## Requisitos
+## 1. Qué resuelve
 
-1. MANGO Employee instalado.
-2. `category-search-system` registrado.
-3. `linkedin-search-visibility` registrado.
-4. El Employee que ejecuta el flujo debe tener ambas skills asignadas.
-5. Para publicar, debe existir permiso/gate de publicación explícito.
+El sistema convierte una categoría estratégica en preguntas priorizadas y después transforma una pregunta prioritaria en contenido LinkedIn trazable.
 
-## Primera ejecución
+~~~text
+Categoría
+  ↓
+Query Brain
+  ↓
+T1/T2/T3
+  ↓
+category-search-system
+  ↓ handoff tipado
+linkedin-search-visibility
+  ↓
+draft
+  ↓
+publish Gate
+  ↓
+observación
+  ↓
+prioridad operacional
+~~~
 
-### 1. Construir/priorizar el sistema
+No garantiza ranking, indexación, citas de IA, tráfico ni ventas.
 
-Ejemplo conceptual:
+## 2. Prerrequisitos
 
-```bash
-mango run ./employees/my-employee \
-  --skill category-search-system \
-  --task "Prioriza las T1 de IA empresarial en México y prepara el handoff LinkedIn para la siguiente query." \
-  --runtime prepare
-```
+Antes de usar esta guía debes tener:
 
-La salida debe incluir un paquete `handoff`.
+1. Python 3.10+.
+2. MANGO Employee instalado.
+3. Un Employee válido.
+4. Ambas Skills asignadas al Employee.
+5. Si quieres ejecución live, un runtime externo instalado/autenticado.
+6. Para publicar, una política/Gate de publicación adecuada.
 
-### 2. Ejecutar el child skill
+Si no cumples 1–3, ve primero a:
 
-```bash
-mango run ./employees/my-employee \
-  --skill linkedin-search-visibility \
-  --task "Ejecuta el handoff preparado por category-search-system para Q-017. Conserva query, entidad, audiencia, evidencia y constraints." \
-  --runtime prepare
-```
+- ../START-HERE.md
+- ../PREREQUISITES.md
+- ../INSTALLATION.md
+- ../FIRST-EMPLOYEE.md
 
-Si el runtime recibe el handoff como contexto estructurado, úsalo directamente. Si no, pega/adjunta el JSON del handoff en la tarea/contexto autorizado.
+## 3. Qué es una Skill aquí
 
-### 3. Revisar el resultado
+Una Skill es un procedimiento reutilizable.
 
-Verifica:
-- opening line;
-- query principal;
-- entidad;
-- claims;
-- CTA;
-- slug preview;
-- verification queries;
-- publish-gate status.
+El padre:
 
-### 4. Publicar
+~~~text
+category-search-system
+~~~
 
-No se publica automáticamente con autonomía Level 2. El output debe quedar en `waiting_approval` hasta aprobación válida.
+decide la estrategia de búsqueda/categoría.
 
-## Comandos de diagnóstico
+El child:
 
-```bash
+~~~text
+linkedin-search-visibility
+~~~
+
+convierte una query/search job en un asset LinkedIn.
+
+Que ambas estén en skills/registry.json no basta. El Employee debe asignarlas explícitamente.
+
+## 4. Verificar que ambas Skills están asignadas
+
+~~~bash
+mango info ./employees/my-employee
+~~~
+
+Busca exactamente:
+
+~~~text
+category-search-system
+linkedin-search-visibility
+~~~
+
+Si falta una, sigue ../SKILLS.md.
+
+Después:
+
+~~~bash
 mango validate ./employees/my-employee
 mango test ./employees/my-employee
 mango security ./employees/my-employee
-mango info ./employees/my-employee
-```
+~~~
 
-## Resultado correcto
+Ambas Skills usan autonomía Level 2 actualmente, por lo que el Employee debe permitir como máximo al menos ese nivel si quieres ejecutarlas.
 
-Un run correcto conserva el mismo `query_id` desde el Query Brain hasta el handoff receipt.
+No aumentes autonomía sin revisar la política del Employee.
 
+## 5. Primer preflight sin modelo
 
-## Auto-chain recomendado
+Antes de instalar Codex/Claude/etc., valida el Chain Runtime con prepare:
 
-En vez de ejecutar dos `mango run` manuales, usa:
-
-```bash
+~~~bash
 mango chain ./employees/my-employee \
   --parent-skill category-search-system \
   --child-skill linkedin-search-visibility \
-  --task "Selecciona la siguiente T1 y crea el asset LinkedIn" \
+  --task "Construye o usa el Query Brain, selecciona la siguiente T1 y prepara el handoff LinkedIn." \
+  --runtime prepare
+~~~
+
+prepare:
+
+- valida asignación;
+- valida dependencia padre→child;
+- valida versiones/contrato;
+- construye el paquete del padre;
+- imprime el prompt;
+- no crea un Run live;
+- no llama a un modelo.
+
+## 6. Ejecutar el parent de forma aislada
+
+También puedes probar sólo el padre:
+
+~~~bash
+mango run ./employees/my-employee \
+  --skill category-search-system \
+  --task "Crea un Query Brain de 30 preguntas para IA empresarial en México." \
+  --runtime prepare
+~~~
+
+Esto sirve para aprender el comportamiento sin encadenar el child.
+
+## 7. Ejecutar el child de forma aislada
+
+~~~bash
+mango run ./employees/my-employee \
+  --skill linkedin-search-visibility \
+  --task "Prepara un post para la query: ¿Cómo crear un agente de IA para una empresa?" \
+  --runtime prepare
+~~~
+
+En ejecución aislada no existe el lineage automático de un handoff padre→child.
+
+## 8. Instalar un runtime live
+
+Elige uno.
+
+Ejemplo Codex:
+
+~~~bash
+npm install -g @openai/codex
+codex --version
+codex
+~~~
+
+Autentica el runtime siguiendo sus instrucciones actuales.
+
+Luego:
+
+~~~bash
+mango doctor
+~~~
+
+Para otros runtimes, ve a ../RUNTIMES.md.
+
+## 9. Auto-chain live recomendado
+
+~~~bash
+mango chain ./employees/my-employee \
+  --parent-skill category-search-system \
+  --child-skill linkedin-search-visibility \
+  --task "Selecciona la siguiente T1 y crea el asset LinkedIn." \
   --runtime codex
-```
+~~~
 
-El comando:
-1. crea un único Run raíz;
-2. ejecuta el padre;
-3. extrae y valida el handoff;
-4. construye el paquete del child con Trusted Runtime Handoff;
-5. ejecuta el child;
-6. valida el receipt;
-7. completa el mismo Run con lineage trazable.
+El flujo hace:
 
-Si el handoff falla:
+1. crea un root Run;
+2. ejecuta el parent;
+3. exige un JSON de handoff;
+4. valida el contrato;
+5. construye el Runtime Package del child;
+6. ejecuta el child;
+7. exige un receipt;
+8. conserva lineage y artefactos;
+9. completa el mismo Run.
 
-```bash
+El comando imprime RUN_ID.
+
+Guárdalo.
+
+## 10. Inspeccionar el Run
+
+~~~bash
 mango chain-status ./employees/my-employee RUN_ID
-mango handoff ./employees/my-employee RUN_ID --file corrected-handoff.json
-```
+mango status ./employees/my-employee RUN_ID
+mango trace show ./employees/my-employee RUN_ID
+mango trace audit ./employees/my-employee RUN_ID
+~~~
+
+Artefactos:
+
+~~~text
+employees/my-employee/state/chains/RUN_ID/
+├── 01-parent-output.txt
+├── 02-handoff.json
+├── 03-child-output.txt
+├── 04-receipt.json
+└── 05-result.json
+~~~
+
+## 11. Si el handoff se bloquea
+
+Un handoff inválido no debe perder el Run.
+
+Inspecciona:
+
+~~~bash
+mango chain-status ./employees/my-employee RUN_ID
+~~~
+
+Prepara un JSON corregido conforme a HANDOFF-CONTRACT.md.
+
+Luego:
+
+~~~bash
+mango handoff ./employees/my-employee RUN_ID \
+  --file corrected-handoff.json
+~~~
+
+Continúa el mismo root Run.
+
+## 12. Qué revisar en el output LinkedIn
+
+Verifica:
+
+- query_id;
+- primary_query;
+- entidad;
+- audiencia;
+- geografía;
+- opening;
+- useful answer cerca del inicio;
+- claims/evidencia;
+- CTA si existe;
+- discoverability preview;
+- verification queries;
+- publish_gate_status.
+
+El child no debe cambiar silenciosamente Q-017 por otra query.
+
+## 13. Publicación
+
+La cadena puede terminar correctamente y aun así la publicación seguir esperando aprobación.
+
+Chain completed ≠ publish authorized.
+
+Si la Skill/Gate requiere aprobación, respétala.
+
+## 14. Query Brain y prioridades
+
+Strategic Priority:
+qué categoría/query quieres ocupar a largo plazo.
+
+Operational Priority:
+qué query necesita refuerzo ahora según observaciones.
+
+Observation no debe sobrescribir silenciosamente Strategic Priority.
+
+## 15. Observación
+
+Una observación válida tiene:
+
+- fecha;
+- query exacta;
+- superficie;
+- target mention;
+- URLs/citas;
+- entidades;
+- resultado.
+
+No uses un resultado aislado para afirmar “rankea permanentemente”.
+
+## 16. Dashboard
+
+El diseño de Category Search contempla un Google Sheets Dashboard y feeds normalizados.
+
+En el estado actual de este repositorio, el Dashboard de Google Sheets no forma parte del core clonado automáticamente.
+
+La Skill puede producir/consumir la estructura de feed, pero la implementación del dashboard debe instalarse/desplegarse aparte si quieres esa interfaz.
+
+No confundas DEMO con LIVE.
+
+## 17. Troubleshooting rápido
+
+Skill exists in registry but is not assigned
+: Asigna ambas Skills en employee.json. Ver ../SKILLS.md.
+
+Skill autonomy exceeds employee maximum
+: Revisa si el Employee debe permitir Level 2.
+
+Runtime not found
+: Instala/autentica el runtime y usa mango doctor.
+
+Chain blocked
+: Usa mango chain-status y revisa 01-parent-output.txt.
+
+Receipt mismatch
+: El child no preservó query_id/lineage; el Run debe fallar, no ocultarlo.
+
+Publish blocked
+: Es comportamiento esperado si falta Gate/autoridad.
+
+## 18. Siguiente lectura
+
+- USER-MANUAL.md
+- HANDOFF-CONTRACT.md
+- ../SKILLS.md
+- ../COMMAND-REFERENCE.md
+- ../OBSERVABILITY.md

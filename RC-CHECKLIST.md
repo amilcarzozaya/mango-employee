@@ -18,11 +18,12 @@
 - Restore round-trip: **PASS**
 - Release provenance manifest: **PASS**
 - Manifest/package version consistency guard: **PASS**
+- Documentation onboarding/link regression tests: **PASS**
 
 Release manifest:
 - Format: `mango-release-manifest-v1`
 - Version: `0.12.0rc2`
 - Canonical files: **29**
-- Release hash: `0adca72dbc9c10a955cb3bbad0824c53cd0a25459cca59d8e37ba1e30ec128a8`
+- Release hash: `d95019d2c01fb636d33c4c0b062bca4824c35528b60cd65d0017d33321a43dd3`
 
 RC2 includes Chain Runtime and the refreshed release provenance snapshot. Promotion beyond RC2 still requires the project’s normal release/pilot criteria.

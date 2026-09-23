@@ -1,5 +1,8 @@
 # MANGO Employee Specification (MES) v1.0
 
+> **Advanced / normative reference.** If you are new to MANGO Employee, start with `docs/START-HERE.md`, then `docs/CONCEPTS.md` and `docs/COMMAND-REFERENCE.md`. This file assumes the basic terms Employee, Skill, Runtime, Run, Gate, Tool, Memory, and Handoff are already understood.
+
+
 **Status:** Draft 1.0  
 **Idioma base:** Español (México)  
 **Propósito:** representar un Empleado IA de forma portable, auditable y versionable.
