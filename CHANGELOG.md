@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.12.0rc2 — Chain Runtime
+- Added `mango chain` for one-Run parent→child Skill orchestration.
+- Added `mango handoff` to resume blocked chain Runs with validated handoff JSON.
+- Added `mango chain-status` and chain lineage in State/Trace.
+- Added Trusted Runtime Handoff envelope to runtime packages.
+- Added strict handoff/receipt validation and provenance.
+- Added Category Search → LinkedIn child auto-chain support.
+- Added MANGO Chain Runtime Specification and regression tests.
+
 ## 0.12.0rc1 — Hardening / Release Candidate
 - Feature freeze before v1.0.
 - Idempotent schema metadata/migrations.
