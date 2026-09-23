@@ -108,6 +108,7 @@ def _execute_meeting(ep, rid, params, repo, source_hash, *, resumed=False):
             extraction_path=params.get("extraction_path"),
             formats=tuple(params["formats"]), out_dir=params["out_dir"],
             prompt_out=params.get("prompt_out"),
+            approval_run_id=rid if resumed else None,
         )
         if result.get("status") == "report_ready_for_review":
             metric(ep, rid, "critical_points", result.get("critical_points", 0), "count")
