@@ -5,7 +5,7 @@ description: Build and operate a complete Category Search System: generate and p
 
 # MANGO Category Search System
 
-Version: **1.1.0**
+Version: **1.2.0**
 
 ## Mission
 
@@ -70,11 +70,15 @@ Operating view for:
 
 It is not market share and is not a universal GEO metric.
 
-## Child skill
+## Child skill and direct handoff
 
-Preferred child skill: `linkedin-search-visibility` v1.x.
+Required child skill for LinkedIn execution: `linkedin-search-visibility` v1.1+.
 
-The parent selects the query, search job, entity association, evidence and angle. The child handles LinkedIn execution details.
+The parent selects the query, search job, entity association, evidence and angle. It emits a typed handoff package conforming to `docs/category-search-system/HANDOFF-CONTRACT.md`.
+
+The child must preserve `query_id`, `primary_query`, entity, audience, geography and constraints, then return a `handoff_receipt`.
+
+The handoff is resolvable inside the same MANGO Employee registry when both skills are installed and assigned to the Employee. Do not claim the current CLI auto-chains two skill runs unless an explicit orchestrator capability is present.
 
 ## Modes
 
