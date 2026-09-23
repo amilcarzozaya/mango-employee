@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.13.0rc1 — MANGO Meeting Intelligence v2
+- Upgrades the existing post-meeting-capture Skill to v2, preserving its ID and legacy output aliases.
+- Adds mango meeting with prepare, live extraction, and validated offline JSON import.
+- Adds evidence-bound decisions, actions, commitments, pending items and up to three critical points.
+- Adds deterministic due-date parsing and ambiguity flags without invented deadlines.
+- Adds optional TXT/Markdown/JSON/DOCX/PDF input and JSON/Markdown/DOCX/PDF output.
+- Adds fictional fixtures, user guide, technical spec, schemas and regression tests.
+
+
 ## 0.12.0rc2 — Documentation onboarding refresh
 - Added a zero-assumption documentation path from prerequisites through first Run.
 - Added detailed prerequisite installation/verification for Python, pip, Git, virtual environments, Node, and optional runtimes.

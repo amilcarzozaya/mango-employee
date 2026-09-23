@@ -1,10 +1,13 @@
-# MANGO Employee v0.12 RC2 — Release Candidate Guide
+# MANGO Employee v0.13 RC1 — Release Candidate Guide
 
 This page is for maintainers/operators preparing the RC2 repository state.
 
 New users should start at docs/START-HERE.md.
 
-## RC2 scope
+## RC1 scope
+
+MANGO Meeting Intelligence v2 adds verified meeting reports, deterministic date parsing and optional Word/PDF. It does not transcribe audio, perform OCR or send external messages.
+
 
 RC2 combines:
 

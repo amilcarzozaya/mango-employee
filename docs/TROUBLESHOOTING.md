@@ -343,3 +343,12 @@ Collect:
 - runtime name/version if live execution is involved.
 
 Do not include secrets, API keys, client records, or confidential files in a public GitHub issue.
+
+## Meeting Intelligence
+
+Si mango meeting rechaza una cita, revisa que source_excerpt sea una
+subcadena literal de la transcripción. No desactives la verificación.
+Si falta un responsable o una fecha, puede ser correcto: revisa
+review_required. Para DOCX/PDF instala python -m pip install -e ".[meeting]".
+El comando rechaza PDFs sin texto y no hace OCR ni transcripción de audio.
+Consulta meeting-intelligence/USER-GUIDE.md.

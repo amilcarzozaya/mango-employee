@@ -29,6 +29,11 @@ If you are new, do **not** start with the specification files. Start with the on
 - [SECURITY.md](SECURITY.md) — security controls and limits.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — architecture overview.
 
+## Meeting Intelligence
+
+- [Meeting Intelligence — Manual desde cero](meeting-intelligence/USER-GUIDE.md): instala, ejecuta una reunión real o el ejemplo ficticio y exporta Word/PDF.
+- [Meeting Intelligence — Especificación técnica](meeting-intelligence/TECHNICAL-SPEC.md): contratos, evidencia, fechas, seguridad y límites.
+
 ## Category Search System
 
 - [category-search-system/USER-GUIDE.md](category-search-system/USER-GUIDE.md) — practical beginner workflow.
@@ -52,4 +57,4 @@ The root-level MANGO specification files are normative/technical references. The
 
 ## Version context
 
-These docs target MANGO Employee CLI **0.12.0rc2** unless a page explicitly says otherwise.
+These docs target MANGO Employee CLI **0.13.0rc1** unless a page explicitly says otherwise.

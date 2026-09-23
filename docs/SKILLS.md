@@ -244,6 +244,13 @@ mango chain ./employees/my-employee \
 
 If preflight fails with “Skill exists in registry but is not assigned to this employee”, assignment is incomplete.
 
+## Meeting Intelligence (post-meeting-capture v2)
+
+El preset Chief of Staff asigna esta Skill. El comando mango meeting añade
+validación estricta de citas y fechas más exportación JSON/Markdown/Word/PDF.
+No asumas que otro preset la tiene asignada: compruébalo con mango info.
+Consulta meeting-intelligence/USER-GUIDE.md.
+
 ## Skill anatomy
 
 A full Skill may contain:

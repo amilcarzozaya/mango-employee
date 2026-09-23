@@ -124,3 +124,10 @@ Do not post real credentials/client data in public issues.
 
 Root policy: SECURITY.md.
 Threat model: THREAT-MODEL.md.
+
+## Meeting transcripts
+
+Meeting Intelligence transcriptions may contain personal or confidential information.
+A live runtime can transmit input to its configured model provider. Obtain appropriate
+consent/authorization and restrict output-file and --prompt-out access.
+The Meeting CLI does not automatically send reports or promote Memory candidates.

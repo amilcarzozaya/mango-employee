@@ -49,7 +49,7 @@ For setup, use docs/START-HERE.md.
 For RC2, the intended tag form is:
 
 ~~~text
-v0.12.0rc2
+v0.13.0rc1
 ~~~
 
 Before tagging:

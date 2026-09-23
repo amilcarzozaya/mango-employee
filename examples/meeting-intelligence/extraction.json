@@ -1,0 +1,92 @@
+{
+  "meeting": {
+    "title": "Seguimiento Proyecto Atlas",
+    "participants": [
+      "Carlos",
+      "Ana",
+      "Luz"
+    ],
+    "objective": "Preparar una propuesta comercial"
+  },
+  "executive_summary": "Ana se comprometió a preparar el presupuesto y Carlos a revisar el alcance. Se excluyó la integración ERP de la primera fase. La necesidad de ampliar el equipo continúa pendiente.",
+  "decisions": [
+    {
+      "description": "Excluir la integración ERP de la primera fase.",
+      "owner": null,
+      "source_excerpt": "Acordamos excluir la integración ERP de la primera fase.",
+      "source_timestamp": "00:00:49"
+    }
+  ],
+  "tasks": [
+    {
+      "description": "Preparar y enviar el presupuesto.",
+      "owner": "Ana",
+      "due_text": "mañana",
+      "status": "committed",
+      "source_excerpt": "Sí, yo preparo el presupuesto y lo envío mañana.",
+      "source_timestamp": "00:00:12"
+    },
+    {
+      "description": "Revisar el alcance.",
+      "owner": "Carlos",
+      "due_text": "el próximo viernes",
+      "status": "committed",
+      "source_excerpt": "Yo revisaré el alcance el próximo viernes.",
+      "source_timestamp": "00:00:27"
+    }
+  ],
+  "commitments": [
+    {
+      "description": "Preparar y enviar el presupuesto.",
+      "owner": "Ana",
+      "due_text": "mañana",
+      "status": "committed",
+      "source_excerpt": "Sí, yo preparo el presupuesto y lo envío mañana.",
+      "source_timestamp": "00:00:12"
+    },
+    {
+      "description": "Revisar el alcance.",
+      "owner": "Carlos",
+      "due_text": "el próximo viernes",
+      "status": "committed",
+      "source_excerpt": "Yo revisaré el alcance el próximo viernes.",
+      "source_timestamp": "00:00:27"
+    }
+  ],
+  "pending": [
+    {
+      "description": "Resolver si hace falta contratar a otro desarrollador.",
+      "owner": null,
+      "source_excerpt": "Todavía no sabemos si hará falta contratar a otro desarrollador.",
+      "source_timestamp": "00:00:38"
+    },
+    {
+      "description": "Evaluar una posible contratación externa, aún no acordada.",
+      "owner": null,
+      "source_excerpt": "Podríamos contratar a alguien externo; habría que evaluarlo.",
+      "source_timestamp": "00:01:04"
+    }
+  ],
+  "critical_points": [
+    {
+      "title": "Riesgo de capacidad del equipo",
+      "reason": "La necesidad de un desarrollador adicional no está definida y podría afectar el alcance y los tiempos.",
+      "urgency": 2,
+      "impact": 3,
+      "dependency": 2,
+      "risk": 3,
+      "source_excerpt": "Todavía no sabemos si hará falta contratar a otro desarrollador.",
+      "source_timestamp": "00:00:38"
+    },
+    {
+      "title": "Compromiso comercial próximo",
+      "reason": "La propuesta al cliente debe enviarse antes del viernes.",
+      "urgency": 3,
+      "impact": 2,
+      "dependency": 2,
+      "risk": 1,
+      "source_excerpt": "Necesitamos enviar una propuesta al cliente antes del viernes.",
+      "source_timestamp": "00:00:01"
+    }
+  ]
+}

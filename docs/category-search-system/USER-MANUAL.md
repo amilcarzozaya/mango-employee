@@ -2,7 +2,7 @@
 
 Versiones:
 
-- MANGO Employee CLI 0.12.0rc2
+- MANGO Employee CLI 0.13.0rc1
 - category-search-system 1.3.0
 - linkedin-search-visibility 1.1.0
 

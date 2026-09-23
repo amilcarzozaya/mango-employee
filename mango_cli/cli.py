@@ -14,6 +14,7 @@ from .teams import create_team, add_member, team_status, delegate, accept, retur
 from .hardening import migrate as release_migrate, audit as release_audit, backup as release_backup, verify_backup, restore as release_restore, readiness as release_readiness, release_manifest
 from .memory import connect as memory_connect, add as memory_add, search as memory_search, set_status, supersede as memory_supersede, audit as memory_audit, explain as memory_explain, consolidate as memory_consolidate, TYPES, SCOPES
 from .chain import run_chain, resume_handoff, inspect_chain, HandoffError
+from .meeting import process_meeting, MeetingError
 
 def icon(ok): return "PASS" if ok else "FAIL"
 
@@ -89,6 +90,26 @@ def cmd_run(args):
         return result["returncode"]
     except Exception as e:
         print("ERROR:",e)
+        return 1
+
+
+def cmd_meeting(args):
+    ep=discover_employee(args.target)
+    repo_root=Path(__file__).resolve().parents[1]
+    try:
+        result=process_meeting(
+            employee_path=ep,repo_root=repo_root,source_path=args.input,
+            meeting_date=args.meeting_date,timezone=args.timezone,title=args.title,
+            runtime=args.runtime,model=args.model,extraction_path=args.extraction,
+            formats=tuple(f.strip() for f in args.formats.split(",") if f.strip()),
+            out_dir=args.out_dir,prompt_out=args.prompt_out)
+        if result.get("status")=="prepared" and result.get("prompt"):
+            print(result["prompt"])
+        else:
+            print(json.dumps({k:v for k,v in result.items() if k!="prompt"},ensure_ascii=False,indent=2))
+        return 0
+    except (MeetingError,ValueError,OSError,RuntimeError) as exc:
+        print("ERROR:",exc,file=sys.stderr)
         return 1
 
 
@@ -353,7 +374,7 @@ def cmd_release(args):
 
 def main():
     ap=argparse.ArgumentParser(prog="mango",description="CLI for MANGO Employee Specification")
-    ap.add_argument("--version",action="version",version="mango-employee-cli 0.12.0rc2")
+    ap.add_argument("--version",action="version",version="mango-employee-cli 0.13.0rc1")
     sub=ap.add_subparsers(dest="command",required=True)
     p=sub.add_parser("init",help="Interactively create a MANGO Employee project"); p.add_argument("directory",nargs="?",default="./my-mango-employee"); p.set_defaults(fn=cmd_init)
     p=sub.add_parser("run",help="Prepare or execute a task with an Employee + Skill")
@@ -369,6 +390,19 @@ def main():
     p.add_argument("--dry-run",action="store_true")
     p.add_argument("--verbose",action="store_true")
     p.set_defaults(fn=cmd_run)
+    p=sub.add_parser("meeting",help="Meeting Intelligence: transcript → verified report")
+    p.add_argument("target",help="Employee directory or employee.json; must assign post-meeting-capture")
+    p.add_argument("--input",required=True,help="Transcript/minutes TXT, MD, JSON, DOCX or text PDF")
+    p.add_argument("--meeting-date",help="Actual meeting date AAAA-MM-DD; required for relative dates")
+    p.add_argument("--timezone",default="America/Mexico_City",help="IANA timezone")
+    p.add_argument("--title",help="Verified meeting title")
+    p.add_argument("--runtime",choices=list(SUPPORTED_RUNTIMES),default="prepare")
+    p.add_argument("--model",help="Optional live model override")
+    p.add_argument("--extraction",help="Existing machine-readable JSON extraction; no model call")
+    p.add_argument("--formats",default="json,md",help="Comma-separated: json,md,docx,pdf")
+    p.add_argument("--out-dir",default="meeting-reports",help="Report output directory")
+    p.add_argument("--prompt-out",help="Save prepared prompt to a file")
+    p.set_defaults(fn=cmd_meeting)
     p=sub.add_parser("chain",help="Execute a parent→child Skill chain as one traceable Run")
     p.add_argument("target",help="Employee directory or employee.json")
     p.add_argument("--parent-skill",required=True,help="Assigned parent skill id")

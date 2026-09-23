@@ -27,15 +27,15 @@ def test_primary_navigation_points_to_start_here():
     docs_index=(ROOT/"docs/README.md").read_text(encoding="utf-8")
     assert "docs/START-HERE.md" in readme
     assert "START-HERE.md" in docs_index
-    assert "0.12.0rc2" in readme
+    assert "0.13.0rc1" in readme
 
 def test_cli_and_release_docs_have_no_stale_beginner_labels():
     cli=(ROOT/"CLI.md").read_text(encoding="utf-8")
     release=(ROOT/"docs/GITHUB-RELEASE-CHECKLIST.md").read_text(encoding="utf-8")
     assert "MANGO CLI v0.1" not in cli
-    assert "0.12.0rc2" in cli
+    assert "0.13.0rc1" in cli
     assert "v0.4.0" not in release
-    assert "v0.12.0rc2" in release
+    assert "v0.13.0rc1" in release
 
 def test_advanced_specs_send_new_users_to_onboarding():
     for p in sorted(ROOT.glob("MANGO-*-SPEC.md")):
